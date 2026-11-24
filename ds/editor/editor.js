@@ -472,6 +472,7 @@ let fixLevel = 0, aiState = { busy: false, out: '', proposal: null }, sampleFn, 
 try { apiKey = localStorage.getItem('nr_api_key') || ''; } catch (e) {}
 setTimeout(async () => { try { sampleFn = window.claude && await window.claude.use('sample'); } catch (e) { sampleFn = null; } }, 0);
 function logFix(complaint, lines, source) {
+    try { if (complaint && lines && lines.length && source !== 'offline') NRKnowledge.record(P, { symptom: String(complaint).slice(0, 120), kw: String(complaint).slice(0, 120), cause: 'Solved earlier with the repair assistant.', fix: 'Changes that worked: ' + lines.slice(0, 4).join('; ').slice(0, 260) }); } catch (e) {}
     (P.fixlog = P.fixlog || []).push({ time: new Date().toISOString(), complaint, source, changes: lines });
 }
 function fixTab(main) {

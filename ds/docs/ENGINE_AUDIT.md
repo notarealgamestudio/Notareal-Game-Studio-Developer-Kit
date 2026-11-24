@@ -77,3 +77,8 @@ Each lives in the "Level / content builder" tab when the game is that type, is s
 - Verified: node tests (`tests/test_aiagent.js`), a mock llama-server over HTTP through the editor in Playwright, and the launcher start/stop with a stand-in server process.
 - NOT verified: a real Qwen model (never downloaded or run here: disk and network), the download button, Windows `tar` unpacking, answer quality of a 7B model on these tools. No model or engine is bundled in the zip (4.7 GB).
 - Not built: the spec's telemetry/model-manager extras, AI texture/background generation tools, tools for the skate park / store layout / face tool.
+
+## Feeding the AI the studio's data (24 Nov)
+- Real: each AI step's prompt now carries (a) console facts, (b) the studio guide, (c) retrieved data matching the request: scanned games from the library, measured real-game numbers, recipes, templates, the open game's settings and design layout, and fixes already learned in this project.
+- Learning (no model training): a request that finished with every step working, and every AI repair the user applies in Fix it, is saved in the project's knowledge list and found by later requests.
+- NOT done: training or fine-tuning a model; telemetry; retrieval over decompiled code from scans beyond the library records the app already stores. Verified with node tests only, not with a real model.

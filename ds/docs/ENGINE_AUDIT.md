@@ -82,3 +82,7 @@ Each lives in the "Level / content builder" tab when the game is that type, is s
 - Real: each AI step's prompt now carries (a) console facts, (b) the studio guide, (c) retrieved data matching the request: scanned games from the library, measured real-game numbers, recipes, templates, the open game's settings and design layout, and fixes already learned in this project.
 - Learning (no model training): a request that finished with every step working, and every AI repair the user applies in Fix it, is saved in the project's knowledge list and found by later requests.
 - NOT done: training or fine-tuning a model; telemetry; retrieval over decompiled code from scans beyond the library records the app already stores. Verified with node tests only, not with a real model.
+
+## AI dock (24 Nov): the AI is now the front of the app
+- Real: `editor/editor_aidock.js` puts one AI box at the bottom of every screen (also the welcome screen): status chip (installed / starting / not installed / keyword mode), "Install the AI" button, live step log. It runs the planner/tool loop; with no model it falls back to the keyword assistant and says so.
+- Verified: Playwright with a stand-in model server (made a kart game from one sentence on the welcome screen; dock stays on other tabs). NOT verified: a real Qwen model, the Install button on Windows, the installed app.

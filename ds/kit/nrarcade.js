@@ -689,11 +689,14 @@ function draw(g, s, C, P, spot) {
     /* ---------------------------------------------------------------- rail shooter (light-gun style, on a fixed path). Built from the three big names of the genre:
      * Time Crisis (duck behind cover to reload and dodge, enemies telegraph before they fire), House of the Dead (civilians you must not shoot, weak points / headshots, boss with a moving core)
      * and Star Fox / Panzer Dragoon (waves arriving from the horizon, combo chains for clean streaks). Arrows move the reticle, Z fires, hold X for cover (reloads). */
+    /* design = { waves: [{ grunts, civilians (do not shoot), hp, speed .6-1.8, fire (frames between shots, 40-200) }], boss: { hp, fire }, theme: { wall, floor, lines } } */
+    A.RAIL_DESIGN = () => ({ waves: [{ grunts: 4, civilians: 0, hp: 1, speed: 1, fire: 100 }, { grunts: 5, civilians: 2, hp: 1, speed: 1, fire: 90 }, { grunts: 6, civilians: 2, hp: 2, speed: 1.1, fire: 80 }, { grunts: 8, civilians: 3, hp: 2, speed: 1.2, fire: 70 }], boss: { hp: 14, fire: 80 }, theme: { wall: '#2b3b52', floor: '#1a2230', lines: '#3d5272' } });
     A.rail = (cfg, o) => {
         const C = Object.assign({}, A.DEFAULTS.rail, cfg), r = rng(o.seed || 1), s = { status: 'play', score: 0, hp: C.hp, ammo: C.mag, wave: 0, cx: W / 2, cy: H / 2 - 20, cover: false, combo: 0, best: 0, en: [], t: 0, last: {}, msg: '', msgT: 0, spawnT: 40, left: 0, killed: 0, shots: 0, hits: 0, boss: null, reloadT: 0, flash: 0 }, edge = (k, n) => { const v = !!k[n], w = !!s.last[n]; s.last[n] = v; return v && !w; };
-        const spawnWave = () => { s.wave++; const n = 3 + s.wave + (C.difficulty > 1 ? 1 : 0); s.left = n; if (s.wave > C.waves) { s.boss = { kind: 'boss', x: W / 2, y: 100, z: .25, hp: C.bossHp, max: C.bossHp, fireT: 90, tel: 0, dir: 1, core: 0 }; s.en.push(s.boss); s.msg = 'BOSS!'; s.msgT = 90; } else { s.msg = 'WAVE ' + s.wave; s.msgT = 70; } };
+        const RD = C.design && Array.isArray(C.design.waves) && C.design.waves.length ? C.design : null, NW = RD ? RD.waves.length : C.waves, BH = RD && RD.boss ? RD.boss.hp : C.bossHp;
+        const spawnWave = () => { s.wave++; const w = RD && RD.waves[s.wave - 1]; const n = w ? w.grunts : 3 + s.wave + (C.difficulty > 1 ? 1 : 0); s.left = n; s.civQ = w ? w.civilians : 0; if (s.wave > NW) { s.boss = { kind: 'boss', x: W / 2, y: 100, z: .25, hp: BH, max: BH, fireT: RD && RD.boss ? RD.boss.fire : 90, tel: 0, dir: 1, core: 0 }; s.en.push(s.boss); s.msg = 'BOSS!'; s.msgT = 90; } else { s.msg = 'WAVE ' + s.wave; s.msgT = 70; } };
         spawnWave();
-        const add = () => { const civ = r() < C.civilians && s.wave > 1; s.en.push({ kind: civ ? 'civ' : 'grunt', x: 40 + r() * (W - 80), y: 90 + r() * 70, z: .08, hp: civ ? 1 : 1 + (s.wave > 3 ? 1 : 0), fireT: 70 + Math.floor(r() * 60), tel: 0, vx: (r() - .5) * .8, dead: 0 }); };
+        const add = () => { const w = RD && RD.waves[s.wave - 1], civ = w ? (s.civQ > 0 && r() < s.civQ / (s.civQ + s.left)) : (r() < C.civilians && s.wave > 1); if (w && civ) s.civQ--; s.en.push({ kind: civ ? 'civ' : 'grunt', x: 40 + r() * (W - 80), y: 90 + r() * 70, z: .08, hp: civ ? 1 : (w ? w.hp : 1 + (s.wave > 3 ? 1 : 0)), fireT: w ? Math.round(w.fire * (.8 + r() * .4)) : 70 + Math.floor(r() * 60), tel: 0, vx: (r() - .5) * .8, dead: 0, sp: w ? w.speed : 1 }); };
         return { s, C, step(k) {
             if (s.status !== 'play') return; s.t++; if (s.msgT > 0) s.msgT--; if (s.flash > 0) s.flash--;
             s.cover = !!k.x; s.cx = clamp(s.cx + ax(k) * C.reticleSpeed, 6, W - 6); if (!s.cover) s.cy = clamp(s.cy + ay(k) * C.reticleSpeed, 40, H - 30);
@@ -709,22 +712,22 @@ function draw(g, s, C, P, spot) {
             for (const e of s.en) {
                 if (e.dead) { if (e.dead > 0 && --e.dead === 0) e.dead = -1; continue; }
                 if (e.kind === 'boss') { e.x += e.dir * 1.1; if (e.x > W - 70 || e.x < 70) e.dir = -e.dir; e.z = Math.min(.7, e.z + .0008); }
-                else { e.z = Math.min(.9, e.z + (e.kind === 'civ' ? .0016 : .0022 + s.wave * .0002)); e.x = clamp(e.x + (e.vx || 0), 20, W - 20); }
+                else { e.z = Math.min(.9, e.z + (e.kind === 'civ' ? .0016 : (.0022 + s.wave * .0002) * (e.sp || 1))); e.x = clamp(e.x + (e.vx || 0), 20, W - 20); }
                 if (e.kind === 'civ') { if (e.z >= .9) e.dead = 1, e.gone = true; continue; }
                 if (--e.fireT <= 0 && e.tel === 0) { e.tel = 28; } if (e.tel > 0 && --e.tel === 0) { if (!s.cover) { s.hp -= e.kind === 'boss' ? 2 : 1; s.combo = 0; s.flash = 10; s.msg = 'HIT'; s.msgT = 20; } e.fireT = e.kind === 'boss' ? 80 : 90 + Math.floor(r() * 50) - s.wave * 3; }
             }
             s.en = s.en.filter(e => e.dead !== -1);
             if (s.hp <= 0) s.status = 'lose';
             else if (s.boss && s.boss.dead) { s.status = 'win'; s.score += s.hp * 500; }
-            else if (!s.boss && s.left <= 0 && !s.en.some(e => !e.dead && e.kind === 'grunt')) { if (s.wave <= C.waves) spawnWave(); }
+            else if (!s.boss && s.left <= 0 && !s.en.some(e => !e.dead && e.kind === 'grunt')) { if (s.wave <= NW) spawnWave(); }
         }, draw(g) {
-            g.fillStyle = '#1a2230'; g.fillRect(0, 0, W, H); g.fillStyle = '#2b3b52'; g.fillRect(0, 0, W, 90); g.strokeStyle = '#3d5272'; for (let i = 0; i < 9; i++) { g.beginPath(); g.moveTo(W / 2, 80); g.lineTo(i * 40, H); g.stroke(); } for (let i = 0; i < 6; i++) { const y = 90 + i * i * 4 + (s.t % 20) * i * .4; g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+            g.fillStyle = RD && RD.theme ? RD.theme.floor : '#1a2230'; g.fillRect(0, 0, W, H); g.fillStyle = RD && RD.theme ? RD.theme.wall : '#2b3b52'; g.fillRect(0, 0, W, 90); g.strokeStyle = RD && RD.theme ? RD.theme.lines : '#3d5272'; for (let i = 0; i < 9; i++) { g.beginPath(); g.moveTo(W / 2, 80); g.lineTo(i * 40, H); g.stroke(); } for (let i = 0; i < 6; i++) { const y = 90 + i * i * 4 + (s.t % 20) * i * .4; g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
             for (const e of s.en.slice().sort((a, b) => a.z - b.z)) { const sc = .35 + e.z * 1.1, w = 22 * sc, h = 44 * sc * (e.kind === 'boss' ? 2.4 : 1), wd = w * (e.kind === 'boss' ? 2.6 : 1); if (e.dead) { g.globalAlpha = e.dead / 20; }
                 g.fillStyle = e.kind === 'civ' ? '#6ac46a' : e.kind === 'boss' ? '#8a3a3a' : e.tel ? '#ff5a5a' : '#c46a3a'; g.fillRect(e.x - wd / 2, e.y - h, wd, h); g.fillStyle = '#e8c8a0'; g.fillRect(e.x - wd * .22, e.y - h - 8 * sc, wd * .44, 8 * sc); if (e.kind === 'boss') { g.fillStyle = '#ffd24a'; g.fillRect(e.x + Math.sin(s.t / 14) * 26 * sc - 4, e.y - h * .6, 8, 8); fillText(g, 'BOSS ' + e.hp + '/' + e.max, e.x, e.y - h - 12, '#fff', 8, 'center'); }
                 if (e.tel) fillText(g, '!', e.x, e.y - h - 12, '#ff0', 12, 'center'); g.globalAlpha = 1; }
             if (s.cover) { g.fillStyle = '#3b3b44'; g.fillRect(0, H - 90, W, 90); fillText(g, 'COVER  (RELOADING)', W / 2, H - 50, '#9ab', 9, 'center'); }
             else { g.strokeStyle = s.flash ? '#f55' : '#fff'; g.beginPath(); g.arc(s.cx, s.cy, 9, 0, 6.3); g.moveTo(s.cx - 14, s.cy); g.lineTo(s.cx + 14, s.cy); g.moveTo(s.cx, s.cy - 14); g.lineTo(s.cx, s.cy + 14); g.stroke(); }
-            fillText(g, 'HP ' + s.hp + '  AMMO ' + s.ammo + '/' + C.mag + '  SCORE ' + s.score, 4, 12, '#fff', 9); fillText(g, 'WAVE ' + Math.min(s.wave, C.waves + 1) + '  COMBO ' + s.combo, W - 4, 12, '#fc6', 9, 'right'); if (s.msgT > 0) fillText(g, s.msg, W / 2, 60, '#ff0', 12, 'center'); end(g, s); } };
+            fillText(g, 'HP ' + s.hp + '  AMMO ' + s.ammo + '/' + C.mag + '  SCORE ' + s.score, 4, 12, '#fff', 9); fillText(g, 'WAVE ' + Math.min(s.wave, NW + 1) + '  COMBO ' + s.combo, W - 4, 12, '#fc6', 9, 'right'); if (s.msgT > 0) fillText(g, s.msg, W / 2, 60, '#ff0', 12, 'center'); end(g, s); } };
     };
     /* ---------------------------------------------------------------- baseball: you bat, the computer pitches. Pitch types (fastball, curve, changeup), timing + height contact, ground / fly / line-drive outcomes,
      * balls and strikes, walks, base running, innings. References: MLB The Show (timing-and-zone batting), Backyard Baseball (simple, readable, kid-friendly rules), Baseball Stars (arcade rules). */
@@ -805,7 +808,9 @@ function draw(g, s, C, P, spot) {
      * You win by finishing the laps in the top 3 or by wrecking every rival; you lose when your car is wrecked or the clock runs out. */
     A.combat = (cfg, o) => {
         const C = Object.assign({}, A.DEFAULTS.combat, cfg), r = rng(o.seed || 1), total = 600, curveAt = [];
-        for (let i = 0; i < total; i++) curveAt.push(Math.sin(i / (total / (C.curves * 2 * Math.PI))) * 1.6);
+        const RD = C.design && Array.isArray(C.design.track) && C.design.track.length ? C.design : null;
+        if (RD) { const sum = RD.track.reduce((n, q) => n + Math.max(1, q.len | 0), 0); let acc = 0, k = 0; for (let i = 0; i < total; i++) { while (k < RD.track.length - 1 && i >= (acc + Math.max(1, RD.track[k].len | 0)) / sum * total) { acc += Math.max(1, RD.track[k].len | 0); k++; } curveAt.push((RD.track[k].curve || 0) * .4); } }
+        else for (let i = 0; i < total; i++) curveAt.push(Math.sin(i / (total / (C.curves * 2 * Math.PI))) * 1.6);
         const s = { status: 'play', score: 0, t: 0, z: 0, x: 0, v: 0, hp: C.hp, heat: 0, jam: 0, missiles: C.missiles, mines: C.mines, lap: 1, time: C.timeLimit, place: C.rivals + 1, wrecked: 0, hitsTaken: 0, gunHits: 0, missileHits: 0, mineHits: 0, picked: 0, crash: 0, msg: '', msgT: 0, last: {}, rivals: [], shots: [], missilesAir: [], minesOn: [], crates: [], fx: [] };
         const edge = (k, n) => { const v = !!k[n], w = !!s.last[n]; s.last[n] = v; return v && !w; };
         const say = (m, t) => { s.msg = m; s.msgT = t || 60; };

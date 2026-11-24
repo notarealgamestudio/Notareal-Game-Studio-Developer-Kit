@@ -464,6 +464,7 @@ static void kart_sfx(int k) { static const u16 hz[6] = { 1800, 700, 300, 120, 24
 static void combat_init(void) {
     KcCfg c = { 2, 5, 100, 30, 3, 2, 4, 18, 22, 150, 2, 150, 10, 0, 0 }; u32 sz; const u8 *k = sec("KCFG", &sz);
     if (k && sz >= 30) { s16 *d = (s16 *)&c; for (int i = 0; i < 13; i++) d[i] = (s16)(k[i * 2] | (k[i * 2 + 1] << 8)); }
+    { u32 zt; const u8 *tk = sec("RACE", &zt); kc_trkd = (tk && zt >= 10 && tk[0] && tk[1]) ? tk : 0; }
     c.color = c1; c.color2 = c2; kc_init(&c, rs | 1); status = 0;
 }
 static void combat_step(void) {

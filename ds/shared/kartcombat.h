@@ -25,6 +25,7 @@ static KcCfg kcC;
 static struct { int status, score, t, z, x, v, hp, heat, jam, missiles, mines, lap, time, place, wrecked, crash, msgT, last, gunHits, missileHits, mineHits, picked, hitsTaken; const char *msg;
     KcRival rv[KC_NR]; KcShot sh[48]; KcMsl ms[24]; KcMine mn[24]; KcCrate cr[28]; KcFx fx[12]; } kc;
 static int16_t kc_curve[KC_TOTAL]; static uint32_t kc_rs = 1;
+static const unsigned char *kc_trkd;   /* optional track design (the RACE section layout from kit NR.raceDesign: [1] sections, then length x50 + signed bend pairs at 8+); set before kc_init */
 static int kc_rnd(int n) { kc_rs = kc_rs * 1664525u + 1013904223u; return (int)((kc_rs >> 8) % (uint32_t)(n > 0 ? n : 1)); }
 static int kc_abs(int v) { return v < 0 ? -v : v; }
 static int kc_clamp(int v, int a, int b) { return v < a ? a : v > b ? b : v; }
@@ -36,6 +37,7 @@ static void kc_init(const KcCfg *c, uint32_t seed)
 {   kcC = *c; if (kcC.laps < 1) kcC.laps = 2; if (kcC.rivals < 1) kcC.rivals = 1; if (kcC.rivals > KC_NR) kcC.rivals = KC_NR; if (kcC.maxSpeed < 40) kcC.maxSpeed = 150; if (kcC.hp < 10) kcC.hp = 100; if (kcC.rivalHp < 5) kcC.rivalHp = 30; if (kcC.curves < 1) kcC.curves = 2; if (kcC.timeLimit < 30) kcC.timeLimit = 150; if (kcC.difficulty10 < 3) kcC.difficulty10 = 10;
     kc_rs = seed ? seed : 1; memset(&kc, 0, sizeof kc);
     for (int i = 0; i < KC_TOTAL; i++) kc_curve[i] = (int16_t)(kc_sin(i * kcC.curves * 1024 / KC_TOTAL) * 16 / 10);
+    if (kc_trkd && kc_trkd[1]) { int n = kc_trkd[1], sum = 0; for (int k = 0; k < n; k++) sum += kc_trkd[8 + k * 2] ? kc_trkd[8 + k * 2] : 1; int acc = 0, k = 0; for (int i = 0; i < KC_TOTAL; i++) { while (k < n - 1 && i * sum >= (acc + (kc_trkd[8 + k * 2] ? kc_trkd[8 + k * 2] : 1)) * KC_TOTAL) { acc += kc_trkd[8 + k * 2] ? kc_trkd[8 + k * 2] : 1; k++; } kc_curve[i] = (int16_t)((signed char)kc_trkd[9 + k * 2] * 68); } }
     kc.hp = kcC.hp; kc.missiles = kcC.missiles; kc.mines = kcC.mines; kc.lap = 1; kc.time = kcC.timeLimit; kc.place = kcC.rivals + 1;
     for (int i = 0; i < kcC.rivals; i++) { KcRival *e = &kc.rv[i]; e->z = (6 + i * 5) * 256; e->x = (i % 3 - 1) * 128; e->hp = kcC.rivalHp; e->top = kcC.maxSpeed * (82 + 5 * (i % 4)) / 100 * kcC.difficulty10 / 10; e->fireT = 90 + i * 20; e->mineT = 200 + i * 40; e->lane = e->x; }
     for (int i = 0; i < 28; i++) { kc.cr[i].z = (30 + i * (KC_TOTAL * kcC.laps / 28) + kc_rnd(10)) * 256; kc.cr[i].x = (kc_rnd(384) - 192) * 1; kc.cr[i].kind = i % 4; }

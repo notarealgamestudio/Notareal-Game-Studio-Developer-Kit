@@ -63,4 +63,6 @@ Each lives in the "Level / content builder" tab when the game is that type, is s
 - First-person shooter: paint the level (walls, enemies, health and ammo pickups, start, exit). PC + DS ROM (FPSL section; DS emulator minimap showed the painted layout and enemy count). PC gained pickups for this.
 - Street basketball (PC only): two teams of two with speed / shooting / dunk / defense per player, team colours and names, court colour. Checked: node tests, editor click-through. No DS engine exists for it.
 - Baseball (PC only): pitcher repertoire, strike rate and speed, ballpark colours, team names. Checked the same way. No DS engine exists for it.
-- STILL SETTINGS ONLY: falling blocks, memory, city sim, hoops, vehicle combat, rail shooter, kart racing, 3D life sim, 3D side-scroller. Timeline-driven DS ROMs (several scenes in one ROM) still use the old built-in content, not these designs.
+- Vehicle combat: uses the same track designer as racing. PC, DS ROM (shared/kartcombat.h reads the RACE section; DS emulator run checked) and the shared header still compiles for the N64 / PlayStation soft engine, which does not read the design yet.
+- Rail shooter (PC only): per-wave gunmen / civilians / HP / speed / fire rate, boss, room colours. Checked: node tests (bot plays through to a win), editor click-through. No DS rail-shooter engine exists.
+- STILL SETTINGS ONLY: falling blocks, memory, city sim, hoops, kart racing, 3D life sim, 3D side-scroller. Timeline-driven DS ROMs (several scenes in one ROM) still use the old built-in content, not these designs.

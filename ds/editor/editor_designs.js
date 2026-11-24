@@ -103,3 +103,16 @@ function fpsDesignTab(main) {
     box.append(cv, el('div', { class: 'hint' }, count('E') + ' enemies · ' + count('H') + ' health · ' + count('A') + ' ammo' + (count('S') ? '' : ' · no start set') + (count('E') > 16 ? ' · the DS holds 16 enemies' : '')));
     main.append(box);
 }
+function railDesignTab(main) {
+    const A = P.arcade; A.cfg = A.cfg || {}; if (!A.cfg.design || !A.cfg.design.waves) A.cfg.design = NRArcade.RAIL_DESIGN(); const D = A.cfg.design, box = el('div', { class: 'pane' });
+    box.append(el('h2', {}, '🎯 Rail shooter designer'), el('p', { class: 'hint' }, 'Script each wave: how many gunmen, how many civilians walk through (shooting one costs a life), how tough and fast they are, and how often they fire. Then the boss and the look of the room. Plays on PC, Xbox and the desktop window; the DS has no rail-shooter engine yet.'),
+        el('div', { class: 'row wrap' }, el('button', { class: 'alt', onclick: () => { A.cfg.design = NRArcade.RAIL_DESIGN(); dirty = true; renderAll(); } }, 'Reset to the starter script')));
+    const tb = el('table', { class: 'tbl' }, el('tr', {}, ...['Wave', 'Gunmen', 'Civilians', 'Gunman HP', 'Speed', 'Fires every (frames)', ''].map(h => el('th', {}, h))));
+    D.waves.forEach((w, i) => tb.append(el('tr', {}, el('td', {}, String(i + 1)), el('td', {}, dsgNum(w.grunts, 1, 14, 1, v => w.grunts = v)), el('td', {}, dsgNum(w.civilians, 0, 8, 1, v => w.civilians = v)), el('td', {}, dsgNum(w.hp, 1, 6, 1, v => w.hp = v)), el('td', {}, dsgNum(w.speed, .6, 1.8, .1, v => w.speed = v)), el('td', {}, dsgNum(w.fire, 40, 200, 10, v => w.fire = v, 70)),
+        el('td', {}, D.waves.length > 1 ? el('button', { class: 'alt', onclick: () => { D.waves.splice(i, 1); dirty = true; renderAll(); } }, 'Remove') : ''))));
+    const bs = D.boss = D.boss || { hp: 14, fire: 80 }, th = D.theme = D.theme || { wall: '#2b3b52', floor: '#1a2230', lines: '#3d5272' };
+    box.append(el('h3', {}, 'Waves'), tb, D.waves.length < 12 ? el('button', { class: 'alt', onclick: () => { const l = D.waves[D.waves.length - 1]; D.waves.push(Object.assign({}, l)); dirty = true; renderAll(); } }, '+ Add wave (copy of the last)') : '',
+        el('h3', {}, 'Boss'), el('div', { class: 'row wrap' }, el('label', {}, 'HP ', dsgNum(bs.hp, 1, 99, 1, v => bs.hp = v)), el('label', {}, 'Fires every (frames) ', dsgNum(bs.fire, 30, 200, 10, v => bs.fire = v))),
+        el('h3', {}, 'Room'), el('div', { class: 'row wrap' }, el('label', {}, 'Wall ', dsgColor(th.wall, v => th.wall = v)), el('label', {}, 'Floor ', dsgColor(th.floor, v => th.floor = v)), el('label', {}, 'Grid lines ', dsgColor(th.lines, v => th.lines = v))));
+    main.append(box);
+}

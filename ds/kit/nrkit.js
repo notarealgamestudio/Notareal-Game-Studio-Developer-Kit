@@ -455,7 +455,7 @@ NR.buildDSArcade = (P, scenes) => {
     if (!scenes && A.mode === 'shmup' && cfg.design && cfg.design.types && cfg.design.waves) sections.push(['SHMP', NR.shmupDesign(cfg.design)]);
     if (!scenes && A.mode === 'fps' && cfg.design && Array.isArray(cfg.design.map) && cfg.design.map.length) sections.push(['FPSL', NR.fpsDesign(cfg.design)]);
     if (!scenes && A.mode === 'brawler' && cfg.design && cfg.design.types && cfg.design.waves) sections.push(['BRWL', NR.brawlerDesign(cfg.design)]);
-    if (!scenes && A.mode === 'race' && cfg.design && Array.isArray(cfg.design.track) && cfg.design.track.length) sections.push(['RACE', NR.raceDesign(cfg.design)]);
+    if (!scenes && (A.mode === 'race' || A.mode === 'combat') && cfg.design && Array.isArray(cfg.design.track) && cfg.design.track.length) sections.push(['RACE', NR.raceDesign(cfg.design)]);
     if (!scenes && A.mode === 'breakout' && cfg.design && Array.isArray(cfg.design.grid) && cfg.design.grid.length) sections.push(['BRKL', NR.breakoutDesign(cfg.design)]);
     if (A.mode === 'combat' && !scenes) { const W3 = typeof NRWorld3D !== 'undefined' ? NRWorld3D : require('./nrworld3d.js'), cb = W3.combatBlock(cfg); sections.push(['KCFG', cb.subarray(80, 110)]); }
     if (A.mode === 'coloring' || (scenes && scenes.list.some(x => x.mode === 'coloring'))) {   /* COLR: the coloring-book pages (shapes + magic hint colours), same data as the PC engine; the DS ROM rasterises them itself */

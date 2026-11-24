@@ -443,6 +443,12 @@ NR.brawlerDesign = d => { const b = new Uint8Array(96), cl = (v, lo, hi) => Math
 /* FPSL: [0]=1 [1] size n (<= 24), then n*n cells: 0 floor, 1 wall, 2 enemy, 3 health, 4 ammo, 5 start, 6 exit */
 NR.fpsDesign = d => { const n = Math.max(8, Math.min(24, Math.max(d.map.length, ...d.map.map(r => r.length)))), b = new Uint8Array(8 + n * n); b[0] = 1; b[1] = n; const code = { '#': 1, '.': 0, E: 2, H: 3, A: 4, S: 5, X: 6 };
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) { const ch = (d.map[y] || '')[x]; b[8 + y * n + x] = ch === undefined ? 1 : (code[ch] === undefined ? 0 : code[ch]); } return b; };
+/* MEMC: [0]=1 [1] cards (2-16); palette 16 x RGB15 u16 at 8 (index 0 = transparent); card pictures at 40 + 256k (palette indexes) */
+NR.memoryDesign = d => { const cards = d.cards.slice(0, 16), b = new Uint8Array(40 + cards.length * 256), hx = h => [1, 3, 5].map(i => parseInt((h || '#000000').slice(i, i + 2), 16) || 0); b[0] = 1; b[1] = cards.length;
+    (d.pal || []).slice(0, 16).forEach((c, i) => { const v = hx(c), w = (v[0] >> 3) | (v[1] >> 3) << 5 | (v[2] >> 3) << 10; b[8 + i * 2] = w & 255; b[9 + i * 2] = w >> 8; }); cards.forEach((c, k) => { for (let i = 0; i < 256; i++) b[40 + k * 256 + i] = parseInt((c.px || '')[i] || '0', 16) || 0; }); return b; };
+/* FALD (56): [0]=1 [1] pieces (1-12) [2] speed-up per line in tenths of a frame [3] fastest speed; shape masks u16 at 8 (4x4, row 0 = top bits); colours RGB15 u16 at 32 */
+NR.fallingDesign = d => { const ps = d.pieces.slice(0, 12), b = new Uint8Array(56), hx = h => [1, 3, 5].map(i => parseInt((h || '#ffffff').slice(i, i + 2), 16) || 0); b[0] = 1; b[1] = ps.length; b[2] = Math.max(0, Math.min(60, Math.round((d.speedUp == null ? 1.2 : d.speedUp) * 10))); b[3] = Math.max(2, Math.min(40, d.fastest || 5));
+    ps.forEach((p, k) => { let m = 0; for (let i = 0; i < 16; i++) if ((p.cells || '')[i] === '1') m |= 1 << (15 - i); b[8 + k * 2] = m & 255; b[9 + k * 2] = m >> 8; const v = hx(p.color), w = (v[0] >> 3) | (v[1] >> 3) << 5 | (v[2] >> 3) << 10; b[32 + k * 2] = w & 255; b[33 + k * 2] = w >> 8; }); return b; };
 NR.breakoutDesign = d => { const g = d.grid.slice(0, 8), cols = Math.max(2, Math.min(16, Math.max(...g.map(r => r.length)))), b = new Uint8Array(4 + g.length * cols); b[0] = 1; b[1] = g.length; b[2] = cols; g.forEach((r, y) => { for (let x = 0; x < cols; x++) b[4 + y * cols + x] = Math.max(0, Math.min(4, (r[x] | 0))); }); return b; };
 NR.buildDSArcade = (P, scenes) => {
     const A = scenes ? { mode: scenes.first.mode, cfg: scenes.first.cfg } : P.arcade; if (!A) throw new Error('No arcade game set up yet');
@@ -453,6 +459,8 @@ NR.buildDSArcade = (P, scenes) => {
     const cfg = A.cfg || {}, b = mk(A.mode, cfg);
     const sections = [['ARCF', b]];
     if (!scenes && A.mode === 'shmup' && cfg.design && cfg.design.types && cfg.design.waves) sections.push(['SHMP', NR.shmupDesign(cfg.design)]);
+    if (!scenes && A.mode === 'falling' && cfg.design && Array.isArray(cfg.design.pieces) && cfg.design.pieces.length) sections.push(['FALD', NR.fallingDesign(cfg.design)]);
+    if (!scenes && A.mode === 'memory' && cfg.design && Array.isArray(cfg.design.cards) && cfg.design.cards.length >= 2) sections.push(['MEMC', NR.memoryDesign(cfg.design)]);
     if (!scenes && A.mode === 'fps' && cfg.design && Array.isArray(cfg.design.map) && cfg.design.map.length) sections.push(['FPSL', NR.fpsDesign(cfg.design)]);
     if (!scenes && A.mode === 'brawler' && cfg.design && cfg.design.types && cfg.design.waves) sections.push(['BRWL', NR.brawlerDesign(cfg.design)]);
     if (!scenes && (A.mode === 'race' || A.mode === 'combat') && cfg.design && Array.isArray(cfg.design.track) && cfg.design.track.length) sections.push(['RACE', NR.raceDesign(cfg.design)]);

@@ -66,3 +66,8 @@ Each lives in the "Level / content builder" tab when the game is that type, is s
 - Vehicle combat: uses the same track designer as racing. PC, DS ROM (shared/kartcombat.h reads the RACE section; DS emulator run checked) and the shared header still compiles for the N64 / PlayStation soft engine, which does not read the design yet.
 - Rail shooter (PC only): per-wave gunmen / civilians / HP / speed / fire rate, boss, room colours. Checked: node tests (bot plays through to a win), editor click-through. No DS rail-shooter engine exists.
 - STILL SETTINGS ONLY: falling blocks, memory, city sim, hoops, kart racing, 3D life sim, 3D side-scroller. Timeline-driven DS ROMs (several scenes in one ROM) still use the old built-in content, not these designs.
+
+## Memory-match and falling-blocks designers
+- Memory: paint 16x16 cards (15 colours + transparent), 2-16 pairs. PC engine draws the pictures; DS ROM reads a `MEMC` section. Verified: node tests, Playwright painting, DS emulator screenshot.
+- Falling blocks: draw up to 12 pieces on a 4x4 grid with colours, set speed-up per line and fastest speed (plus well size, start speed, lines to win). PC engine and DS ROM (`FALD`) read it. Verified: node tests, Playwright, DS emulator screenshot with a custom 2x3 piece.
+- Not verified: the installed Windows app; Timeline multi-scene DS ROMs still use built-in content.

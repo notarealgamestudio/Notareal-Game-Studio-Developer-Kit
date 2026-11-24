@@ -116,3 +116,40 @@ function railDesignTab(main) {
         el('h3', {}, 'Room'), el('div', { class: 'row wrap' }, el('label', {}, 'Wall ', dsgColor(th.wall, v => th.wall = v)), el('label', {}, 'Floor ', dsgColor(th.floor, v => th.floor = v)), el('label', {}, 'Grid lines ', dsgColor(th.lines, v => th.lines = v))));
     main.append(box);
 }
+
+/* Memory match: paint the card pictures (16x16, 15 colours + transparent). Pairs = number of cards. */
+const MMD = { sel: 0, ci: 1 };
+function memoryDesignTab(main) {
+    const A = P.arcade; A.cfg = A.cfg || {}; if (!A.cfg.design) A.cfg.design = NRArcade.MEMORY_DESIGN(); const D = A.cfg.design, box = el('div', { class: 'pane' });
+    if (MMD.sel >= D.cards.length) MMD.sel = 0;
+    box.append(el('h2', {}, '🃏 Memory card designer'), el('p', { class: 'hint' }, 'Each card is a 16x16 picture; every card you add becomes a pair in the game (2 to 16). Pick a colour, then click or drag on the grid. Colour 0 is see-through.'),
+        el('div', { class: 'row wrap' }, el('button', { class: 'alt', onclick: () => { A.cfg.design = NRArcade.MEMORY_DESIGN(); MMD.sel = 0; dirty = true; renderAll(); } }, 'Reset to the starter cards'), el('label', {}, 'Card back ', dsgColor(A.cfg.color || '#4ae87a', v => A.cfg.color = v))));
+    const pal = el('div', { class: 'row wrap' }); D.pal.forEach((c, i) => pal.append(el('span', { style: 'display:inline-block;width:26px;height:26px;border:2px solid ' + (MMD.ci === i ? '#fff' : '#444') + ';background:' + (i ? c : 'repeating-conic-gradient(#888 0 25%,#555 0 50%) 0/10px 10px') + ';cursor:pointer', title: 'colour ' + i, onclick: () => { MMD.ci = i; renderAll(); } }), i ? dsgColor(c, v => D.pal[i] = v) : ''));
+    box.append(el('h3', {}, 'Palette'), pal);
+    const cv = el('canvas', { width: 320, height: 320, style: 'border:1px solid #444;image-rendering:pixelated;touch-action:none;cursor:crosshair' }), g = cv.getContext('2d'), card = D.cards[MMD.sel];
+    const draw = () => { g.clearRect(0, 0, 320, 320); for (let k = 0; k < 256; k++) { const c = parseInt(card.px[k], 16) || 0, x = (k % 16) * 20, y = Math.floor(k / 16) * 20; g.fillStyle = c ? D.pal[c] : ((k % 16 + Math.floor(k / 16)) & 1 ? '#555' : '#666'); g.fillRect(x, y, 20, 20); } };
+    let down = 0; const put = e => { const r = cv.getBoundingClientRect(), x = Math.floor((e.clientX - r.left) / r.width * 16), y = Math.floor((e.clientY - r.top) / r.height * 16); if (x < 0 || y < 0 || x > 15 || y > 15) return; const k = y * 16 + x; if (card.px[k] === MMD.ci.toString(16)) return; card.px = card.px.slice(0, k) + MMD.ci.toString(16) + card.px.slice(k + 1); dirty = true; draw(); };
+    cv.onpointerdown = e => { down = 1; put(e); }; cv.onpointermove = e => { if (down) put(e); }; cv.onpointerup = cv.onpointerleave = () => { if (down) { down = 0; renderAll(); } }; draw();
+    const list = el('div', { class: 'row wrap' }); D.cards.forEach((c, i) => { const t = el('canvas', { width: 32, height: 32, style: 'border:2px solid ' + (i === MMD.sel ? '#fff' : '#444') + ';cursor:pointer;image-rendering:pixelated;background:#666', onclick: () => { MMD.sel = i; renderAll(); } }), tg = t.getContext('2d'); for (let k = 0; k < 256; k++) { const v = parseInt(c.px[k], 16) || 0; if (v) { tg.fillStyle = D.pal[v]; tg.fillRect((k % 16) * 2, Math.floor(k / 16) * 2, 2, 2); } } list.append(t); });
+    box.append(el('h3', {}, 'Cards (' + D.cards.length + ' pairs)'), list, el('div', { class: 'row wrap' }, el('label', {}, 'Name ', el('input', { value: card.name, style: 'width:110px', onchange: e => { card.name = e.target.value.slice(0, 12); dirty = true; } })),
+        D.cards.length < 16 ? el('button', { class: 'alt', onclick: () => { D.cards.push({ name: 'Card ' + (D.cards.length + 1), px: '0'.repeat(256) }); MMD.sel = D.cards.length - 1; dirty = true; renderAll(); } }, 'Add card') : '',
+        D.cards.length > 2 ? el('button', { class: 'alt', onclick: () => { D.cards.splice(MMD.sel, 1); MMD.sel = 0; dirty = true; renderAll(); } }, 'Remove this card') : '',
+        el('button', { class: 'alt', onclick: () => { card.px = '0'.repeat(256); dirty = true; renderAll(); } }, 'Clear')), cv);
+    main.append(box);
+}
+
+/* Falling blocks: draw the pieces (4x4 grid each, up to 12), pick colours, set how fast it speeds up. */
+const FBD = { sel: 0 };
+function fallingDesignTab(main) {
+    const A = P.arcade; A.cfg = A.cfg || {}; if (!A.cfg.design) A.cfg.design = NRArcade.FALLING_DESIGN(); const D = A.cfg.design, box = el('div', { class: 'pane' }); if (FBD.sel >= D.pieces.length) FBD.sel = 0; const pc = D.pieces[FBD.sel];
+    box.append(el('h2', {}, '🧩 Block piece designer'), el('p', { class: 'hint' }, 'Draw each falling piece on its 4x4 grid (click squares on and off). Pieces turn in 4 directions. Up to 12 pieces; the game picks them at random.'),
+        el('div', { class: 'row wrap' }, el('button', { class: 'alt', onclick: () => { A.cfg.design = NRArcade.FALLING_DESIGN(); FBD.sel = 0; dirty = true; renderAll(); } }, 'Reset to the classic 7 pieces'),
+            el('label', {}, 'Speeds up per line ', dsgNum(D.speedUp == null ? 1.2 : D.speedUp, 0, 6, .1, v => D.speedUp = v)), el('label', {}, 'Fastest (frames per step) ', dsgNum(D.fastest || 5, 2, 40, 1, v => D.fastest = v)),
+            el('label', {}, 'Well width ', dsgNum(A.cfg.w || 10, 6, 14, 1, v => A.cfg.w = v, 50)), el('label', {}, 'Well height ', dsgNum(A.cfg.h || 18, 10, 22, 1, v => A.cfg.h = v, 50)), el('label', {}, 'Start speed ', dsgNum(A.cfg.startSpeed || 30, 6, 60, 1, v => A.cfg.startSpeed = v, 50)), el('label', {}, 'Lines to win ', dsgNum(A.cfg.goalLines || 20, 1, 99, 1, v => A.cfg.goalLines = v, 50))));
+    const list = el('div', { class: 'row wrap' }); D.pieces.forEach((p, i) => { const t = el('canvas', { width: 32, height: 32, style: 'border:2px solid ' + (i === FBD.sel ? '#fff' : '#444') + ';cursor:pointer;background:#111', onclick: () => { FBD.sel = i; renderAll(); } }), g = t.getContext('2d'); g.fillStyle = p.color; for (let k = 0; k < 16; k++) if (p.cells[k] === '1') g.fillRect((k % 4) * 8, Math.floor(k / 4) * 8, 7, 7); list.append(t); });
+    const grid = el('div', { style: 'display:grid;grid-template-columns:repeat(4,44px);gap:3px;margin:8px 0' }); for (let k = 0; k < 16; k++) grid.append(el('div', { style: 'width:44px;height:44px;cursor:pointer;border:1px solid #555;background:' + (pc.cells[k] === '1' ? pc.color : '#1a1a2a'), onclick: () => { pc.cells = pc.cells.slice(0, k) + (pc.cells[k] === '1' ? '0' : '1') + pc.cells.slice(k + 1); dirty = true; renderAll(); } }));
+    box.append(el('h3', {}, 'Pieces (' + D.pieces.length + ')'), list, el('div', { class: 'row wrap' }, el('label', {}, 'Name ', el('input', { value: pc.name, style: 'width:110px', onchange: e => { pc.name = e.target.value.slice(0, 12); dirty = true; } })), el('label', {}, 'Colour ', dsgColor(pc.color, v => pc.color = v)),
+        D.pieces.length < 12 ? el('button', { class: 'alt', onclick: () => { D.pieces.push({ name: 'Piece ' + (D.pieces.length + 1), cells: '0000011001100000', color: '#ffffff' }); FBD.sel = D.pieces.length - 1; dirty = true; renderAll(); } }, 'Add piece') : '',
+        D.pieces.length > 1 ? el('button', { class: 'alt', onclick: () => { D.pieces.splice(FBD.sel, 1); FBD.sel = 0; dirty = true; renderAll(); } }, 'Remove this piece') : ''), grid);
+    main.append(box);
+}

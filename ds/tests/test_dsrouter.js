@@ -2,7 +2,7 @@
 const K = require('../kit/nrkit.js'), T = require('../kit/nrtimeline.js'); require('../kit/nrarcade.js'); const CC = require('../kit/nrcolor.js');
 let ok = 0, bad = 0; const t = (n, c) => { c ? ok++ : (bad++, console.log('FAIL', n)); };
 const mk = (type, o) => Object.assign({ id: 's' + Math.random(), type, onWin: 'next', onLose: 'retry' }, o);
-t('router list equals the DS arcade ROM modes', JSON.stringify(T.DS_ARCADE.slice().sort()) === JSON.stringify(Object.keys(K.ARCADE_KEYS).sort()));
+t('router list equals the DS arcade ROM modes', JSON.stringify(T.DS_ARCADE.slice().sort()) === JSON.stringify(K.DS_ARCADE_MODES().sort()));
 const tl = [mk('title', { title: 'T', text: 'hello' }), mk('arcade', { mode: 'hoops', cfg: { title: 'H' } }), mk('arcade', { mode: 'coloring', cfg: {} }), mk('credits', { title: 'End', text: 'bye' })];
 const P = { songs: [], console: 'ds', timeline: tl };
 const v = T.validate(P, 'ds'); t('DS validator accepts chained DS arcade games', v.ok, JSON.stringify(v.errors)); t('...and says the router chains them', v.warnings.some(w => /scene router/.test(w)));

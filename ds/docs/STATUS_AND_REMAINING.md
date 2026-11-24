@@ -39,7 +39,7 @@ Not done yet (honest):
 - **Sixth Seal logic** (kit/nrsixthseal.js + panel in the Sigil tab): six-slot mixtape, rack presets, six sigils, beat-battle and DJ-gig scoring, cash/respect, day clock, versioned CRC save (.ssm). The DS Sigil ROM now has a TAPE tab (v1.26): six TRACK slots over the save slots with an unlock message when all six are saved, and a Tape Deck (CLEAN / WARM / WORN / RADIO / DEAD lo-fi on the drum sounds). Keys and sample-pad instruments, tape effect saved per track, sigils, battles, gigs and The Hollow world are NOT in the ROM yet.
 - **About tab** shows editor/about.txt (placeholder until Steve's message is supplied).
 ### Not done yet (asked for)
-- SNES: only 5 of 42 game types have a SNES engine (platformers). A SNES basketball and a Mode 7 kart/combat engine need new 65816 engines.
+- SNES: 8 of 42 game types now have a SNES engine (5 platformer types, racing/kart racing on the Mode 7 kart engine, and basketball). Other genres (RPG, fighting, shooters) still need new 65816 engines.
 - Vehicle combat on DS / N64 / PSX: exists as a PC mode only.
 - Sixth Seal DS ROM milestones M2-M6.
 
@@ -82,10 +82,3 @@ Honest limits / not finished:
 - Kart Party multiplayer is PC/Xbox/desktop only; the SNES kart is one player.
 - The assistant is a tool router, not a general chatbot; a small local model is optional.
 - CLI tools in tools/ are for developers; every capability users need has a path in the app (Research Lab, Assistant, Export).
-
-## v1.31 — Tony Hawk (DS) + TNA data pass
-- Scanned: Tony Hawk's American Sk8land, Proving Ground (DS), TNA Impact: Cross the Line (DS), WWF WrestleMania 2000 (N64). Records merged into library/code_db.json.
-- **Measured** (American Sk8land, emulator + game memory, library/measured_motion.json): ollie airtime 33 frames (apex 16.5), push to top speed ~20 frames, brake from cruise ~28 frames. The skate engine and ICW's skate game now use these (pop 0.171, gravity 0.011, accel 0.0085).
-- **Read from TNA's files**: 1,021 named wrestler animations with frame counts (strikes, grabs, aerials, finishers, submissions, turnbuckle, apron, weapons). Inventory is in measured_motion.json.
-- ICW: chokeslam (grapple UP at 50+ spirit), top-rope dive (Y in a corner, rival down) added; verified in an emulator by health/state log.
-- NOT done: grind/manual balance numbers, ramp/vert speeds (not measured); bone-level animation import from TNA (.dsan, 29 bones, not decoded); WrestleMania 2000 is compressed and only static strings/scan were available (no N64 emulator here); Tony Hawk's Pro Skater 2 (PlayStation disc) was not analysed.

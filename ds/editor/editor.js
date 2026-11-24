@@ -584,6 +584,7 @@ async function exportRom() {
     if ((P.console === 'n64' || P.console === 'psx') && P.arcade && NRWorld3D.idx(P.arcade.mode) !== undefined) return exportArcadeSoft();
     if (P.miniMode === 'race' && P.console === 'ds' && P.arcade) return exportArcadeDS();
     if (P.miniMode === 'race' && P.console === 'snes') return exportKartSnes();
+    if (P.console === 'snes' && P.arcade && P.arcade.mode === 'basketball') return exportBasketSnes();
     const status = modal('Building your ROM…', el('p', { id: 'buildmsg' }, 'Converting art, music and sounds for the DS…'), [['Close', () => true, 'alt']]);
     try {
         const refs = new Set([P.tileset.image, P.background, ...Object.values(P.sprites).flatMap(s => [s.image, s.td]), P.opening && P.opening.top, P.opening && P.opening.bottom].filter(Boolean));

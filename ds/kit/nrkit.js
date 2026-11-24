@@ -371,14 +371,14 @@ NR.buildDSSkate = P => {
 };
 /* DS 3D wrestling ROM (engine/wrestling, the ICW match engine): WRCF section = up to 8 wrestlers (40-byte records, see engine/wrestling/source/main.c) + the match type */
 NR.WRESTLE_DEFAULT = () => ({ title: 'Pro Wrestling', matchType: 5, roster: [
-    { name: 'Hero', sex: 0, skin: 2, hair: 1, hairc: 1, eyes: 1, beard: 0, top: 1, pants: 2, boots: 4, height: 1, build: 1, fin: 0, heel: 0, preset: 0, key: 5, tempo: 124 },
-    { name: 'Rival', sex: 0, skin: 4, hair: 0, hairc: 0, eyes: 2, beard: 1, top: 3, pants: 1, boots: 2, height: 1.05, build: 1.1, fin: 2, heel: 1, preset: 1, key: 3, tempo: 96 }] });
+    { name: 'Hero', sex: 0, skin: 2, hair: 1, hairc: 1, eyes: 1, beard: 0, top: 1, pants: 2, boots: 4, height: 1, build: 1, fin: 0, heel: 0, preset: 0, key: 5, tempo: 124, power: 100, tough: 100, speed: 100, gain: 100 },
+    { name: 'Rival', sex: 0, skin: 4, hair: 0, hairc: 0, eyes: 2, beard: 1, top: 3, pants: 1, boots: 2, height: 1.05, build: 1.1, fin: 2, heel: 1, preset: 1, key: 3, tempo: 96, power: 110, tough: 110, speed: 90, gain: 100 }] });
 NR.buildDSWrestling = P => {
     const W = P.wrestle || NR.WRESTLE_DEFAULT(), R = (W.roster || []).slice(0, 8); if (R.length < 2) throw new Error('A wrestling game needs at least 2 wrestlers');
     const pl = new Uint8Array(4 + 40 * R.length); pl[0] = R.length; pl[1] = W.matchType == null ? 5 : Math.max(0, Math.min(5, W.matchType | 0));
     R.forEach((w, i) => { const o = 4 + i * 40, nm = String(w.name || 'WRESTLER').slice(0, 15).toUpperCase(); for (let k = 0; k < nm.length; k++) pl[o + k] = nm.charCodeAt(k) & 127;
         [w.sex, w.skin, w.hair, w.hairc, w.eyes, w.beard, w.top, w.pants, w.boots].forEach((v, k) => { pl[o + 16 + k] = (+v || 0) & 255; });
-        pl[o + 25] = Math.round((w.height || 1) * 100); pl[o + 26] = Math.round((w.build || 1) * 100); pl[o + 27] = (w.fin || 0) & 3; pl[o + 28] = w.heel ? 1 : 0; pl[o + 29] = (w.preset || 0) % 3; pl[o + 30] = (w.key || 0) % 12; pl[o + 31] = Math.max(60, Math.min(200, +w.tempo || 120)); });
+        pl[o + 25] = Math.round((w.height || 1) * 100); pl[o + 26] = Math.round((w.build || 1) * 100); pl[o + 27] = (w.fin || 0) & 3; pl[o + 28] = w.heel ? 1 : 0; pl[o + 29] = (w.preset || 0) % 3; pl[o + 30] = (w.key || 0) % 12; pl[o + 31] = Math.max(60, Math.min(200, +w.tempo || 120)); [w.power, w.tough, w.speed, w.gain].forEach((v, k) => { pl[o + 32 + k] = Math.max(40, Math.min(200, Math.round(+v || 100))); }); });
     const hdr = 20 + 12, off = (hdr + 15) & ~15, blk = new Uint8Array((off + pl.length + 15) & ~15), v = new DataView(blk.buffer);
     blk.set([...'NRGDATA1'].map(ch => ch.charCodeAt(0)), 0); v.setUint32(12, blk.length, true); v.setUint32(16, 1, true);
     blk.set([...'WRCF'].map(ch => ch.charCodeAt(0)), 20); v.setUint32(24, off, true); v.setUint32(28, pl.length, true); blk.set(pl, off);

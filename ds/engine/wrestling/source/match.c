@@ -120,6 +120,7 @@ typedef struct {
     float walk, speed;
     int state, t, dur;
     int health, spirit;
+    int pw, tg, sp, gn;   // wrestler stats in percent: power (damage dealt), toughness (damage taken is divided by it), speed, momentum gain
     int cool;          // AI / move cooldown
     Pose pose;
     Motion mo; int mstate;   // motion layer (render-side follow-through)
@@ -215,9 +216,10 @@ static void bars(void)
 }
 
 // ---------------------------------------------------------------- moves
-static void hurt(W *d, int dmg) { d->health -= dmg; if (d->health < 0) d->health = 0; }
+static void hurt(W *d, int dmg) { d->health -= d->tg > 0 ? dmg * 100 / d->tg : dmg; if (d->health < 0) d->health = 0; }
 static void gain(W *a, int n)
 {
+    if (a->gn > 0) n = n * a->gn / 100;
     a->spirit += n; if (a->spirit > 100) a->spirit = 100;
     if (a->spirit == 100 && !a->fin_ready) { a->fin_ready = 1; if (a == &w[0]) banner(13); }
 }
@@ -294,6 +296,7 @@ static int land_hit(W *a, W *d, int dmg, int knock)
         } else { hurt(d, dmg / 4); sfx(SFX_HIT); a->x -= sinf(a->yaw / 57.2958f) * 0.04f; a->z -= cosf(a->yaw / 57.2958f) * 0.04f; motion_hit(&d->mo, 0.25f); }
         return 0;
     }
+    if (a->pw > 0) dmg = dmg * a->pw / 100;
     if (match_type == MT_NODQ || match_type == MT_CAGE || match_type == MT_LMS) dmg += dmg / 3;
     hurt(d, dmg);
     sfx(SFX_HIT);
@@ -626,7 +629,7 @@ static void update_w(W *a, W *d, int idx)
                     att->fin = att->mv == 1 ? 0 : att->mv == 3 ? 1 : 2;
                     if (att->mv == 1 && att->spirit >= 50) att->fin = 4;                  // power slam: spirit 50+ makes it a chokeslam
                     def->fin = att->fin;
-                    def->fdmg = att->fin == 4 ? 24 : att->mv == 1 ? 15 : att->mv == 3 ? 20 : 17;   // body slam 15, DDT 20, neckbreaker 17 (kit table) att->fdmg = def->fdmg;
+                    def->fdmg = (att->fin == 4 ? 24 : att->mv == 1 ? 15 : att->mv == 3 ? 20 : 17) * (att->pw > 0 ? att->pw : 100) / 100;   // body slam 15, DDT 20, neckbreaker 17 (kit table) att->fdmg = def->fdmg;
                     set_state(att, S_FIN_A, (att->fin && att->fin != 4) ? 100 : 130);
                     set_state(def, S_FIN_D, (att->fin && att->fin != 4) ? 100 : 130);
                     gain(att, 14);
@@ -778,7 +781,7 @@ static void move(W *a, float dx, float dz)
     float len = sqrtf(dx * dx + dz * dz);
     a->speed = 0;
     if (len < 0.001f || a->state != S_IDLE) return;
-    float sp = a->run ? 0.068f : 0.032f;
+    float sp = (a->run ? 0.068f : 0.032f) * (a->sp > 0 ? a->sp / 100.0f : 1.0f);
     a->x += dx / len * sp; a->z += dz / len * sp;
     a->speed = sp;
     a->walk += a->run ? 0.34f : 0.22f;
@@ -1079,8 +1082,8 @@ int match_run(u16 *subfb, int player, int opp)
     init_poses();
     memset(w, 0, sizeof w);
     memset(&ref, 0, sizeof ref);
-    w[0] = (W){ .look = cast_look(player), .x = 0, .z = 1.4f, .yaw = 180, .health = 100, .spirit = SPIRIT0 + (spirit_bonus > 70 ? 70 : spirit_bonus), .pose = P_STANCE };
-    w[1] = (W){ .look = cast_look(opp), .x = 0, .z = -7.0f, .yaw = 0, .health = 100, .spirit = 30, .pose = P_STAND, .base = -MAT_Y };
+    w[0] = (W){ .pw = cast_stat(player)[0], .tg = cast_stat(player)[1], .sp = cast_stat(player)[2], .gn = cast_stat(player)[3], .look = cast_look(player), .x = 0, .z = 1.4f, .yaw = 180, .health = 100, .spirit = SPIRIT0 + (spirit_bonus > 70 ? 70 : spirit_bonus), .pose = P_STANCE };
+    w[1] = (W){ .pw = cast_stat(opp)[0], .tg = cast_stat(opp)[1], .sp = cast_stat(opp)[2], .gn = cast_stat(opp)[3], .look = cast_look(opp), .x = 0, .z = -7.0f, .yaw = 0, .health = 100, .spirit = 30, .pose = P_STAND, .base = -MAT_Y };
     ref = (W){ .look = cast_look(C_REF), .x = 1.8f, .z = 0.2f, .yaw = -90, .pose = P_STAND };
     set_state(&w[1], S_ENTER, 0);
     int caw_entrance = cast_theme(player) != NULL && !skip_player_entrance;

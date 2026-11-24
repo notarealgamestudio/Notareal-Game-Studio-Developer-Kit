@@ -1,0 +1,107 @@
+[
+ [
+  "town starter: 4 maps (3 top-down + 1 side view)",
+  true,
+  ""
+ ],
+ [
+  "place a person on the map",
+  true,
+  ""
+ ],
+ [
+  "rule editor: when talked to, give a potion",
+  true,
+  ""
+ ],
+ [
+  "add an item to the item list",
+  true,
+  ""
+ ],
+ [
+  "add a side-view stage (game type splitter)",
+  true,
+  ""
+ ],
+ [
+  "text tool: click the map to place a story line",
+  true,
+  ""
+ ],
+ [
+  "all-text panel: find and edit a line anywhere in the game",
+  true,
+  ""
+ ],
+ [
+  "talk to Maya: she asks for her key (edited line)",
+  true,
+  ""
+ ],
+ [
+  "map intro text shows on entering",
+  true,
+  ""
+ ],
+ [
+  "walk onto the key in the field: picked up",
+  true,
+  ""
+ ],
+ [
+  "attack: defeat an enemy (drops money)",
+  true,
+  "10"
+ ],
+ [
+  "return the key: flag set, key taken, +$50",
+  true,
+  "[60, {\"helped_maya\": 1}]"
+ ],
+ [
+  "walk through a door into the house",
+  true,
+  ""
+ ],
+ [
+  "open a chest: 2 potions",
+  true,
+  ""
+ ],
+ [
+  "shop: buy a potion for $15",
+  true,
+  ""
+ ],
+ [
+  "bag: drink a potion to heal",
+  true,
+  ""
+ ],
+ [
+  "side-view stage: the hero jumps",
+  true,
+  "178.5625 -> 127.5"
+ ],
+ [
+  "talk to the hermit, choose Yes: you win",
+  true,
+  ""
+ ],
+ [
+  "export World as a DS ROM: the town renders in DeSmuME",
+  true,
+  ""
+ ],
+ [
+  "DS ROM: talking to Maya shows her dialog on the bottom screen",
+  true,
+  "{'TOP': '75', 'DIALOG': '580'}"
+ ],
+ [
+  "no script errors",
+  true,
+  ""
+ ]
+]

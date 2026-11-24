@@ -1,0 +1,113 @@
+XL3
+H 1A areas 2 global symbols
+M crt0
+S .__.ABS. Def000000
+S _game_main Ref000000
+A _CODE size 18 flags 0 addr 0
+A _HEADER size 0 flags 8 addr 0
+A _HEADER0 size 1 flags 8 addr 0
+A _HEADER1 size 1 flags 8 addr 8
+A _HEADER2 size 1 flags 8 addr 10
+A _HEADER3 size 1 flags 8 addr 18
+A _HEADER4 size 1 flags 8 addr 20
+A _HEADER5 size 1 flags 8 addr 28
+A _HEADER6 size 1 flags 8 addr 30
+A _HEADER7 size 1 flags 8 addr 38
+A _HEADER8 size 1 flags 8 addr 40
+A _HEADER9 size 1 flags 8 addr 48
+A _HEADERa size 1 flags 8 addr 50
+A _HEADERb size 1 flags 8 addr 58
+A _HEADERc size 1 flags 8 addr 60
+A _HEADERd size 4 flags 8 addr 100
+A _HEADERe size 30 flags 8 addr 104
+A _HEADERf size 10 flags 8 addr 134
+A _HEADER10 size D flags 8 addr 143
+A _CONST size 0 flags 0 addr 0
+A _INITIALIZER size 0 flags 0 addr 0
+A _GSINIT size 0 flags 0 addr 0
+A _GSFINAL size 0 flags 0 addr 0
+A _DATA size 0 flags 0 addr 0
+A _BSS size 0 flags 0 addr 0
+A _HEAP size 0 flags 0 addr 0
+T 00 00 00
+R 00 00 02 00
+T 00 00 00 C9
+R 00 00 02 00
+T 08 00 00
+R 00 00 03 00
+T 08 00 00 C9
+R 00 00 03 00
+T 10 00 00
+R 00 00 04 00
+T 10 00 00 C9
+R 00 00 04 00
+T 18 00 00
+R 00 00 05 00
+T 18 00 00 C9
+R 00 00 05 00
+T 20 00 00
+R 00 00 06 00
+T 20 00 00 C9
+R 00 00 06 00
+T 28 00 00
+R 00 00 07 00
+T 28 00 00 C9
+R 00 00 07 00
+T 30 00 00
+R 00 00 08 00
+T 30 00 00 C9
+R 00 00 08 00
+T 38 00 00
+R 00 00 09 00
+T 38 00 00 C9
+R 00 00 09 00
+T 40 00 00
+R 00 00 0A 00
+T 40 00 00 D9
+R 00 00 0A 00
+T 48 00 00
+R 00 00 0B 00
+T 48 00 00 D9
+R 00 00 0B 00
+T 50 00 00
+R 00 00 0C 00
+T 50 00 00 D9
+R 00 00 0C 00
+T 58 00 00
+R 00 00 0D 00
+T 58 00 00 D9
+R 00 00 0D 00
+T 60 00 00
+R 00 00 0E 00
+T 60 00 00 D9
+R 00 00 0E 00
+T 00 01 00
+R 00 00 0F 00
+T 00 01 00 00 C3 00 00
+R 00 00 0F 00 00 05 00 00
+T 04 01 00
+R 00 00 10 00
+T 04 01 00 CE ED 66 66 CC 0D 00 0B 03 73 00 83 00
+R 00 00 10 00
+T 11 01 00 0C 00 0D 00 08 11 1F 88 89 00 0E DC CC
+R 00 00 10 00
+T 1E 01 00 6E E6 DD DD D9 99 BB BB 67 63 6E 0E EC
+R 00 00 10 00
+T 2B 01 00 CC DD DC 99 9F BB B9 33 3E
+R 00 00 10 00
+T 34 01 00
+R 00 00 11 00
+T 34 01 00 4E 4F 54 41 52 45 41 4C 00 00 00 00 00
+R 00 00 11 00
+T 41 01 00 00 00 00
+R 00 00 11 00
+T 43 01 00
+R 00 00 12 00
+T 43 01 00 80 00 00 00 00 00 00 01 33 00 00 00 00
+R 00 00 12 00
+T 00 00 00
+R 00 00 00 00
+T 00 00 00 F3 31 FE FF E0 80 21 00 C0 01 00 20 AF
+R 00 00 00 00
+T 0D 00 00 22 0B 78 B1 20 F9 CD 00 00 18 FE
+R 00 00 00 00 02 0A 01 00

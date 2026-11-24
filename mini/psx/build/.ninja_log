@@ -1,0 +1,22 @@
+# ninja log v7
+1	30	1795485049455821483	CMakeFiles/mini.dir/nrd_psx.c.obj	d4692f4c3d3717
+30	86	1795485049483883806	CMakeFiles/mini.dir/home/claude/notareal-kit/psx/notareal_psx.c.obj	4870c004a80f15bb
+86	94	1795485049536403422	CMakeFiles/mini.dir/incbin_6409c43bf152fb58600185217425edd46be5bf82.s.obj	6f28b59202c11a10
+1	332	1795485049452403417	CMakeFiles/mini.dir/hal_psx.c.obj	7d0826e232da6665
+1	436	1795485049455974034	CMakeFiles/mini.dir/home/claude/notareal-kit/mini/src/game.c.obj	4e25c48f473e79a8
+436	505	1795485049952403447	mini.elf	92b02c039d07617d
+436	505	1795485049952403447	mini.exe	92b02c039d07617d
+436	505	1795485049952403447	mini.map	92b02c039d07617d
+436	505	1795485049952403447	/home/claude/notareal-kit/mini/psx/build/mini.exe	92b02c039d07617d
+436	505	1795485049952403447	/home/claude/notareal-kit/mini/psx/build/mini.map	92b02c039d07617d
+0	42	1795485132487413613	build.ninja	9ba40144c95bc8e2
+1	15	1795485132505160772	CMakeFiles/mini.dir/nrd_psx.c.obj	5fc791b966ecda07
+15	44	1795485132516408355	CMakeFiles/mini.dir/home/claude/notareal-kit/psx/notareal_psx.c.obj	a8e1025097a043de
+44	60	1795485132547122469	CMakeFiles/mini.dir/incbin_6409c43bf152fb58600185217425edd46be5bf82.s.obj	d0a5235e123f20a5
+1	253	1795485132500408354	CMakeFiles/mini.dir/hal_psx.c.obj	f81a991b1900d11e
+1	485	1795485132505310084	CMakeFiles/mini.dir/home/claude/notareal-kit/mini/src/game.c.obj	e80f0b1128a36533
+485	538	1795485133036408385	mini.elf	92b02c039d07617d
+485	538	1795485133036408385	mini.exe	92b02c039d07617d
+485	538	1795485133036408385	mini.map	92b02c039d07617d
+485	538	1795485133036408385	/home/claude/notareal-kit/mini/psx/build/mini.exe	92b02c039d07617d
+485	538	1795485133036408385	/home/claude/notareal-kit/mini/psx/build/mini.map	92b02c039d07617d

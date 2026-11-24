@@ -1,0 +1,21 @@
+// ARM9 side of the shared-memory sound/input link (shared/mailbox.h): sample / PSG / noise voices on the 16 hardware channels.
+#include <nds.h>
+#include "../../../shared/mailbox.h"
+static u32 snd_t(int hz) { if (hz < 1) hz = 1; return (u16)((-(33513982 >> 1) - ((hz + 1) >> 1)) / hz); }
+static void post(u32 w0, u32 w1, u32 w2, u32 w3)
+{
+    Mailbox *mb = MAILBOX; if (mb->magic != MB_MAGIC_ARM7) return; u32 wr = mb->wr; if (wr - mb->rd >= MB_RING) return;
+    volatile MbCmd *c = &mb->cmd[wr % MB_RING]; c->w0 = w0; c->w1 = w1; c->w2 = w2; c->w3 = w3; mb->wr = wr + 1;
+}
+static u32 head(int op, int ch, int vol, int pan) { if (vol < 0) vol = 0; if (vol > 127) vol = 127; if (pan < 0) pan = 0; if (pan > 127) pan = 127; return op | (ch & 15) << 8 | vol << 16 | pan << 24; }
+void snd_sample_ch(int ch, const void *data, u32 bytes, int fmt, int hz, int vol, int pan, int loop) { post(head(MB_SAMPLE, ch, vol, pan), (u32)data, bytes >> 2, snd_t(hz) | (fmt & 3) << 16 | (loop ? 1u : 0u) << 18); }
+void snd_stop(int ch) { if (ch >= 0) post(head(MB_KILL, ch, 0, 0), 0, 0, 0); }
+void snd_vol(int ch, int vol) { post(head(MB_VOL, ch, vol, 64), 0, 0, 0); }
+void snd_master(int vol) { post(head(MB_MASTER, 0, vol, 0), 0, 0, 0); }
+void setTransferInputData(touchPosition *touch, u16 buttons);
+void snd_input(void)
+{
+    Mailbox *mb = MAILBOX; if (mb->magic != MB_MAGIC_ARM7) return; touchPosition t = { 0 }; u16 k = mb->keyxy;
+    if (!(k & KEYXY_TOUCH)) { t.rawx = mb->rawx; t.rawy = mb->rawy; t.px = mb->px; t.py = mb->py; }
+    setTransferInputData(&t, k);
+}

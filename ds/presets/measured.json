@@ -1,0 +1,525 @@
+{
+ "version": 1,
+ "note": "Measurements only, from the games you scanned. No game content.",
+ "genres": {
+  "rpg_linear": {
+   "games": 4,
+   "platforms": [
+    "Nintendo 64",
+    "Nintendo DS",
+    "PC (Morrowind engine)"
+   ],
+   "medianMB": 56.25,
+   "medianRoutines": 2906,
+   "hardwareShare": {
+    "3d": 35,
+    "graphics": 24,
+    "sound": 20,
+    "ipc": 5
+   },
+   "examples": [
+    "FFTA2-NA",
+    "THE LEGEND OF ZELDA",
+    "YOSHI STORY",
+    "The Elder Scrolls III: Morrowind + Tribunal"
+   ]
+  },
+  "jrpg": {
+   "games": 1,
+   "platforms": [
+    "Nintendo DS"
+   ],
+   "medianMB": 128.0,
+   "medianRoutines": 998,
+   "hardwareShare": {
+    "3d": 28,
+    "graphics": 26,
+    "sound": 16,
+    "timers": 13
+   },
+   "examples": [
+    "FF4"
+   ]
+  },
+  "coloring_book": {
+   "games": 2,
+   "platforms": [
+    "Nintendo DS"
+   ],
+   "medianMB": 24.0,
+   "medianRoutines": 1802,
+   "hardwareShare": {
+    "3d": 30,
+    "graphics": 28,
+    "sound": 18,
+    "ipc": 9
+   },
+   "examples": [
+    "PROJECTRUB",
+    "C!T!YOSHI!"
+   ]
+  },
+  "crafting_sim": {
+   "games": 5,
+   "platforms": [
+    "Nintendo DS"
+   ],
+   "medianMB": 32.0,
+   "medianRoutines": 2841,
+   "hardwareShare": {
+    "graphics": 39,
+    "3d": 26,
+    "sound": 14,
+    "ipc": 8
+   },
+   "examples": [
+    "DINER DASH",
+    "TINGLE RPG",
+    "BEEMOVIE",
+    "TC UTK2",
+    "CARS"
+   ]
+  },
+  "adventure_explore": {
+   "games": 3,
+   "platforms": [
+    "Nintendo 64",
+    "Nintendo DS"
+   ],
+   "medianMB": 16.0,
+   "medianRoutines": 524,
+   "hardwareShare": {
+    "3d": 28,
+    "graphics": 14,
+    "sound": 9,
+    "cartridge": 9
+   },
+   "examples": [
+    "ANIMAL CROSS",
+    "GOEMONS GREAT ADV",
+    "GOLDENEYE"
+   ]
+  },
+  "open_world_2d": {
+   "games": 4,
+   "platforms": [
+    "Game Boy Advance",
+    "Nintendo DS",
+    "Super Nintendo"
+   ],
+   "medianMB": 5.0,
+   "medianRoutines": 523,
+   "hardwareShare": {
+    "graphics": 59,
+    "sound": 11,
+    "timers": 10,
+    "dma": 8
+   },
+   "examples": [
+    "BOKUJOMONODS",
+    "GBAZELDA",
+    "SUPER MOONLIGHT HOLLR",
+    "GOODWILL"
+   ]
+  },
+  "military_shooter": {
+   "games": 5,
+   "platforms": [
+    "Nintendo DS",
+    "Super Nintendo"
+   ],
+   "medianMB": 64.0,
+   "medianRoutines": 1927,
+   "hardwareShare": {
+    "3d": 34,
+    "sound": 25,
+    "graphics": 19,
+    "timers": 8
+   },
+   "examples": [
+    "ADVANCEWARSE",
+    "CALLOFDUTY7",
+    "CALLOFDUTY8",
+    "ACREED2DS",
+    "HOUNDS: RELOADED"
+   ]
+  },
+  "minigames": {
+   "games": 6,
+   "platforms": [
+    "Game Boy Advance",
+    "Nintendo 64",
+    "Nintendo DS"
+   ],
+   "medianMB": 12.0,
+   "medianRoutines": 1477,
+   "hardwareShare": {
+    "graphics": 28,
+    "3d": 14,
+    "timers": 13,
+    "sound": 7
+   },
+   "examples": [
+    "KUNIO-DODGE",
+    "LCA DS",
+    "monopoly",
+    "MarioParty3",
+    "NICKTOONS 02"
+   ]
+  },
+  "farm_sim": {
+   "games": 2,
+   "platforms": [
+    "Game Boy Advance",
+    "Nintendo DS"
+   ],
+   "medianMB": 36.0,
+   "medianRoutines": 7712,
+   "hardwareShare": {
+    "graphics": 75,
+    "timers": 8,
+    "3d": 6,
+    "sound": 4
+   },
+   "examples": [
+    "HM DS",
+    "HARVESTMOGBA"
+   ]
+  },
+  "racing": {
+   "games": 5,
+   "platforms": [
+    "Nintendo 64",
+    "Nintendo DS"
+   ],
+   "medianMB": 32.0,
+   "medianRoutines": 1310,
+   "hardwareShare": {
+    "3d": 38,
+    "sound": 18,
+    "graphics": 14,
+    "ipc": 6
+   },
+   "examples": [
+    "NFSU2",
+    "ASPHALT GT",
+    "RIDGE RACER 64",
+    "Cruis'n USA",
+    "CRUIS'N WORLD"
+   ]
+  },
+  "sidescroller_3d": {
+   "games": 1,
+   "platforms": [
+    "Nintendo DS"
+   ],
+   "medianMB": 32.0,
+   "medianRoutines": 3126,
+   "hardwareShare": {
+    "3d": 30,
+    "graphics": 23,
+    "sound": 20,
+    "ipc": 9
+   },
+   "examples": [
+    "RAYMAN DS"
+   ]
+  },
+  "memory_puzzle": {
+   "games": 2,
+   "platforms": [
+    "Nintendo 64",
+    "Nintendo DS"
+   ],
+   "medianMB": 32.0,
+   "medianRoutines": 1666,
+   "hardwareShare": {
+    "graphics": 28,
+    "3d": 27,
+    "sound": 18,
+    "ipc": 6
+   },
+   "examples": [
+    "PACMANWORLD3",
+    "PUZZLE LEAGUE N64"
+   ]
+  },
+  "breakout": {
+   "games": 1,
+   "platforms": [
+    "Nintendo DS"
+   ],
+   "medianMB": 32.0,
+   "medianRoutines": 5049,
+   "hardwareShare": {
+    "graphics": 49,
+    "3d": 14,
+    "ipc": 13,
+    "timers": 9
+   },
+   "examples": [
+    "MPPINBALL"
+   ]
+  },
+  "trick_sports": {
+   "games": 3,
+   "platforms": [
+    "Nintendo 64"
+   ],
+   "medianMB": 16.0,
+   "medianRoutines": 831,
+   "hardwareShare": {
+    "3d": 62,
+    "cartridge": 9,
+    "audio": 6,
+    "video": 6
+   },
+   "examples": [
+    "Wipeout 64",
+    "EXCITEBIKE64",
+    "1080 SNOWBOARDING"
+   ]
+  },
+  "music_maker": {
+   "games": 1,
+   "platforms": [
+    "Nintendo 64"
+   ],
+   "medianMB": 8.0,
+   "medianRoutines": 787,
+   "hardwareShare": {
+    "cartridge": 31,
+    "3d": 14,
+    "rsp": 14,
+    "audio": 14
+   },
+   "examples": [
+    "Bust A Move '99"
+   ]
+  },
+  "kart_racing": {
+   "games": 1,
+   "platforms": [
+    "Nintendo 64"
+   ],
+   "medianMB": 12.0,
+   "medianRoutines": 0,
+   "hardwareShare": {},
+   "examples": [
+    "Diddy Kong Racing"
+   ]
+  },
+  "platformer_3d": {
+   "games": 2,
+   "platforms": [
+    "Nintendo 64"
+   ],
+   "medianMB": 20.0,
+   "medianRoutines": 198,
+   "hardwareShare": {
+    "cartridge": 24,
+    "rsp": 16,
+    "mips": 12,
+    "3d": 12
+   },
+   "examples": [
+    "DONKEY KONG 64",
+    "BOMBERMAN64U"
+   ]
+  },
+  "open_world_3d": {
+   "games": 1,
+   "platforms": [
+    "Nintendo 64"
+   ],
+   "medianMB": 12.0,
+   "medianRoutines": 59,
+   "hardwareShare": {
+    "3d": 91,
+    "video": 4,
+    "audio": 2,
+    "cartridge": 2
+   },
+   "examples": [
+    "Shadow of the Empire"
+   ]
+  },
+  "puzzle_falling": {
+   "games": 2,
+   "platforms": [
+    "Game Boy Advance",
+    "Nintendo 64"
+   ],
+   "medianMB": 10.0,
+   "medianRoutines": 2982,
+   "hardwareShare": {
+    "graphics": 49,
+    "dma": 9,
+    "sound": 9,
+    "timers": 6
+   },
+   "examples": [
+    "MAGICAL TETRIS",
+    "TETRISWORLDS"
+   ]
+  },
+  "wrestling": {
+   "games": 2,
+   "platforms": [
+    "Nintendo 64",
+    "Nintendo DS"
+   ],
+   "medianMB": 16.85,
+   "medianRoutines": 1795,
+   "hardwareShare": {
+    "3d": 38,
+    "sound": 32,
+    "graphics": 8,
+    "dma": 4
+   },
+   "examples": [
+    "WWF No Mercy",
+    "HOMEBREW"
+   ]
+  },
+  "fighting": {
+   "games": 1,
+   "platforms": [
+    "Nintendo 64"
+   ],
+   "medianMB": 16.0,
+   "medianRoutines": 1376,
+   "hardwareShare": {
+    "3d": 52,
+    "cartridge": 19,
+    "rsp": 10,
+    "controllers": 8
+   },
+   "examples": [
+    "SMASH BROTHERS"
+   ]
+  },
+  "god_sim": {
+   "games": 1,
+   "platforms": [
+    "Nintendo 64"
+   ],
+   "medianMB": 16.0,
+   "medianRoutines": 1556,
+   "hardwareShare": {
+    "rsp": 29,
+    "audio": 20,
+    "cartridge": 20,
+    "mips": 14
+   },
+   "examples": [
+    "HARVESTMOON64"
+   ]
+  },
+  "action_adventure": {
+   "games": 2,
+   "platforms": [
+    "NES",
+    "Nintendo 64"
+   ],
+   "medianMB": 8.15,
+   "medianRoutines": 788,
+   "hardwareShare": {
+    "mapper": 38,
+    "cart": 35,
+    "ppu": 10,
+    "rsp": 4
+   },
+   "examples": [
+    "GEX: ENTER THE GECKO",
+    "Snake's Revenge (USA)"
+   ]
+  },
+  "basketball": {
+   "games": 1,
+   "platforms": [
+    "Nintendo 64"
+   ],
+   "medianMB": 12.0,
+   "medianRoutines": 1546,
+   "hardwareShare": {
+    "cartridge": 25,
+    "rsp": 17,
+    "audio": 14,
+    "3d": 14
+   },
+   "examples": [
+    "NBA HANGTIME"
+   ]
+  },
+  "monster_rpg": {
+   "games": 1,
+   "platforms": [
+    "Game Boy Advance"
+   ],
+   "medianMB": 8.0,
+   "medianRoutines": 18483,
+   "hardwareShare": {
+    "graphics": 69,
+    "timers": 13,
+    "sound": 10,
+    "dma": 7
+   },
+   "examples": [
+    "ROBOPON2CROS"
+   ]
+  },
+  "runner": {
+   "games": 1,
+   "platforms": [
+    "Nintendo DS"
+   ],
+   "medianMB": 1.9,
+   "medianRoutines": 262,
+   "hardwareShare": {
+    "graphics": 37,
+    "dma": 23,
+    "ipc": 19,
+    "input": 7
+   },
+   "examples": [
+    "HOMEBREW"
+   ]
+  },
+  "shmup": {
+   "games": 1,
+   "platforms": [
+    "NES"
+   ],
+   "medianMB": 0.1,
+   "medianRoutines": 129,
+   "hardwareShare": {
+    "mapper": 49,
+    "cart": 30,
+    "ppu": 16,
+    "sound": 3
+   },
+   "examples": [
+    "Gradius (USA)"
+   ]
+  },
+  "platformer": {
+   "games": 1,
+   "platforms": [
+    "NES"
+   ],
+   "medianMB": 0.3,
+   "medianRoutines": 264,
+   "hardwareShare": {
+    "cart": 41,
+    "mapper": 32,
+    "ppu": 21,
+    "sound": 5
+   },
+   "examples": [
+    "Super Mario Bros. 2 (USA) (Rev 1)"
+   ]
+  }
+ },
+ "games": 178
+}

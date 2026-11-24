@@ -1,0 +1,3 @@
+/home/claude/notareal-kit/mini/psx/build/CMakeFiles/mini.dir
+/home/claude/notareal-kit/mini/psx/build/CMakeFiles/edit_cache.dir
+/home/claude/notareal-kit/mini/psx/build/CMakeFiles/rebuild_cache.dir

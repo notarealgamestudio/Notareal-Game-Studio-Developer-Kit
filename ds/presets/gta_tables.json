@@ -1,0 +1,2375 @@
+{
+"source": "Derived from GTA III (USA) and Fallout 2 (USA) data tables for design reference: numbers and names only, no art, maps or audio",
+"gta_peds": {
+"player": {
+"flee": 0.0,
+"turn": 15.0,
+"fear": 50,
+"temper": 50,
+"law": 50,
+"sexy": 50,
+"attack": 3.0,
+"defend": 0.4,
+"flags": 6
+},
+"cop": {
+"flee": 20.0,
+"turn": 7.5,
+"fear": 10,
+"temper": 30,
+"law": 100,
+"sexy": 50,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 2
+},
+"medic": {
+"flee": 20.0,
+"turn": 7.5,
+"fear": 70,
+"temper": 30,
+"law": 60,
+"sexy": 40,
+"attack": 0.8,
+"defend": 1.4,
+"flags": 128
+},
+"fireman": {
+"flee": 20.0,
+"turn": 7.5,
+"fear": 10,
+"temper": 20,
+"law": 60,
+"sexy": 80,
+"attack": 1.2,
+"defend": 0.8,
+"flags": 2
+},
+"gang1": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 20,
+"temper": 65,
+"law": 10,
+"sexy": 40,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 6
+},
+"gang2": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 20,
+"temper": 65,
+"law": 10,
+"sexy": 40,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 14
+},
+"gang3": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 20,
+"temper": 65,
+"law": 10,
+"sexy": 40,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 6
+},
+"gang4": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 20,
+"temper": 65,
+"law": 10,
+"sexy": 40,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 6
+},
+"gang5": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 20,
+"temper": 65,
+"law": 10,
+"sexy": 40,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 14
+},
+"gang6": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 20,
+"temper": 65,
+"law": 10,
+"sexy": 40,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 6
+},
+"gang7": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 20,
+"temper": 65,
+"law": 10,
+"sexy": 40,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 6
+},
+"street_guy": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 45,
+"temper": 30,
+"law": 30,
+"sexy": 60,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 6
+},
+"suit_guy": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 35,
+"temper": 60,
+"law": 60,
+"sexy": 30,
+"attack": 0.8,
+"defend": 1.2,
+"flags": 130
+},
+"sensible_guy": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 65,
+"temper": 30,
+"law": 70,
+"sexy": 20,
+"attack": 0.7,
+"defend": 1.1,
+"flags": 128
+},
+"geek_guy": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 45,
+"temper": 10,
+"law": 40,
+"sexy": 5,
+"attack": 0.5,
+"defend": 1.7,
+"flags": 129
+},
+"old_guy": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 40,
+"temper": 10,
+"law": 40,
+"sexy": 5,
+"attack": 0.4,
+"defend": 2.5,
+"flags": 19
+},
+"tough_guy": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 30,
+"temper": 70,
+"law": 50,
+"sexy": 60,
+"attack": 1.1,
+"defend": 1.5,
+"flags": 130
+},
+"street_girl": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 55,
+"temper": 30,
+"law": 30,
+"sexy": 60,
+"attack": 0.9,
+"defend": 1.0,
+"flags": 134
+},
+"suit_girl": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 60,
+"temper": 60,
+"law": 60,
+"sexy": 30,
+"attack": 0.6,
+"defend": 1.6,
+"flags": 130
+},
+"sensible_girl": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 65,
+"temper": 30,
+"law": 70,
+"sexy": 20,
+"attack": 0.5,
+"defend": 1.1,
+"flags": 128
+},
+"geek_girl": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 80,
+"temper": 10,
+"law": 40,
+"sexy": 5,
+"attack": 0.4,
+"defend": 1.9,
+"flags": 129
+},
+"old_girl": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 80,
+"temper": 10,
+"law": 40,
+"sexy": 5,
+"attack": 0.3,
+"defend": 3.0,
+"flags": 177
+},
+"tough_girl": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 30,
+"temper": 70,
+"law": 50,
+"sexy": 60,
+"attack": 1.1,
+"defend": 1.5,
+"flags": 2
+},
+"tramp_male": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 40,
+"temper": 50,
+"law": 20,
+"sexy": 10,
+"attack": 0.9,
+"defend": 1.6,
+"flags": 18
+},
+"tramp_female": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 30,
+"temper": 30,
+"law": 20,
+"sexy": 10,
+"attack": 0.9,
+"defend": 1.6,
+"flags": 146
+},
+"tourist": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 100,
+"temper": 20,
+"law": 70,
+"sexy": 30,
+"attack": 0.8,
+"defend": 1.8,
+"flags": 132
+},
+"prostitute": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 40,
+"temper": 20,
+"law": 40,
+"sexy": 100,
+"attack": 0.7,
+"defend": 1.0,
+"flags": 2
+},
+"criminal": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 30,
+"temper": 55,
+"law": 10,
+"sexy": 60,
+"attack": 1.2,
+"defend": 1.3,
+"flags": 14
+},
+"busker": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 50,
+"temper": 20,
+"law": 40,
+"sexy": 90,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 17
+},
+"taxidriver": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 70,
+"temper": 80,
+"law": 30,
+"sexy": 30,
+"attack": 0.8,
+"defend": 1.5,
+"flags": 130
+},
+"psycho": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 0,
+"temper": 100,
+"law": 0,
+"sexy": 50,
+"attack": 1.0,
+"defend": 1.0,
+"flags": 134
+},
+"steward": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 40,
+"temper": 30,
+"law": 70,
+"sexy": 20,
+"attack": 0.7,
+"defend": 1.1,
+"flags": 128
+},
+"sportsfan": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 40,
+"temper": 50,
+"law": 70,
+"sexy": 20,
+"attack": 0.7,
+"defend": 1.1,
+"flags": 142
+},
+"shopper": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 30,
+"temper": 75,
+"law": 50,
+"sexy": 40,
+"attack": 1.5,
+"defend": 1.5,
+"flags": 170
+},
+"oldshopper": {
+"flee": 17.0,
+"turn": 7.5,
+"fear": 45,
+"temper": 65,
+"law": 70,
+"sexy": 20,
+"attack": 1.0,
+"defend": 2.5,
+"flags": 242
+}
+},
+"gta_fist": [
+{
+"move": "Null",
+"start": 0,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "null",
+"damage": 0
+},
+{
+"move": "StdPunch",
+"start": 5,
+"end": 8,
+"combo": 0,
+"radius": 0.4,
+"level": "M",
+"anim": "punchR",
+"damage": 1
+},
+{
+"move": "Idle",
+"start": 0,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "FIGHTIDLE",
+"damage": 0
+},
+{
+"move": "Shuffle_f",
+"start": 0,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "FIGHTsh_F",
+"damage": 0
+},
+{
+"move": "Knee",
+"start": 7,
+"end": 10,
+"combo": 0,
+"radius": 0.4,
+"level": "L",
+"anim": "FIGHTknee",
+"damage": 2
+},
+{
+"move": "Headbutt",
+"start": 8,
+"end": 10,
+"combo": 0,
+"radius": 0.4,
+"level": "H",
+"anim": "FIGHThead",
+"damage": 3
+},
+{
+"move": "PunchJab",
+"start": 3,
+"end": 5,
+"combo": 8,
+"radius": 0.3,
+"level": "H",
+"anim": "FIGHTLhook",
+"damage": 1
+},
+{
+"move": "PunchHook",
+"start": 4,
+"end": 6,
+"combo": 8,
+"radius": 0.3,
+"level": "H",
+"anim": "FIGHTpunch",
+"damage": 2
+},
+{
+"move": "Kick",
+"start": 5,
+"end": 9,
+"combo": 0,
+"radius": 0.4,
+"level": "M",
+"anim": "FIGHTkick",
+"damage": 2
+},
+{
+"move": "LongKick",
+"start": 8,
+"end": 11,
+"combo": 0,
+"radius": 0.4,
+"level": "M",
+"anim": "FIGHTlngkck",
+"damage": 3
+},
+{
+"move": "RoundHouse",
+"start": 8,
+"end": 12,
+"combo": 0,
+"radius": 0.4,
+"level": "M",
+"anim": "FIGHTrndhse",
+"damage": 3
+},
+{
+"move": "BodyBlow",
+"start": 7,
+"end": 10,
+"combo": 0,
+"radius": 0.3,
+"level": "L",
+"anim": "FIGHTbodyblow",
+"damage": 2
+},
+{
+"move": "GroundKick",
+"start": 8,
+"end": 11,
+"combo": 0,
+"radius": 0.4,
+"level": "G",
+"anim": "KICK_floor",
+"damage": 3
+},
+{
+"move": "HitFront",
+"start": 4,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "HIT_front",
+"damage": 0
+},
+{
+"move": "HitBack",
+"start": 4,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "HIT_back",
+"damage": 0
+},
+{
+"move": "HitRight",
+"start": 4,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "HIT_R",
+"damage": 0
+},
+{
+"move": "HitLeft",
+"start": 4,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "HIT_L",
+"damage": 0
+},
+{
+"move": "HitBody",
+"start": 4,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "HIT_bodyblow",
+"damage": 0
+},
+{
+"move": "HitChest",
+"start": 4,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "HIT_chest",
+"damage": 0
+},
+{
+"move": "HitHead",
+"start": 4,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "HIT_head",
+"damage": 0
+},
+{
+"move": "HitBigStep",
+"start": 4,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "HIT_walk",
+"damage": 0
+},
+{
+"move": "HitOnFloor",
+"start": 0,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "FLOOR_hit",
+"damage": 0
+},
+{
+"move": "HitBehind",
+"start": 4,
+"end": 0,
+"combo": 0,
+"radius": 0.0,
+"level": "N",
+"anim": "HIT_behind",
+"damage": 0
+}
+],
+"gta_weapons": [
+{
+"name": "Unarmed",
+"type": "MELEE",
+"range": 2.8,
+"rate": 750,
+"reload": 300,
+"ammo": 1000,
+"damage": 8
+},
+{
+"name": "BaseballBat",
+"type": "MELEE",
+"range": 1.5,
+"rate": 750,
+"reload": 300,
+"ammo": 1000,
+"damage": 21
+},
+{
+"name": "Colt45",
+"type": "INSTANT_HIT",
+"range": 30.0,
+"rate": 250,
+"reload": 350,
+"ammo": 12,
+"damage": 25
+},
+{
+"name": "Uzi",
+"type": "INSTANT_HIT",
+"range": 30.0,
+"rate": 250,
+"reload": 500,
+"ammo": 25,
+"damage": 20
+},
+{
+"name": "Shotgun",
+"type": "INSTANT_HIT",
+"range": 15.0,
+"rate": 250,
+"reload": 750,
+"ammo": 1000,
+"damage": 100
+},
+{
+"name": "Grenade",
+"type": "PROJECTILE",
+"range": 30.0,
+"rate": 100,
+"reload": 1,
+"ammo": 1,
+"damage": 75
+},
+{
+"name": "Molotov",
+"type": "PROJECTILE",
+"range": 25.0,
+"rate": 100,
+"reload": 1,
+"ammo": 1,
+"damage": 75
+},
+{
+"name": "RocketLauncher",
+"type": "PROJECTILE",
+"range": 15.0,
+"rate": 100,
+"reload": 1200,
+"ammo": 1,
+"damage": 75
+},
+{
+"name": "FlameThrower",
+"type": "AREA_EFFECT",
+"range": 5.1,
+"rate": 100,
+"reload": 100,
+"ammo": 500,
+"damage": 25
+},
+{
+"name": "AK47",
+"type": "INSTANT_HIT",
+"range": 75.0,
+"rate": 1,
+"reload": 1000,
+"ammo": 30,
+"damage": 19
+},
+{
+"name": "M16",
+"type": "INSTANT_HIT",
+"range": 75.0,
+"rate": 1,
+"reload": 1000,
+"ammo": 60,
+"damage": 52
+},
+{
+"name": "SniperRifle",
+"type": "INSTANT_HIT",
+"range": 100.0,
+"rate": 500,
+"reload": 1401,
+"ammo": 1,
+"damage": 125
+},
+{
+"name": "Detonator",
+"type": "PROJECTILE",
+"range": 25.0,
+"rate": 100,
+"reload": 1,
+"ammo": 1,
+"damage": 0
+}
+],
+"gta_timecycle": [
+{
+"ambient": [
+74.0,
+74.0,
+46.0
+],
+"directional": [
+100.0,
+100.0,
+105.0
+],
+"sky_top": [
+0.0,
+0.0,
+5.0
+]
+},
+{
+"ambient": [
+65.0,
+55.0,
+45.0
+],
+"directional": [
+100.0,
+100.0,
+107.0
+],
+"sky_top": [
+0.0,
+0.0,
+5.0
+]
+},
+{
+"ambient": [
+65.0,
+55.0,
+45.0
+],
+"directional": [
+100.0,
+100.0,
+107.0
+],
+"sky_top": [
+0.0,
+0.0,
+5.0
+]
+},
+{
+"ambient": [
+65.0,
+55.0,
+45.0
+],
+"directional": [
+100.0,
+100.0,
+107.0
+],
+"sky_top": [
+0.0,
+0.0,
+5.0
+]
+},
+{
+"ambient": [
+65.0,
+55.0,
+45.0
+],
+"directional": [
+100.0,
+100.0,
+107.0
+],
+"sky_top": [
+0.0,
+0.0,
+5.0
+]
+},
+{
+"ambient": [
+102.0,
+74.0,
+50.0
+],
+"directional": [
+100.0,
+100.0,
+107.0
+],
+"sky_top": [
+80.0,
+80.0,
+128.0
+]
+},
+{
+"ambient": [
+124.0,
+114.0,
+86.0
+],
+"directional": [
+180.0,
+180.0,
+187.0
+],
+"sky_top": [
+90.0,
+205.0,
+255.0
+]
+},
+{
+"ambient": [
+124.0,
+114.0,
+86.0
+],
+"directional": [
+205.0,
+255.0,
+255.0
+],
+"sky_top": [
+90.0,
+205.0,
+255.0
+]
+},
+{
+"ambient": [
+100.0,
+90.0,
+85.0
+],
+"directional": [
+205.0,
+255.0,
+255.0
+],
+"sky_top": [
+90.0,
+205.0,
+255.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+205.0,
+255.0,
+255.0
+],
+"sky_top": [
+112.0,
+213.0,
+255.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+255.0,
+255.0,
+255.0
+],
+"sky_top": [
+90.0,
+200.0,
+255.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+255.0,
+255.0,
+255.0
+],
+"sky_top": [
+90.0,
+155.0,
+255.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+255.0,
+255.0,
+255.0
+],
+"sky_top": [
+90.0,
+200.0,
+255.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+255.0,
+255.0,
+255.0
+],
+"sky_top": [
+90.0,
+155.0,
+255.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+255.0,
+255.0,
+255.0
+],
+"sky_top": [
+90.0,
+155.0,
+255.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+255.0,
+255.0,
+255.0
+],
+"sky_top": [
+90.0,
+155.0,
+255.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+255.0,
+255.0,
+255.0
+],
+"sky_top": [
+90.0,
+155.0,
+255.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+255.0,
+253.0,
+250.0
+],
+"sky_top": [
+90.0,
+155.0,
+255.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+255.0,
+255.0,
+170.0
+],
+"sky_top": [
+114.0,
+163.0,
+192.0
+]
+},
+{
+"ambient": [
+90.0,
+65.0,
+27.0
+],
+"directional": [
+215.0,
+125.0,
+147.0
+],
+"sky_top": [
+109.0,
+142.0,
+157.0
+]
+},
+{
+"ambient": [
+75.0,
+75.0,
+45.0
+],
+"directional": [
+102.0,
+102.0,
+103.0
+],
+"sky_top": [
+109.0,
+142.0,
+189.0
+]
+},
+{
+"ambient": [
+75.0,
+75.0,
+45.0
+],
+"directional": [
+102.0,
+102.0,
+103.0
+],
+"sky_top": [
+30.0,
+20.0,
+50.0
+]
+},
+{
+"ambient": [
+75.0,
+75.0,
+45.0
+],
+"directional": [
+102.0,
+102.0,
+103.0
+],
+"sky_top": [
+20.0,
+15.0,
+45.0
+]
+},
+{
+"ambient": [
+75.0,
+75.0,
+45.0
+],
+"directional": [
+102.0,
+102.0,
+103.0
+],
+"sky_top": [
+15.0,
+10.0,
+40.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+30.0
+],
+"directional": [
+200.0,
+200.0,
+210.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+30.0
+],
+"directional": [
+200.0,
+200.0,
+214.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+30.0
+],
+"directional": [
+200.0,
+200.0,
+210.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+30.0
+],
+"directional": [
+200.0,
+200.0,
+210.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+30.0
+],
+"directional": [
+200.0,
+200.0,
+210.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+30.0
+],
+"directional": [
+200.0,
+200.0,
+210.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+150.0,
+150.0,
+150.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+150.0,
+150.0,
+150.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+150.0,
+150.0,
+150.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+215.0,
+213.0,
+210.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+215.0,
+215.0,
+210.0
+],
+"sky_top": [
+170.0,
+170.0,
+170.0
+]
+},
+{
+"ambient": [
+40.0,
+50.0,
+60.0
+],
+"directional": [
+205.0,
+205.0,
+207.0
+],
+"sky_top": [
+100.0,
+100.0,
+100.0
+]
+},
+{
+"ambient": [
+40.0,
+50.0,
+60.0
+],
+"directional": [
+204.0,
+202.0,
+207.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+40.0,
+50.0,
+20.0
+],
+"directional": [
+205.0,
+202.0,
+207.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+30.0
+],
+"directional": [
+205.0,
+208.0,
+200.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+30.0
+],
+"directional": [
+205.0,
+205.0,
+200.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+17.0,
+36.0,
+48.0
+],
+"directional": [
+100.0,
+100.0,
+105.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+17.0,
+36.0,
+48.0
+],
+"directional": [
+100.0,
+100.0,
+107.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+17.0,
+36.0,
+48.0
+],
+"directional": [
+100.0,
+100.0,
+105.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+17.0,
+36.0,
+48.0
+],
+"directional": [
+100.0,
+100.0,
+105.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+17.0,
+36.0,
+48.0
+],
+"directional": [
+100.0,
+100.0,
+105.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+17.0,
+36.0,
+48.0
+],
+"directional": [
+100.0,
+100.0,
+105.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+17.0,
+36.0,
+48.0
+],
+"directional": [
+107.0,
+107.0,
+105.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+17.0,
+36.0,
+48.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+85.0,
+85.0,
+85.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+34.0,
+72.0,
+92.0
+],
+"directional": [
+197.0,
+197.0,
+195.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+66.0,
+97.0,
+122.0
+],
+"directional": [
+197.0,
+255.0,
+255.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+66.0,
+97.0,
+122.0
+],
+"directional": [
+197.0,
+255.0,
+255.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+66.0,
+97.0,
+122.0
+],
+"directional": [
+255.0,
+255.0,
+255.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+17.0,
+36.0,
+48.0
+],
+"directional": [
+102.0,
+102.0,
+100.0
+],
+"sky_top": [
+40.0,
+40.0,
+40.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+200.0,
+200.0,
+210.0
+],
+"sky_top": [
+50.0,
+50.0,
+50.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+200.0,
+200.0,
+214.0
+],
+"sky_top": [
+50.0,
+50.0,
+50.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+200.0,
+200.0,
+210.0
+],
+"sky_top": [
+50.0,
+50.0,
+50.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+200.0,
+200.0,
+210.0
+],
+"sky_top": [
+50.0,
+50.0,
+50.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+200.0,
+200.0,
+210.0
+],
+"sky_top": [
+50.0,
+50.0,
+50.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+200.0,
+200.0,
+210.0
+],
+"sky_top": [
+50.0,
+50.0,
+50.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+210.0
+],
+"sky_top": [
+50.0,
+50.0,
+50.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+210.0
+],
+"sky_top": [
+50.0,
+50.0,
+50.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+100.0,
+100.0,
+100.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+130.0,
+130.0,
+130.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+130.0,
+130.0,
+130.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+180.0,
+180.0,
+180.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+180.0,
+180.0,
+180.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+180.0,
+180.0,
+180.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+180.0,
+180.0,
+180.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+180.0,
+180.0,
+180.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+215.0
+],
+"sky_top": [
+180.0,
+180.0,
+180.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+213.0,
+210.0
+],
+"sky_top": [
+180.0,
+180.0,
+180.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+215.0,
+215.0,
+210.0
+],
+"sky_top": [
+130.0,
+130.0,
+130.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+205.0,
+205.0,
+207.0
+],
+"sky_top": [
+100.0,
+100.0,
+105.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+204.0,
+202.0,
+207.0
+],
+"sky_top": [
+100.0,
+100.0,
+105.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+205.0,
+202.0,
+207.0
+],
+"sky_top": [
+80.0,
+80.0,
+80.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+205.0,
+208.0,
+200.0
+],
+"sky_top": [
+60.0,
+60.0,
+60.0
+]
+},
+{
+"ambient": [
+40.0,
+40.0,
+40.0
+],
+"directional": [
+205.0,
+205.0,
+200.0
+],
+"sky_top": [
+50.0,
+50.0,
+50.0
+]
+}
+]
+}

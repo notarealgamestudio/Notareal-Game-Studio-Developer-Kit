@@ -1,0 +1,6 @@
+NOTAREAL GAME STUDIO (offline program)
+
+1. Put NotarealStudio.exe in its own folder (for example C:\Notareal) and double-click it.
+2. A black window opens and your browser opens the studio. No internet is needed. Keep the black window open while you work; close it to quit.
+3. If Windows says "protected your PC", click More info, then Run anyway (the program is not code-signed).
+4. Research Lab tab: type the folder that holds your ROMs and press Scan this folder. Everything is saved in the Notareal_Data folder next to the program (research_library.json and graphics_report.md). It is still there next time.

@@ -1,0 +1,1237 @@
+{
+ "source": "NOTAREAL ROM catalog (115 titles); systems from measured catalog facts",
+ "types": [
+  {
+   "id": "platformer",
+   "name": "2D platformer",
+   "family": "Action",
+   "about": "Run and jump through side-scrolling levels to reach the goal.",
+   "learns_from": [
+    "Aaahh Real Monsters",
+    "Batman Forever",
+    "Batman Returns USA",
+    "Boogerman - A Pick and Flick Adventure",
+    "Donkey Kong Country",
+    "Donkey Kong Country 2 - Diddys Kong Quest",
+    "Donkey Kong Country 3 - Dixie Kongs Double Trouble",
+    "Donkey Kong Land 2 USA Europe SGB Enhanced",
+    "Donkey Kong Land III USA Europe SGB Enhanced",
+    "Donkey Kong Land U S",
+    "Earthworm Jim",
+    "Earthworm Jim 2",
+    "Jurassic Park - Lost World The U S",
+    "Kirbys Block Ball U S",
+    "Kirbys Dream Land 2 U S",
+    "Pac-in-Time",
+    "Rayman DS E Trashman",
+    "Super Mario Bros. 2 (USA) (Rev 1).nes",
+    "Super Mario World USA",
+    "Tiny Toon Adventures - Buster Saves the Day U C",
+    "Wario Land II U Cf2"
+   ],
+   "systems": [
+    "Run, P-speed and acceleration",
+    "Speed-dependent jump height",
+    "Variable gravity (hold to jump higher)"
+   ],
+   "engine": "side2d",
+   "status": "ready",
+   "touch_layout": "stats",
+   "music": "chip_adventure",
+   "art": "classic",
+   "controls": "D-pad move, B jump, Y run",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "puzzle_platformer",
+   "name": "Puzzle platformer",
+   "family": "Action",
+   "about": "Short single-screen stages where the route is the puzzle: keys, switches, careful jumps.",
+   "learns_from": [
+    "Donkey Kong JU V1.1 S"
+   ],
+   "systems": [],
+   "engine": "side2d",
+   "status": "ready",
+   "touch_layout": "quickbar",
+   "music": "vapor_rain",
+   "art": "blocky",
+   "controls": "D-pad move, B jump, retry button on the touch screen",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "runner",
+   "name": "Auto-runner / speedrun",
+   "family": "Action",
+   "about": "The hero always runs; timing the jumps is everything.",
+   "learns_from": [
+    "F-Zero",
+    "Super Mario World USA"
+   ],
+   "systems": [
+    "Run, P-speed and acceleration",
+    "Speed-dependent jump height",
+    "Variable gravity (hold to jump higher)"
+   ],
+   "engine": "side2d",
+   "status": "ready",
+   "touch_layout": "controller",
+   "music": "metal_thrash",
+   "art": "cute",
+   "controls": "Tap jump; auto-run on",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ],
+   "preset_physics": "snappy"
+  },
+  {
+   "id": "collectathon2d",
+   "name": "Collect-a-thon 2D",
+   "family": "Action",
+   "about": "Big levels full of coins and secrets to find; the map screen helps.",
+   "learns_from": [
+    "Donkey Kong 64  USA",
+    "Donkey Kong Country",
+    "Donkey Kong Country 2 - Diddys Kong Quest",
+    "Donkey Kong Country 3 - Dixie Kongs Double Trouble",
+    "Wario Land II U Cf2"
+   ],
+   "systems": [],
+   "engine": "side2d",
+   "status": "ready",
+   "touch_layout": "mapscreen",
+   "music": "world_caribbean",
+   "art": "cute",
+   "controls": "D-pad, B jump, map on the touch screen",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "kids_first",
+   "name": "First game (for kids)",
+   "family": "Action",
+   "about": "Gentle levels, lots of lives, big touch buttons, no hard jumps.",
+   "learns_from": [
+    "Kirbys Block Ball U S",
+    "Kirbys Dream Land 2 U S",
+    "Pac-Man 2 - The New Adventures"
+   ],
+   "systems": [],
+   "engine": "side2d",
+   "status": "ready",
+   "touch_layout": "command",
+   "music": "chip_adventure",
+   "art": "cute",
+   "controls": "Touch: one big JUMP button; auto-run",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ],
+   "preset_physics": "floaty"
+  },
+  {
+   "id": "platformer_3d",
+   "name": "3D platformer",
+   "family": "Action",
+   "about": "Explore 3D worlds, jump between platforms, collect items.",
+   "learns_from": [
+    "Bomberman 64 (USA)",
+    "Donkey Kong 64  USA",
+    "Donkey Kong 64 (USA)",
+    "Mario Kart 64 USA"
+   ],
+   "systems": [],
+   "engine": "plat3d",
+   "status": "blueprint",
+   "touch_layout": "mapscreen",
+   "music": "orchestral_epic",
+   "art": "realistic",
+   "controls": "D-pad/stick move, B jump, camera on L/R",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "sidescroller_3d",
+   "name": "3D side-scroller (2.5D)",
+   "family": "Action",
+   "about": "3D graphics on a 2D path, like modern side-scrollers.",
+   "learns_from": [
+    "Donkey Kong Country",
+    "Donkey Kong Country 2 - Diddys Kong Quest",
+    "Donkey Kong Country 3 - Dixie Kongs Double Trouble",
+    "Pac-in-Time",
+    "Rayman DS (E)(Trashman)"
+   ],
+   "systems": [],
+   "engine": "plat3d",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "orchestral_epic",
+   "art": "realistic",
+   "controls": "D-pad move, B jump",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "action_adventure",
+   "name": "Action adventure (top-down)",
+   "family": "Adventure",
+   "about": "Explore an overworld and dungeons from above, swing a weapon, find items that open new paths.",
+   "learns_from": [
+    "Final Fantasy Adventure USA",
+    "Gex 64 - Enter the Gecko (USA)",
+    "Legend of Zelda The - Links Awakening DX U V1.2 C",
+    "Legend of Zelda The - Oracle of Ages USA Australia",
+    "Legend of Zelda The - Oracle of Seasons U C",
+    "Snake's Revenge (USA).nes"
+   ],
+   "systems": [
+    "32-direction movement (angle + speed)",
+    "Deterministic RNG",
+    "Enemy aims at the player",
+    "Gridless vs grid object movement",
+    "Knockback timer + damage flash",
+    "Momentum on ice / underwater",
+    "Side-view section physics",
+    "Top-down jump with a height axis",
+    "Weighted random tables (drops)"
+   ],
+   "engine": "topdown",
+   "status": "blueprint",
+   "touch_layout": "quickbar",
+   "music": "world_celtic",
+   "art": "classic",
+   "controls": "D-pad walk, A attack, B item, touch: map + items",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "monster_rpg",
+   "name": "Monster-collecting RPG",
+   "family": "RPG",
+   "about": "Catch creatures, train a team, battle with a command menu on the bottom screen.",
+   "learns_from": [
+    "0476 - Robopon 2 - Cross Version (U)",
+    "POKEMON PL",
+    "Pokemon - Blue Version USA Europe SGB Enhanced",
+    "Pokemon - Green Version USA Europe SGB Enhanced T-En by Skeetendo Inc. v2.5 n",
+    "Pokemon Red",
+    "Robopon - Sun Version U C"
+   ],
+   "systems": [
+    "Overworld grid walking"
+   ],
+   "engine": "rpg",
+   "status": "blueprint",
+   "touch_layout": "command",
+   "music": "world_japan",
+   "art": "cute",
+   "controls": "D-pad walk, A talk; battles on big touch commands",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "jrpg",
+   "name": "Party RPG (turn-based)",
+   "family": "RPG",
+   "about": "A party of heroes, towns, dungeons and turn-based battles.",
+   "learns_from": [
+    "Final Fantasy Adventure USA",
+    "Final Fantasy IV (USA) (En,Fr,Es)",
+    "Final Fantasy Legend II U",
+    "Final Fantasy Legend III U",
+    "Final Fantasy Legend The U",
+    "Shin Megami Tensei - Devil Survivor 2 USA",
+    "Shin Megami Tensei - Devil Survivor USA",
+    "Shin Megami Tensei - Strange Journey USA",
+    "Super Mario RPG - Legend of the Seven Stars"
+   ],
+   "systems": [
+    "Gridless vs grid object movement"
+   ],
+   "engine": "rpg",
+   "status": "blueprint",
+   "touch_layout": "command",
+   "music": "orchestral_epic",
+   "art": "classic",
+   "controls": "D-pad walk, A confirm, B cancel, touch menus",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "rpg_linear",
+   "name": "3D RPG linear quest",
+   "family": "RPG",
+   "about": "A story-driven 3D quest through a set path of areas and boss fights.",
+   "learns_from": [
+    "Final Fantasy Tactics A2 - Grimoire of the Rift (USA) (En,Fr,Es)",
+    "Indiana Jones and the Infernal Machine  USA",
+    "Legend of Zelda, The - Ocarina of Time - Master Quest (E) [!]",
+    "Morrowind.esm + Tribunal.esm",
+    "Super Mario RPG - Legend of the Seven Stars",
+    "Yoshi's Story (USA) (En,Ja)"
+   ],
+   "systems": [],
+   "engine": "rpg3d",
+   "status": "blueprint",
+   "touch_layout": "command",
+   "music": "orchestral_epic",
+   "art": "realistic",
+   "controls": "Stick move, A act, touch command menu",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "open_world_2d",
+   "name": "2D open world / RPG",
+   "family": "RPG",
+   "about": "A big map to roam freely with towns, side quests and secrets.",
+   "learns_from": [
+    "0776 - Legend of Zelda, The - A Link to the Past & Four Swords (UA)",
+    "Final Fantasy Legend II U",
+    "Final Fantasy Legend III U",
+    "Final Fantasy Legend The U",
+    "Harvest Moon DS - The Tale of Two Towns (USA)",
+    "Legend of Zelda The - Links Awakening DX U V1.2 C",
+    "Legend of Zelda The - Oracle of Ages USA Australia",
+    "Legend of Zelda The - Oracle of Seasons U C",
+    "POKEMON PL",
+    "Pokemon - Blue Version USA Europe SGB Enhanced",
+    "Pokemon - Green Version USA Europe SGB Enhanced T-En by Skeetendo Inc. v2.5 n",
+    "Pokemon Red",
+    "goodwill",
+    "super-moonlight-holler (3)"
+   ],
+   "systems": [
+    "32-direction movement (angle + speed)",
+    "Deterministic RNG",
+    "Enemy aims at the player",
+    "Knockback timer + damage flash",
+    "Momentum on ice / underwater",
+    "Overworld grid walking",
+    "Side-view section physics",
+    "Top-down jump with a height axis",
+    "Weighted random tables (drops)"
+   ],
+   "engine": "topdown",
+   "status": "blueprint",
+   "touch_layout": "mapscreen",
+   "music": "world_andes",
+   "art": "classic",
+   "controls": "D-pad walk, A talk, touch map",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "open_world_3d",
+   "name": "3D open world / life sim",
+   "family": "Simulation",
+   "about": "A living 3D town to explore: jobs, friends, daily routines.",
+   "learns_from": [
+    "Harvest Moon 64 USA",
+    "Star Wars - Shadows of the Empire (U) (V1.2) [!]",
+    "THE URBZ DS",
+    "Urbz The - Sims in the City USA"
+   ],
+   "systems": [
+    "Open-world social sim"
+   ],
+   "engine": "world3d",
+   "status": "blueprint",
+   "touch_layout": "mapscreen",
+   "music": "vapor_mall",
+   "art": "realistic",
+   "controls": "Stick move, A interact, touch map + phone",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "farm_sim",
+   "name": "Farm / life sim",
+   "family": "Simulation",
+   "about": "Plant, harvest, raise animals and grow your farm through the seasons.",
+   "learns_from": [
+    "Harvest Moon - Friends of Mineral Town (USA)",
+    "Harvest Moon 64 USA",
+    "Harvest Moon DS (USA) (Rev 1)",
+    "THE URBZ DS",
+    "Urbz The - Sims in the City USA"
+   ],
+   "systems": [
+    "Open-world social sim"
+   ],
+   "engine": "topdown",
+   "status": "blueprint",
+   "touch_layout": "quickbar",
+   "music": "world_mexico",
+   "art": "cute",
+   "controls": "D-pad walk, A use tool, touch tool belt",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "city_builder",
+   "name": "City builder",
+   "family": "Simulation",
+   "about": "Zone land, build roads and power, keep the citizens happy.",
+   "learns_from": [
+    "SimCity 2000",
+    "Utopia - The Creation of a Nation USA"
+   ],
+   "systems": [],
+   "engine": "sim",
+   "status": "blueprint",
+   "touch_layout": "quickbar",
+   "music": "vapor_sunset",
+   "art": "blocky",
+   "controls": "Stylus places buildings; D-pad scrolls",
+   "consoles": [
+    "ds",
+    "snes"
+   ]
+  },
+  {
+   "id": "god_sim",
+   "name": "Planet / god sim",
+   "family": "Simulation",
+   "about": "Shape a whole world: climate, life and civilisation.",
+   "learns_from": [
+    "Harvest Moon 64 (USA)",
+    "SimEarth - The Living Planet"
+   ],
+   "systems": [],
+   "engine": "sim",
+   "status": "blueprint",
+   "touch_layout": "mapscreen",
+   "music": "cloud_static",
+   "art": "realistic",
+   "controls": "Stylus tools, map on the touch screen",
+   "consoles": [
+    "ds",
+    "snes"
+   ]
+  },
+  {
+   "id": "fighting",
+   "name": "1-on-1 fighting",
+   "family": "Fighting",
+   "about": "Two fighters, special moves from button combos, rounds and a timer.",
+   "learns_from": [
+    "Battle Arena Toshinden U S",
+    "Mortal Kombat",
+    "Mortal Kombat 3",
+    "Mortal Kombat I II U",
+    "Mortal Kombat II",
+    "Street Fighter Alpha 2",
+    "Street Fighter II Turbo - Hyper Fighting",
+    "Super Smash Bros. (USA)"
+   ],
+   "systems": [],
+   "engine": "fight",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "metal_gallop",
+   "art": "realistic",
+   "controls": "D-pad + 4 attack buttons, touch specials",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "wrestling",
+   "name": "Wrestling",
+   "family": "Fighting",
+   "about": "Grapples, strikes, reversals, pins and submissions in the ring; create-a-wrestler with face wraps.",
+   "learns_from": [
+    "ECW Hardcore Revolution U C",
+    "Power Move Pro Wrestling  USA",
+    "SMACKDOWN 09",
+    "SMACKDOWN 10",
+    "TNAIMPACTCRL",
+    "WCW - The Main Event USA Europe",
+    "WCW Mayhem U C",
+    "WCW Super Brawl Wrestling USA",
+    "WCW vs  The World",
+    "WWESMACKDOWN",
+    "WWF Attitude U Cf1",
+    "WWF Betrayal U C",
+    "WWF King of the Ring U",
+    "WWF No Mercy (E) (V1.1) [!]",
+    "WWF Raw USA",
+    "WWF Royal Rumble USA",
+    "WWF Superstars 2 USA Europe",
+    "WWF Superstars USA Europe",
+    "WWF WrestleMania - The Arcade Game USA",
+    "WWF WrestleMania 2000 U C"
+   ],
+   "systems": [
+    "Create-a-Superstar parts",
+    "Match types across the wrestling library",
+    "Per-wrestler story graph",
+    "Season/backstage story engine",
+    "Shared skeleton body proportions",
+    "SvR 2010 move library",
+    "Wrestling skeleton + move timing"
+   ],
+   "engine": "wrestle",
+   "status": "blueprint",
+   "touch_layout": "command",
+   "music": "metal_doom",
+   "art": "realistic",
+   "controls": "D-pad move, B strike, A grapple, R run, touch finishers",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "beat_em_up",
+   "name": "Beat-em-up",
+   "family": "Fighting",
+   "about": "Walk right and fight waves of enemies with combos and throws.",
+   "learns_from": [
+    "Alien vs. Predator",
+    "Vigilante 8 U C"
+   ],
+   "systems": [],
+   "engine": "brawler",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "metal_thrash",
+   "art": "classic",
+   "controls": "D-pad move, B attack, A jump",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "shooter_fps",
+   "name": "First-person shooter",
+   "family": "Shooter",
+   "about": "Explore levels in first person and complete missions.",
+   "learns_from": [
+    "Call of Duty - Black Ops USA",
+    "Call of Duty - Modern Warfare 3 - Defiance USA",
+    "Call of Duty - World at War U Venom",
+    "GoldenEye 007 USA",
+    "Harvest Moon 64 USA",
+    "Hexen USA",
+    "Moon USA"
+   ],
+   "systems": [],
+   "engine": "fps",
+   "status": "blueprint",
+   "touch_layout": "quickbar",
+   "music": "cloud_purple",
+   "art": "realistic",
+   "controls": "D-pad move, stylus aim, L fire",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "shooter_tps",
+   "name": "Third-person shooter / war game",
+   "family": "Shooter",
+   "about": "Squad up, take cover and push across the battlefield.",
+   "learns_from": [
+    "Call of Duty - Black Ops USA",
+    "Call of Duty - Modern Warfare 3 - Defiance USA",
+    "Call of Duty - World at War U Venom",
+    "GoldenEye 007 USA",
+    "Tom Clancy s Splinter Cell - Chaos Theory E Lube",
+    "Vigilante 8 U C"
+   ],
+   "systems": [],
+   "engine": "fps",
+   "status": "blueprint",
+   "touch_layout": "mapscreen",
+   "music": "metal_doom",
+   "art": "realistic",
+   "controls": "Stick move, R aim, L fire, touch squad map",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "rail_shooter",
+   "name": "3D rail shooter",
+   "family": "Shooter",
+   "about": "Fly through space on a set path, shoot everything, dodge.",
+   "learns_from": [
+    "Star Fox",
+    "Star Fox 2 Early Beta"
+   ],
+   "systems": [],
+   "engine": "rail3d",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "orchestral_epic",
+   "art": "realistic",
+   "controls": "D-pad steer, B fire, A bomb",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "shmup",
+   "name": "Shoot-em-up (2D)",
+   "family": "Shooter",
+   "about": "A ship, endless bullets, power-ups and big bosses.",
+   "learns_from": [
+    "Gradius (USA).nes",
+    "Star Fox",
+    "Star Fox 2 Early Beta"
+   ],
+   "systems": [],
+   "engine": "shmup",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "metal_thrash",
+   "art": "blocky",
+   "controls": "D-pad fly, B fire",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "vehicle_combat",
+   "name": "Vehicle combat",
+   "family": "Racing",
+   "about": "Armed cars in an arena; last one driving wins.",
+   "learns_from": [
+    "Vigilante 8 U C"
+   ],
+   "systems": [],
+   "engine": "race3d",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "metal_gallop",
+   "art": "realistic",
+   "controls": "D-pad steer, A gas, B fire",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "racing",
+   "name": "Racing",
+   "family": "Racing",
+   "about": "Laps, opponents, boosts and a finish line.",
+   "learns_from": [
+    "Asphalt - Urban GT (U)(Wario)",
+    "Cruis'n USA (USA) (Rev 2)",
+    "Cruis'n World (USA)",
+    "Cruisn Exotica U C",
+    "Dukes of Hazzard The - Racing for Home U C",
+    "F-Zero",
+    "Mario Kart 64 USA",
+    "Need For Speed - Underground 2 (E)(Brassteroid Team)",
+    "RR64 - Ridge Racer 64 (USA)"
+   ],
+   "systems": [],
+   "engine": "race3d",
+   "status": "blueprint",
+   "touch_layout": "mapscreen",
+   "music": "vapor_sunset",
+   "art": "realistic",
+   "controls": "A gas, B brake, R drift, touch track map",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "kart_racing",
+   "name": "Kart racing",
+   "family": "Racing",
+   "about": "Cute karts, items to throw, shortcuts and battle mode.",
+   "learns_from": [
+    "Diddy Kong Racing (USA) (En,Fr) (Rev 1)",
+    "Mario Kart 64 USA"
+   ],
+   "systems": [],
+   "engine": "race3d",
+   "status": "blueprint",
+   "touch_layout": "mapscreen",
+   "music": "world_brazil",
+   "art": "cute",
+   "controls": "A gas, R hop/drift, L item",
+   "consoles": [
+    "ds",
+    "snes",
+    "n64"
+   ]
+  },
+  {
+   "id": "trick_sports",
+   "name": "Skate / BMX / snowboard tricks",
+   "family": "Sports",
+   "about": "Big parks, combos of tricks, grinds and a score attack timer.",
+   "learns_from": [
+    "1080 Snowboarding (Japan, USA) (En,Ja)",
+    "1693 - Tony Hawks Underground 2 UE",
+    "Cool Boarders 4 (NTSC-U) (SCUS-94559)",
+    "Dave Mirra Freestyle BMX  USA   Rev 1",
+    "Excitebike 64 (USA) (Rev 1)",
+    "THUG2 (GBA)",
+    "TONY HAWK 3 (GBA)",
+    "Tony Hawks Pro Skater 2 U C",
+    "Tony Hawks Pro Skater 3 U C",
+    "Tony Hawks Pro Skater U C",
+    "Wipeout 64 (USA)",
+    "thug2"
+   ],
+   "systems": [
+    "Level goals and score tiers",
+    "NPC goal-givers in levels",
+    "Skate trick + combo system"
+   ],
+   "engine": "trick3d",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "cloud_screw",
+   "art": "realistic",
+   "controls": "D-pad + A ollie, B grab, R spin",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "basketball",
+   "name": "Arcade basketball",
+   "family": "Sports",
+   "about": "2-on-2 dunks, turbo, on-fire streaks.",
+   "learns_from": [
+    "NBA Hang Time",
+    "NBA Hangtime (USA)",
+    "NBA Jam",
+    "NBA Jam Tournament Edition",
+    "NBA Live 98",
+    "NCAA Basketball",
+    "NCAA Final Four Basketball"
+   ],
+   "systems": [
+    "Created player stat growth"
+   ],
+   "engine": "sports",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "cloud_purple",
+   "art": "realistic",
+   "controls": "A shoot, B pass, R turbo",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "baseball",
+   "name": "Baseball",
+   "family": "Sports",
+   "about": "Pitch, bat and field through 9 innings.",
+   "learns_from": [
+    "All-Star Baseball 99 U"
+   ],
+   "systems": [],
+   "engine": "sports",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "world_latin",
+   "art": "classic",
+   "controls": "A swing/pitch, D-pad aim",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "puzzle_falling",
+   "name": "Falling-block puzzle",
+   "family": "Puzzle",
+   "about": "Pieces fall; match or clear lines before the board fills.",
+   "learns_from": [
+    "1640 - Tetris Worlds (E) (M3)",
+    "Magical Tetris Challenge (USA)",
+    "Pac-Attack"
+   ],
+   "systems": [],
+   "engine": "puzzle",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "vapor_mall",
+   "art": "cute",
+   "controls": "D-pad move, A rotate",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "breakout",
+   "name": "Ball-and-paddle arcade",
+   "family": "Puzzle",
+   "about": "Bounce a ball to break every block on the screen.",
+   "learns_from": [
+    "Kirbys Block Ball U S",
+    "Metroid Prime Pinball (U)(Mode 7)"
+   ],
+   "systems": [],
+   "engine": "puzzle",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "chip_adventure",
+   "art": "blocky",
+   "controls": "D-pad or stylus moves the paddle",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "memory_puzzle",
+   "name": "Puzzle / memory",
+   "family": "Puzzle",
+   "about": "Flip cards, match pairs, remember patterns; perfect for touch.",
+   "learns_from": [
+    "Beavis and Butthead U",
+    "Pac Man World 3 (E)(Independent)",
+    "Pac-Attack",
+    "Pokemon Puzzle League (USA)"
+   ],
+   "systems": [],
+   "engine": "puzzle",
+   "status": "blueprint",
+   "touch_layout": "controller",
+   "music": "world_indonesia",
+   "art": "cute",
+   "controls": "Stylus taps cards",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "minigames",
+   "name": "Minigame collection",
+   "family": "Party",
+   "about": "Lots of tiny games in one cartridge, like a party pack.",
+   "learns_from": [
+    "1687 - Nicktoon's Collection - Volume 2 (U) (Video)",
+    "Animaniacs - Lights, Camera, Action! (E)(Trashman)",
+    "Beavis and Butthead U",
+    "Mario Party 3 (USA)",
+    "Monopoly (USA)",
+    "Super Dodgeball Brawlers (USA)",
+    "YoutubeDS"
+   ],
+   "systems": [],
+   "engine": "puzzle",
+   "status": "blueprint",
+   "touch_layout": "command",
+   "music": "world_balkan",
+   "art": "cute",
+   "controls": "Different per minigame; touch menus",
+   "consoles": [
+    "ds",
+    "snes",
+    "psx"
+   ]
+  },
+  {
+   "id": "music_maker",
+   "name": "Music maker (Memphis Sigil)",
+   "family": "Creative",
+   "about": "A pocket DS music workstation: 8-row drum machine, 16-step sequencer, 5 patterns + song chain, 808 bass and 12 original sounds. Grooves from the KORG M01, drum tuning from the Korg DS-10.",
+   "learns_from": [
+    "Bust-A-Move '99 (USA)",
+    "DS-10",
+    "KORG M01",
+    "Korg DS-10 Synthesizer USA"
+   ],
+   "systems": [
+    "Groove sequencer + analog synth",
+    "Sampled workstation (M1 sounds)",
+    "Korg DS-10 patch bank (24 patches), KORG M01 drum-pattern bank (36 grooves)"
+   ],
+   "engine": "music",
+   "status": "ready",
+   "touch_layout": "controller",
+   "music": "cloud_static",
+   "art": "realistic",
+   "controls": "Stylus on the step grid and pads; X play, Y record, L/R pattern, Up/Down tempo",
+   "consoles": [
+    "ds"
+   ]
+  },
+  {
+   "id": "adventure_explore",
+   "name": "3D open adventure",
+   "family": "Adventure",
+   "about": "Tombs, traps, climbing and puzzles in big 3D spaces.",
+   "learns_from": [
+    "Animal Crossing - Wild World (USA) (Rev 1)",
+    "Donkey Kong 64  USA",
+    "Goemon's Great Adventure (USA)",
+    "GoldenEye 007 (USA)",
+    "Indiana Jones and the Infernal Machine  USA",
+    "Tomb Raider II - Starring Lara Croft  USA   Rev 3"
+   ],
+   "systems": [],
+   "engine": "plat3d",
+   "status": "blueprint",
+   "touch_layout": "mapscreen",
+   "music": "world_mideast",
+   "art": "realistic",
+   "controls": "Stick move, A jump, B action, touch inventory",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "survival_rpg",
+   "name": "Survival action RPG (post-apocalyptic)",
+   "family": "RPG",
+   "about": "Post-apocalyptic Appalachian action RPG: survive alien-virus infected, scavenge, join factions, rebuild settlements and a government, then the Robot War. 30-50 compact connected maps.",
+   "learns_from": [
+    "Adventure Time - Hey Ice King! Why'd You Steal Our Garbage!! (USA)",
+    "Aliens - Infestation (USA) (En,Fr,De)",
+    "Final Fantasy Adventure USA",
+    "Legend of Zelda The - Links Awakening DX U V1.2 C",
+    "Legend of Zelda The - Oracle of Ages USA Australia",
+    "Legend of Zelda The - Oracle of Seasons U C",
+    "Shin Megami Tensei - Devil Survivor 2 USA",
+    "Shin Megami Tensei - Devil Survivor USA",
+    "Shin Megami Tensei - Strange Journey USA",
+    "SimCity 2000",
+    "THE URBZ DS",
+    "Urbz The - Sims in the City USA"
+   ],
+   "systems": [
+    "32-direction movement (angle + speed)",
+    "Deterministic RNG",
+    "Enemy aims at the player",
+    "Gridless vs grid object movement",
+    "Knockback timer + damage flash",
+    "Momentum on ice / underwater",
+    "Open-world social sim",
+    "Side-view section physics",
+    "Top-down jump with a height axis",
+    "Weighted random tables (drops)"
+   ],
+   "engine": "topdown",
+   "status": "blueprint",
+   "touch_layout": "command",
+   "music": "metal_doom",
+   "art": "realistic",
+   "controls": "D-pad move, A attack/talk, B item, touch: map, inventory, settlement menu",
+   "consoles": [
+    "ds"
+   ],
+   "design_doc": "Berea_After_the_Fall_Claude_Developer_Handoff.docx",
+   "systems_needed": [
+    "SPECIAL stats + 12 skills",
+    "reputation + factions",
+    "dialogue trees",
+    "settlement building + supply routes",
+    "map transitions",
+    "final human/cyborg choice"
+   ]
+  },
+  {
+   "id": "crafting_sim",
+   "name": "Crafting / jewelry life sim",
+   "family": "Simulation",
+   "about": "Cozy town life sim: make jewelry on the touch screen, befriend social circles, take commissions, grow a jewelry business.",
+   "learns_from": [
+    "Bee Movie Game (USA)",
+    "Cars (U)(Legacy)",
+    "Diner Dash - Sizzle & Serve (USA) (En,Fr,De,Es,It) (Rev 1) (1)",
+    "Freshly Picked - Tingle's Rosy Rupeeland (E)(FireX)",
+    "Harvest Moon 64 USA",
+    "POKEMON PL",
+    "Pokemon - Blue Version USA Europe SGB Enhanced",
+    "Pokemon - Green Version USA Europe SGB Enhanced T-En by Skeetendo Inc. v2.5 n",
+    "Pokemon Red",
+    "THE URBZ DS",
+    "Trauma Center - Under the Knife 2 (USA)",
+    "Urbz The - Sims in the City USA"
+   ],
+   "systems": [
+    "Open-world social sim",
+    "Overworld grid walking"
+   ],
+   "engine": "world3d",
+   "status": "blueprint",
+   "touch_layout": "command",
+   "music": "vapor_mall",
+   "art": "cute",
+   "controls": "D-pad walk, A talk; jewelry design on the touch screen",
+   "consoles": [
+    "ds"
+   ],
+   "design_doc": "Friendship_Bracelets_Claude_Developer_Handoff.docx",
+   "systems_needed": [
+    "touch bead/thread designer",
+    "NPC schedules + friendship",
+    "shops with rotating stock",
+    "commissions + reputation",
+    "save designs"
+   ]
+  },
+  {
+   "id": "coloring_book",
+   "name": "Coloring book (touch art)",
+   "family": "Creative",
+   "about": "Color cute line art (floral patterns, guinea pigs, rabbits, cats, ferrets, turtles, frogs, foods) with marker, paintbrush, pen and glitter pen in many colours; save designs in your notebook.",
+   "learns_from": [
+    "0021 - Project Rub (E)(GBXR)",
+    "DS-10",
+    "Korg DS-10 Synthesizer USA",
+    "POKEMON PL",
+    "Pokemon - Blue Version USA Europe SGB Enhanced",
+    "Pokemon - Green Version USA Europe SGB Enhanced T-En by Skeetendo Inc. v2.5 n",
+    "Pokemon Red",
+    "Yoshi Touch & Go (USA, Australia)"
+   ],
+   "systems": [
+    "Groove sequencer + analog synth",
+    "Overworld grid walking"
+   ],
+   "engine": "paint",
+   "status": "blueprint",
+   "touch_layout": "controller",
+   "music": "vapor_sunset",
+   "art": "cute",
+   "controls": "Stylus draws/fills; touch tool and colour palette; L/R undo/redo",
+   "consoles": [
+    "ds"
+   ],
+   "systems_needed": [
+    "flood fill + brush tools",
+    "glitter shimmer palette cycling",
+    "notebook save slots",
+    "page picker"
+   ]
+  },
+  {
+   "id": "military_shooter",
+   "name": "Military shooter (story missions + zombie mode)",
+   "family": "Shooter",
+   "about": "Story campaign of modern-warfare missions: drones, microwave and sound weapons, psyops; weapon racks and in-mission choices on the bottom screen; mission map on the touch screen where you drop a flare to mark a spot; unlockable mission modes and a zombie survival mode.",
+   "learns_from": [
+    "Advance Wars - Dual Strike (USA, Australia)",
+    "Assassin's Creed II - Discovery (USA) (En,Fr,Es) (NDSi Enhanced)",
+    "Call of Duty - Black Ops (USA)",
+    "Call of Duty - Black Ops USA",
+    "Call of Duty - Modern Warfare 3 - Defiance (USA)",
+    "Call of Duty - Modern Warfare 3 - Defiance USA",
+    "Call of Duty - World at War U Venom",
+    "GoldenEye 007 USA",
+    "Harvest Moon 64 USA",
+    "Hexen USA",
+    "Moon USA",
+    "Tom Clancy s Splinter Cell - Chaos Theory E Lube",
+    "Vigilante 8 U C",
+    "hounds_reloaded"
+   ],
+   "systems": [],
+   "engine": "fps",
+   "status": "blueprint",
+   "touch_layout": "mapscreen",
+   "music": "metal_doom",
+   "art": "realistic",
+   "controls": "D-pad move, stylus aim, L fire; touch weapon rack + map flare",
+   "consoles": [
+    "ds"
+   ],
+   "systems_needed": [
+    "first-person raycast/3D engine",
+    "weapon rack + loadouts",
+    "touch map with flare marker",
+    "mission unlocks",
+    "zombie waves",
+    "drone support calls"
+   ]
+  },
+  {
+   "id": "job_sim",
+   "name": "Job sim (convenience store, 3D)",
+   "family": "Simulation",
+   "about": "Run a shift in a real 3D store: ring up customers and count change, stock shelves from the back room, mop spills, stop shoplifters and survive a late-night robbery. GTA-style third-person controls, radar and HUD; customers have moods and idle animations (foot tapping, checking a watch).",
+   "learns_from": [
+    "Grand Theft Auto III (USA)",
+    "Convenience Store (Game Boy)"
+   ],
+   "controls": "Up/Down walk, Left/Right turn, hold C sprint, Z action, X shout / tackle",
+   "systems": [
+    "Register and change counting",
+    "Shelf stocking from a back room",
+    "Shoplifters and a late robbery",
+    "Customer moods and idle animations",
+    "Reputation and shift profit"
+   ],
+   "engine": "arcade3d",
+   "status": "built",
+   "touch_layout": "command",
+   "music": "vapor_mall",
+   "art": "cute",
+   "consoles": [
+    "pc",
+    "xbox"
+   ],
+   "design_doc": "GTA III layout and controls, GTA pedestrian stats; see presets/gta_tables.json",
+   "systems_needed": [
+    "3D renderer",
+    "Animation library",
+    "Nav mesh"
+   ]
+  },
+  {
+   "id": "snowboarding",
+   "name": "Snowboarding tricks",
+   "family": "Sports",
+   "about": "Big Air, Half Pipe and Slope Style: grabs, spins, rails and combos on the mountain.",
+   "learns_from": [
+    "Cool Boarders 4 (NTSC-U) (SCUS-94559)",
+    "1080 Snowboarding (Japan, USA) (En,Ja)",
+    "1080 Snowboarding (Japan, USA) (En,Ja)",
+    "1693 - Tony Hawks Underground 2 UE",
+    "Cool Boarders 4 (NTSC-U) (SCUS-94559)"
+   ],
+   "systems": [
+    "Level goals and score tiers",
+    "NPC goal-givers in levels",
+    "Skate trick + combo system"
+   ],
+   "engine": "trick3d",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "cloud_screw",
+   "art": "realistic",
+   "controls": "D-pad + A ollie, B grab, R spin",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  },
+  {
+   "id": "bmx",
+   "name": "BMX freestyle",
+   "family": "Sports",
+   "about": "Street, Dirt and Vert: peg grinds, bar tricks, manuals and combos on a bike.",
+   "learns_from": [
+    "Dave Mirra Freestyle BMX  USA   Rev 1",
+    "Excitebike 64 (USA) (Rev 1)",
+    "1080 Snowboarding (Japan, USA) (En,Ja)",
+    "1693 - Tony Hawks Underground 2 UE",
+    "Cool Boarders 4 (NTSC-U) (SCUS-94559)"
+   ],
+   "systems": [
+    "Level goals and score tiers",
+    "NPC goal-givers in levels",
+    "Skate trick + combo system"
+   ],
+   "engine": "trick3d",
+   "status": "blueprint",
+   "touch_layout": "stats",
+   "music": "cloud_screw",
+   "art": "realistic",
+   "controls": "D-pad + A ollie, B grab, R spin",
+   "consoles": [
+    "ds",
+    "psx",
+    "n64"
+   ]
+  }
+ ],
+ "splitter": {
+  "about": "Game type splitter: combine two types in one game. Each level/area picks which type it plays as (e.g. platformer stages + top-down overworld, or an RPG with racing missions). The project keeps one cast, one art style and one soundtrack across both.",
+  "pairs_ready": [
+   [
+    "platformer",
+    "runner"
+   ],
+   [
+    "platformer",
+    "kids_first"
+   ],
+   [
+    "platformer",
+    "puzzle_platformer"
+   ],
+   [
+    "collectathon2d",
+    "runner"
+   ]
+  ]
+ }
+}

@@ -1,0 +1,34 @@
+[
+ [
+  "title screen shows",
+  true
+ ],
+ [
+  "music plays on the SPC700",
+  true
+ ],
+ [
+  "stomping an enemy scores 100",
+  true,
+  "score 100"
+ ],
+ [
+  "bot moves right through the level",
+  true,
+  "130 -> 919 px"
+ ],
+ [
+  "no lives lost on the test level",
+  true,
+  "lives 6"
+ ],
+ [
+  "stomp + coins + heart + goal score (>= 1100)",
+  true,
+  "score 1170"
+ ],
+ [
+  "bot reaches the goal pole",
+  true
+ ]
+]

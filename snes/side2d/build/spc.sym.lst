@@ -1,0 +1,843 @@
+000200 audio.inc:2  AUDIO_DATA_BASE = $0800
+000200 audio.inc:3  AUDIO_DIR_PAGE = $08
+000200 audio.inc:4  AUDIO_PITCH = $0900
+000200 audio.inc:5  AUDIO_INST = $09A8
+000200 audio.inc:6  AUDIO_SONGS = $0A00
+000200 audio.inc:7  AUDIO_SFXTAB = $0A40
+000200 audio.inc:8  SFX_COUNT = 24
+000200 audio.inc:9  ECHO_PAGE = $E8
+000200 audio.inc:10  ECHO_EDL = 3
+000200 driver.s:10  lastseq   = $00
+000200 driver.s:11  t0        = $01
+000200 driver.s:12  t1        = $02
+000200 driver.s:13  t2        = $03
+000200 driver.s:14  ptr       = $04
+000200 driver.s:15  ptr2      = $06
+000200 driver.s:16  konbits   = $08
+000200 driver.s:17  kofbits   = $09
+000200 driver.s:18  argA      = $0A
+000200 driver.s:19  argB      = $0B
+000200 driver.s:20  cmd       = $0C
+000200 driver.s:21  chreg     = $0D
+000200 driver.s:22  master    = $0E
+000200 driver.s:23  cur_song  = $0F
+000200 driver.s:24  chx       = $10
+000200 driver.s:26  m_on      = $12
+000200 driver.s:27  m_wait    = $18
+000200 driver.s:28  m_pl      = $1E
+000200 driver.s:29  m_ph      = $24
+000200 driver.s:30  m_sl      = $2A
+000200 driver.s:31  m_sh      = $30
+000200 driver.s:32  m_rl      = $36
+000200 driver.s:33  m_rh      = $3C
+000200 driver.s:34  m_cl      = $42
+000200 driver.s:35  m_ch      = $48
+000200 driver.s:36  m_rc      = $4E
+000200 driver.s:37  m_inst    = $54
+000200 driver.s:38  m_off     = $5A
+000200 driver.s:39  m_vol     = $60
+000200 driver.s:40  m_pan     = $66
+000200 driver.s:41  m_vl      = $6C
+000200 driver.s:42  m_vr      = $72
+000200 driver.s:43  m_slide   = $78
+000200 driver.s:44  m_nslide  = $7E
+000200 driver.s:45  m_pitl    = $84
+000200 driver.s:46  m_pith    = $8A
+000200 driver.s:48  s_on      = $90
+000200 driver.s:49  s_time    = $92
+000200 driver.s:50  s_vol     = $94
+000200 driver.s:51  s_decay   = $96
+000200 driver.s:52  s_pl      = $98
+000200 driver.s:53  s_ph      = $9A
+000200 driver.s:54  s_slide   = $9C
+000200 driver.s:55  s_pri     = $9E
+000200 driver.s:56  s_pan     = $A0
+000200 driver.s:57  s_seq     = $A2
+000200 driver.s:58  s_ql      = $A4
+000200 driver.s:59  s_qh      = $A6
+000200 driver.s:60  s_qwait   = $A8
+000200 driver.s:61  s_vol0    = $AA
+000200 driver.s:62  rr        = $AC
+000200 driver.s:64  .org $0200
+000200 driver.s:65  start:
+000200 driver.s:66  clrp
+000201 driver.s:67  mov x,#$EF
+000203 driver.s:68  mov sp,x
+000204 driver.s:69  mov a,#0
+000206 driver.s:70  mov x,#0
+000208 driver.s:71  @clr:
+000208 driver.s:72  mov (x)+,a
+000209 driver.s:73  cmp x,#$E0
+00020B driver.s:74  bne @clr
+00020D driver.s:75  mov x,#0
+00020F driver.s:76  @dsp:
+00020F driver.s:77  mov a,!dsp_init_tab+x
+000212 driver.s:78  cmp a,#$FF
+000214 driver.s:79  beq @dspdone
+000216 driver.s:80  mov $F2,a
+000218 driver.s:81  inc x
+000219 driver.s:82  mov a,!dsp_init_tab+x
+00021C driver.s:83  mov $F3,a
+00021E driver.s:84  inc x
+00021F driver.s:85  bra @dsp
+000221 driver.s:86  @dspdone:
+000221 driver.s:87  mov master,#$6C
+000224 driver.s:88  mov cur_song,#$FF
+000227 driver.s:90  mov $FC,#250
+00022A driver.s:91  mov $F1,#$04
+00022D driver.s:92  mov y,#64
+00022F driver.s:93  @ew:
+00022F driver.s:94  mov a,$FF
+000231 driver.s:95  beq @ew
+000233 driver.s:96  dbnz y,@ew
+000235 driver.s:97  mov $FA,#200
+000238 driver.s:98  mov $FB,#80
+00023B driver.s:99  mov $F1,#$03
+00023E driver.s:100  mov a,$F4
+000240 driver.s:101  mov lastseq,a
+000242 driver.s:102  mov $F7,#$5A
+000245 driver.s:103  mov $F4,a
+000247 driver.s:105  mainloop:
+000247 driver.s:106  mov a,$FD
+000249 driver.s:107  beq @t1
+00024B driver.s:108  mov t2,a
+00024D driver.s:109  @tk:
+00024D driver.s:110  call mus_tick
+000250 driver.s:111  dbnz t2,@tk
+000253 driver.s:112  call flush_keys
+000256 driver.s:113  @t1:
+000256 driver.s:114  mov a,$FE
+000258 driver.s:115  beq @cmdchk
+00025A driver.s:116  mov t2,a
+00025C driver.s:117  @tk1:
+00025C driver.s:118  call sfx_tick
+00025F driver.s:119  dbnz t2,@tk1
+000262 driver.s:120  call flush_keys
+000265 driver.s:121  @cmdchk:
+000265 driver.s:122  mov a,$F4
+000267 driver.s:123  cmp a,$F4
+000269 driver.s:124  bne mainloop
+00026B driver.s:125  cmp a,lastseq
+00026D driver.s:126  beq mainloop
+00026F driver.s:127  mov lastseq,a
+000271 driver.s:128  mov cmd,$F5
+000274 driver.s:129  mov argA,$F6
+000277 driver.s:130  mov argB,$F7
+00027A driver.s:131  mov a,cmd
+00027C driver.s:132  cmp a,#1
+00027E driver.s:133  bne @n1
+000280 driver.s:134  call cmd_sfx
+000283 driver.s:135  bra @ack
+000285 driver.s:136  @n1:
+000285 driver.s:137  cmp a,#2
+000287 driver.s:138  bne @n2
+000289 driver.s:139  call cmd_music
+00028C driver.s:140  bra @ack
+00028E driver.s:141  @n2:
+00028E driver.s:142  cmp a,#3
+000290 driver.s:143  bne @n3
+000292 driver.s:144  call stop_music
+000295 driver.s:145  bra @ack
+000297 driver.s:146  @n3:
+000297 driver.s:147  cmp a,#5
+000299 driver.s:148  bne @ack
+00029B driver.s:149  mov master,argA
+00029E driver.s:150  @ack:
+00029E driver.s:151  call flush_keys
+0002A1 driver.s:152  mov a,lastseq
+0002A3 driver.s:153  mov $F4,a
+0002A5 driver.s:154  jmp !mainloop
+0002A8 driver.s:157  flush_keys:
+0002A8 driver.s:158  mov $F2,#$5C
+0002AB driver.s:159  mov $F3,#$00
+0002AE driver.s:160  mov a,konbits
+0002B0 driver.s:161  beq @nokon
+0002B2 driver.s:162  mov $F2,#$4C
+0002B5 driver.s:163  mov $F3,a
+0002B7 driver.s:164  @nokon:
+0002B7 driver.s:165  mov a,kofbits
+0002B9 driver.s:166  beq @nokof
+0002BB driver.s:167  mov $F2,#$5C
+0002BE driver.s:168  mov $F3,a
+0002C0 driver.s:169  @nokof:
+0002C0 driver.s:170  mov konbits,#0
+0002C3 driver.s:171  mov kofbits,#0
+0002C6 driver.s:172  ret
+0002C7 driver.s:175  cmd_music:
+0002C7 driver.s:176  mov a,argA
+0002C9 driver.s:177  cmp a,cur_song
+0002CB driver.s:178  bne @new
+0002CD driver.s:179  ret
+0002CE driver.s:180  @new:
+0002CE driver.s:181  call stop_music
+0002D1 driver.s:182  mov a,argA
+0002D3 driver.s:183  mov cur_song,a
+0002D5 driver.s:184  asl a
+0002D6 driver.s:185  mov y,a
+0002D7 driver.s:186  mov a,!AUDIO_SONGS+y
+0002DA driver.s:187  mov ptr,a
+0002DC driver.s:188  mov a,!AUDIO_SONGS+1+y
+0002DF driver.s:189  mov ptr+1,a
+0002E1 driver.s:191  mov y,#0
+0002E3 driver.s:192  mov x,#0
+0002E5 driver.s:193  @lp:
+0002E5 driver.s:194  mov a,[ptr]+y
+0002E7 driver.s:195  mov m_pl+x,a
+0002E9 driver.s:196  mov m_sl+x,a
+0002EB driver.s:197  inc y
+0002EC driver.s:198  mov a,[ptr]+y
+0002EE driver.s:199  mov m_ph+x,a
+0002F0 driver.s:200  mov m_sh+x,a
+0002F2 driver.s:201  inc y
+0002F3 driver.s:202  or a,m_pl+x
+0002F5 driver.s:203  beq @off
+0002F7 driver.s:204  mov a,#1
+0002F9 driver.s:205  @off:
+0002F9 driver.s:206  mov m_on+x,a
+0002FB driver.s:207  mov a,#1
+0002FD driver.s:208  mov m_wait+x,a
+0002FF driver.s:209  mov a,#100
+000301 driver.s:210  mov m_vol+x,a
+000303 driver.s:211  mov m_vl+x,a
+000305 driver.s:212  mov m_vr+x,a
+000307 driver.s:213  mov a,#64
+000309 driver.s:214  mov m_pan+x,a
+00030B driver.s:215  mov a,#0
+00030D driver.s:216  mov m_slide+x,a
+00030F driver.s:217  mov m_nslide+x,a
+000311 driver.s:218  mov m_rc+x,a
+000313 driver.s:219  mov m_inst+x,a
+000315 driver.s:220  mov a,!inst_off0
+000318 driver.s:221  mov m_off+x,a
+00031A driver.s:222  inc x
+00031B driver.s:223  cmp x,#6
+00031D driver.s:224  bne @lp
+00031F driver.s:225  mov a,[ptr]+y
+000321 driver.s:226  mov $FA,a
+000323 driver.s:227  inc y
+000324 driver.s:228  mov a,[ptr]+y
+000326 driver.s:229  mov $F2,#$2C
+000329 driver.s:230  mov $F3,a
+00032B driver.s:231  mov $F2,#$3C
+00032E driver.s:232  mov $F3,a
+000330 driver.s:233  inc y
+000331 driver.s:234  mov a,[ptr]+y
+000333 driver.s:235  mov $F2,#$0D
+000336 driver.s:236  mov $F3,a
+000338 driver.s:237  inc y
+000339 driver.s:238  mov a,[ptr]+y
+00033B driver.s:239  mov $F2,#$4D
+00033E driver.s:240  mov $F3,a
+000340 driver.s:241  ret
+000341 driver.s:243  stop_music:
+000341 driver.s:244  mov x,#0
+000343 driver.s:245  mov a,#0
+000345 driver.s:246  @lp:
+000345 driver.s:247  mov m_on+x,a
+000347 driver.s:248  inc x
+000348 driver.s:249  cmp x,#6
+00034A driver.s:250  bne @lp
+00034C driver.s:251  mov a,kofbits
+00034E driver.s:252  or a,#$3F
+000350 driver.s:253  mov kofbits,a
+000352 driver.s:254  mov cur_song,#$FF
+000355 driver.s:255  ret
+000356 driver.s:257  inst_off0:
+000356 driver.s:258  .db 0
+000357 driver.s:261  mus_tick:
+000357 driver.s:262  mov x,#0
+000359 driver.s:263  @ch:
+000359 driver.s:264  mov a,m_on+x
+00035B driver.s:265  beq @next
+00035D driver.s:266  mov a,m_slide+x
+00035F driver.s:267  beq @ns
+000361 driver.s:268  call bend
+000364 driver.s:269  @ns:
+000364 driver.s:270  mov a,m_wait+x
+000366 driver.s:271  dec a
+000367 driver.s:272  mov m_wait+x,a
+000369 driver.s:273  bne @next
+00036B driver.s:274  mov chx,x
+00036D driver.s:275  call mus_events
+000370 driver.s:276  mov x,chx
+000372 driver.s:277  @next:
+000372 driver.s:278  inc x
+000373 driver.s:279  cmp x,#6
+000375 driver.s:280  bne @ch
+000377 driver.s:281  ret
+000378 driver.s:284  bend:
+000378 driver.s:285  mov t1,#0
+00037B driver.s:286  mov a,m_slide+x
+00037D driver.s:287  bpl @p
+00037F driver.s:288  mov t1,#$FF
+000382 driver.s:289  @p:
+000382 driver.s:290  asl a
+000383 driver.s:291  rol t1
+000385 driver.s:292  clrc
+000386 driver.s:293  adc a,m_pitl+x
+000388 driver.s:294  mov m_pitl+x,a
+00038A driver.s:295  mov a,m_pith+x
+00038C driver.s:296  adc a,t1
+00038E driver.s:297  and a,#$3F
+000390 driver.s:298  mov m_pith+x,a
+000392 driver.s:299  mov a,x
+000393 driver.s:300  xcn a
+000394 driver.s:301  or a,#2
+000396 driver.s:302  mov $F2,a
+000398 driver.s:303  mov a,m_pitl+x
+00039A driver.s:304  mov $F3,a
+00039C driver.s:305  mov a,x
+00039D driver.s:306  xcn a
+00039E driver.s:307  or a,#3
+0003A0 driver.s:308  mov $F2,a
+0003A2 driver.s:309  mov a,m_pith+x
+0003A4 driver.s:310  mov $F3,a
+0003A6 driver.s:311  ret
+0003A7 driver.s:314  mus_events:
+0003A7 driver.s:315  mov x,chx
+0003A9 driver.s:316  mov a,m_pl+x
+0003AB driver.s:317  mov ptr,a
+0003AD driver.s:318  mov a,m_ph+x
+0003AF driver.s:319  mov ptr+1,a
+0003B1 driver.s:320  @ev:
+0003B1 driver.s:321  mov x,chx
+0003B3 driver.s:322  mov y,#0
+0003B5 driver.s:323  mov a,[ptr]+y
+0003B7 driver.s:324  cmp a,#$60
+0003B9 driver.s:325  bcs @notnote
+0003BB driver.s:326  jmp !@note
+0003BE driver.s:327  @notnote:
+0003BE driver.s:328  bne @n60
+0003C0 driver.s:329  jmp !@rest
+0003C3 driver.s:330  @n60:
+0003C3 driver.s:331  cmp a,#$61
+0003C5 driver.s:332  bne @n61
+0003C7 driver.s:333  jmp !@tie
+0003CA driver.s:334  @n61:
+0003CA driver.s:335  cmp a,#$E0
+0003CC driver.s:336  beq @inst
+0003CE driver.s:337  cmp a,#$E1
+0003D0 driver.s:338  beq @vol
+0003D2 driver.s:339  cmp a,#$E2
+0003D4 driver.s:340  beq @pan
+0003D6 driver.s:341  cmp a,#$E3
+0003D8 driver.s:342  beq @slide
+0003DA driver.s:343  cmp a,#$E4
+0003DC driver.s:344  beq @call
+0003DE driver.s:345  cmp a,#$E5
+0003E0 driver.s:346  beq @ret
+0003E2 driver.s:347  cmp a,#$FE
+0003E4 driver.s:348  beq @loop
+0003E6 driver.s:350  mov a,#0
+0003E8 driver.s:351  mov m_on+x,a
+0003EA driver.s:352  mov a,!bit_tab+x
+0003ED driver.s:353  or a,kofbits
+0003EF driver.s:354  mov kofbits,a
+0003F1 driver.s:355  ret
+0003F2 driver.s:356  @loop:
+0003F2 driver.s:357  mov a,m_sl+x
+0003F4 driver.s:358  mov ptr,a
+0003F6 driver.s:359  mov a,m_sh+x
+0003F8 driver.s:360  mov ptr+1,a
+0003FA driver.s:361  jmp !@ev
+0003FD driver.s:362  @inst:
+0003FD driver.s:363  inc y
+0003FE driver.s:364  mov a,[ptr]+y
+000400 driver.s:365  mov m_inst+x,a
+000402 driver.s:366  asl a
+000403 driver.s:367  asl a
+000404 driver.s:368  mov y,a
+000405 driver.s:369  mov a,!AUDIO_INST+3+y
+000408 driver.s:370  mov m_off+x,a
+00040A driver.s:371  call adv2
+00040D driver.s:372  jmp !@ev
+000410 driver.s:373  @vol:
+000410 driver.s:374  inc y
+000411 driver.s:375  mov a,[ptr]+y
+000413 driver.s:376  mov m_vol+x,a
+000415 driver.s:377  call panvol
+000418 driver.s:378  call adv2
+00041B driver.s:379  jmp !@ev
+00041E driver.s:380  @pan:
+00041E driver.s:381  inc y
+00041F driver.s:382  mov a,[ptr]+y
+000421 driver.s:383  mov m_pan+x,a
+000423 driver.s:384  call panvol
+000426 driver.s:385  call adv2
+000429 driver.s:386  jmp !@ev
+00042C driver.s:387  @slide:
+00042C driver.s:388  inc y
+00042D driver.s:389  mov a,[ptr]+y
+00042F driver.s:390  mov m_nslide+x,a
+000431 driver.s:391  call adv2
+000434 driver.s:392  jmp !@ev
+000437 driver.s:393  @call:
+000437 driver.s:395  inc y
+000438 driver.s:396  mov a,[ptr]+y
+00043A driver.s:397  mov m_cl+x,a
+00043C driver.s:398  inc y
+00043D driver.s:399  mov a,[ptr]+y
+00043F driver.s:400  mov m_ch+x,a
+000441 driver.s:401  inc y
+000442 driver.s:402  mov a,[ptr]+y
+000444 driver.s:403  mov m_rc+x,a
+000446 driver.s:404  mov a,ptr
+000448 driver.s:405  clrc
+000449 driver.s:406  adc a,#4
+00044B driver.s:407  mov m_rl+x,a
+00044D driver.s:408  mov a,ptr+1
+00044F driver.s:409  adc a,#0
+000451 driver.s:410  mov m_rh+x,a
+000453 driver.s:411  mov a,m_cl+x
+000455 driver.s:412  mov ptr,a
+000457 driver.s:413  mov a,m_ch+x
+000459 driver.s:414  mov ptr+1,a
+00045B driver.s:415  jmp !@ev
+00045E driver.s:416  @ret:
+00045E driver.s:417  mov a,m_rc+x
+000460 driver.s:418  dec a
+000461 driver.s:419  mov m_rc+x,a
+000463 driver.s:420  beq @done
+000465 driver.s:421  mov a,m_cl+x
+000467 driver.s:422  mov ptr,a
+000469 driver.s:423  mov a,m_ch+x
+00046B driver.s:424  mov ptr+1,a
+00046D driver.s:425  jmp !@ev
+000470 driver.s:426  @done:
+000470 driver.s:427  mov a,m_rl+x
+000472 driver.s:428  mov ptr,a
+000474 driver.s:429  mov a,m_rh+x
+000476 driver.s:430  mov ptr+1,a
+000478 driver.s:431  jmp !@ev
+00047B driver.s:432  @tie:
+00047B driver.s:433  inc y
+00047C driver.s:434  mov a,[ptr]+y
+00047E driver.s:435  mov m_wait+x,a
+000480 driver.s:436  call adv2
+000483 driver.s:437  jmp !@store
+000486 driver.s:438  @rest:
+000486 driver.s:439  inc y
+000487 driver.s:440  mov a,[ptr]+y
+000489 driver.s:441  mov m_wait+x,a
+00048B driver.s:442  call adv2
+00048E driver.s:443  mov a,#0
+000490 driver.s:444  mov m_slide+x,a
+000492 driver.s:445  mov a,!bit_tab+x
+000495 driver.s:446  or a,kofbits
+000497 driver.s:447  mov kofbits,a
+000499 driver.s:448  jmp !@store
+00049C driver.s:449  @note:
+00049C driver.s:451  clrc
+00049D driver.s:452  adc a,m_off+x
+00049F driver.s:453  asl a
+0004A0 driver.s:454  mov y,a
+0004A1 driver.s:455  mov a,!AUDIO_PITCH+y
+0004A4 driver.s:456  mov m_pitl+x,a
+0004A6 driver.s:457  mov a,!AUDIO_PITCH+1+y
+0004A9 driver.s:458  mov m_pith+x,a
+0004AB driver.s:459  mov a,m_nslide+x
+0004AD driver.s:460  mov m_slide+x,a
+0004AF driver.s:461  mov a,#0
+0004B1 driver.s:462  mov m_nslide+x,a
+0004B3 driver.s:463  mov a,x
+0004B4 driver.s:464  xcn a
+0004B5 driver.s:465  mov chreg,a
+0004B7 driver.s:466  or a,#2
+0004B9 driver.s:467  mov $F2,a
+0004BB driver.s:468  mov a,m_pitl+x
+0004BD driver.s:469  mov $F3,a
+0004BF driver.s:470  mov a,chreg
+0004C1 driver.s:471  or a,#3
+0004C3 driver.s:472  mov $F2,a
+0004C5 driver.s:473  mov a,m_pith+x
+0004C7 driver.s:474  mov $F3,a
+0004C9 driver.s:476  mov a,m_inst+x
+0004CB driver.s:477  asl a
+0004CC driver.s:478  asl a
+0004CD driver.s:479  mov y,a
+0004CE driver.s:480  mov a,chreg
+0004D0 driver.s:481  or a,#4
+0004D2 driver.s:482  mov $F2,a
+0004D4 driver.s:483  mov a,!AUDIO_INST+y
+0004D7 driver.s:484  mov $F3,a
+0004D9 driver.s:485  mov a,chreg
+0004DB driver.s:486  or a,#5
+0004DD driver.s:487  mov $F2,a
+0004DF driver.s:488  mov a,!AUDIO_INST+1+y
+0004E2 driver.s:489  mov $F3,a
+0004E4 driver.s:490  mov a,chreg
+0004E6 driver.s:491  or a,#6
+0004E8 driver.s:492  mov $F2,a
+0004EA driver.s:493  mov a,!AUDIO_INST+2+y
+0004ED driver.s:494  mov $F3,a
+0004EF driver.s:496  mov a,m_vl+x
+0004F1 driver.s:497  mov y,master
+0004F3 driver.s:498  mul ya
+0004F4 driver.s:499  mov a,y
+0004F5 driver.s:500  asl a
+0004F6 driver.s:501  mov $F2,chreg
+0004F9 driver.s:502  mov $F3,a
+0004FB driver.s:503  mov a,m_vr+x
+0004FD driver.s:504  mov y,master
+0004FF driver.s:505  mul ya
+000500 driver.s:506  mov a,y
+000501 driver.s:507  asl a
+000502 driver.s:508  mov t0,a
+000504 driver.s:509  mov a,chreg
+000506 driver.s:510  or a,#1
+000508 driver.s:511  mov $F2,a
+00050A driver.s:512  mov $F3,t0
+00050D driver.s:514  mov y,#1
+00050F driver.s:515  mov a,[ptr]+y
+000511 driver.s:516  mov m_wait+x,a
+000513 driver.s:517  call adv2
+000516 driver.s:518  mov a,!bit_tab+x
+000519 driver.s:519  or a,konbits
+00051B driver.s:520  mov konbits,a
+00051D driver.s:521  mov a,!bit_tab+x
+000520 driver.s:522  eor a,#$FF
+000522 driver.s:523  and a,kofbits
+000524 driver.s:524  mov kofbits,a
+000526 driver.s:525  @store:
+000526 driver.s:526  mov x,chx
+000528 driver.s:527  mov a,ptr
+00052A driver.s:528  mov m_pl+x,a
+00052C driver.s:529  mov a,ptr+1
+00052E driver.s:530  mov m_ph+x,a
+000530 driver.s:531  ret
+000531 driver.s:534  panvol:
+000531 driver.s:535  push y
+000532 driver.s:536  mov a,#128
+000534 driver.s:537  setc
+000535 driver.s:538  sbc a,m_pan+x
+000537 driver.s:539  mov y,m_vol+x
+000539 driver.s:540  mul ya
+00053A driver.s:541  call @scale
+00053D driver.s:542  mov m_vl+x,a
+00053F driver.s:543  mov a,m_pan+x
+000541 driver.s:544  mov y,m_vol+x
+000543 driver.s:545  mul ya
+000544 driver.s:546  call @scale
+000547 driver.s:547  mov m_vr+x,a
+000549 driver.s:548  pop y
+00054A driver.s:549  ret
+00054B driver.s:550  @scale:
+00054B driver.s:551  movw ptr2,ya
+00054D driver.s:552  asl ptr2
+00054F driver.s:553  rol ptr2+1
+000551 driver.s:554  asl ptr2
+000553 driver.s:555  rol ptr2+1
+000555 driver.s:556  mov a,ptr2+1
+000557 driver.s:557  bpl @ok
+000559 driver.s:558  mov a,#127
+00055B driver.s:559  @ok:
+00055B driver.s:560  ret
+00055C driver.s:562  adv2:
+00055C driver.s:563  mov a,ptr
+00055E driver.s:564  clrc
+00055F driver.s:565  adc a,#2
+000561 driver.s:566  mov ptr,a
+000563 driver.s:567  mov a,ptr+1
+000565 driver.s:568  adc a,#0
+000567 driver.s:569  mov ptr+1,a
+000569 driver.s:570  ret
+00056A driver.s:575  cmd_sfx:
+00056A driver.s:576  mov a,argA
+00056C driver.s:577  cmp a,#SFX_COUNT
+00056E driver.s:578  bcc @ok
+000570 driver.s:579  ret
+000571 driver.s:580  @ok:
+000571 driver.s:581  mov y,#8
+000573 driver.s:582  mul ya
+000574 driver.s:583  clrc
+000575 driver.s:584  adc a,#<AUDIO_SFXTAB
+000577 driver.s:585  mov ptr,a
+000579 driver.s:586  mov a,y
+00057A driver.s:587  adc a,#>AUDIO_SFXTAB
+00057C driver.s:588  mov ptr+1,a
+00057E driver.s:589  mov y,#7
+000580 driver.s:590  mov a,[ptr]+y
+000582 driver.s:591  mov t0,a
+000584 driver.s:593  mov x,#0
+000586 driver.s:594  mov a,s_on
+000588 driver.s:595  beq @got
+00058A driver.s:596  inc x
+00058B driver.s:597  mov a,s_on+1
+00058D driver.s:598  beq @got
+00058F driver.s:599  mov a,s_pri
+000591 driver.s:600  cmp a,s_pri+1
+000593 driver.s:601  bcc @l0
+000595 driver.s:603  mov x,#1
+000597 driver.s:604  mov a,s_pri+1
+000599 driver.s:605  cmp a,s_pri
+00059B driver.s:606  bne @l1
+00059D driver.s:607  mov a,rr
+00059F driver.s:608  eor a,#1
+0005A1 driver.s:609  mov rr,a
+0005A3 driver.s:610  mov x,a
+0005A4 driver.s:611  @l1:
+0005A4 driver.s:612  bra @chk
+0005A6 driver.s:613  @l0:
+0005A6 driver.s:614  mov x,#0
+0005A8 driver.s:615  @chk:
+0005A8 driver.s:616  mov a,t0
+0005AA driver.s:617  cmp a,s_pri+x
+0005AC driver.s:618  bcs @got
+0005AE driver.s:619  ret
+0005AF driver.s:620  @got:
+0005AF driver.s:621  mov chx,x
+0005B1 driver.s:622  mov a,t0
+0005B3 driver.s:623  mov s_pri+x,a
+0005B5 driver.s:624  mov a,argB
+0005B7 driver.s:625  mov s_pan+x,a
+0005B9 driver.s:626  mov a,#1
+0005BB driver.s:627  mov s_on+x,a
+0005BD driver.s:628  mov a,x
+0005BE driver.s:629  clrc
+0005BF driver.s:630  adc a,#6
+0005C1 driver.s:631  xcn a
+0005C2 driver.s:632  mov chreg,a
+0005C4 driver.s:633  mov y,#0
+0005C6 driver.s:634  mov a,[ptr]+y
+0005C8 driver.s:635  cmp a,#$FF
+0005CA driver.s:636  beq @jingle
+0005CC driver.s:638  mov t1,a
+0005CE driver.s:639  mov a,#0
+0005D0 driver.s:640  mov s_seq+x,a
+0005D2 driver.s:641  inc y
+0005D3 driver.s:642  mov a,[ptr]+y
+0005D5 driver.s:643  mov s_pl+x,a
+0005D7 driver.s:644  inc y
+0005D8 driver.s:645  mov a,[ptr]+y
+0005DA driver.s:646  mov s_ph+x,a
+0005DC driver.s:647  inc y
+0005DD driver.s:648  mov a,[ptr]+y
+0005DF driver.s:649  mov s_slide+x,a
+0005E1 driver.s:650  inc y
+0005E2 driver.s:651  mov a,[ptr]+y
+0005E4 driver.s:652  mov s_vol+x,a
+0005E6 driver.s:653  inc y
+0005E7 driver.s:654  mov a,[ptr]+y
+0005E9 driver.s:655  mov s_decay+x,a
+0005EB driver.s:656  inc y
+0005EC driver.s:657  mov a,[ptr]+y
+0005EE driver.s:658  mov s_time+x,a
+0005F0 driver.s:659  call s_start
+0005F3 driver.s:660  ret
+0005F4 driver.s:661  @jingle:
+0005F4 driver.s:662  inc y
+0005F5 driver.s:663  mov a,[ptr]+y
+0005F7 driver.s:664  mov t1,a
+0005F9 driver.s:665  inc y
+0005FA driver.s:666  mov a,[ptr]+y
+0005FC driver.s:667  mov s_ql+x,a
+0005FE driver.s:668  inc y
+0005FF driver.s:669  mov a,[ptr]+y
+000601 driver.s:670  mov s_qh+x,a
+000603 driver.s:671  inc y
+000604 driver.s:672  mov a,[ptr]+y
+000606 driver.s:673  mov s_vol0+x,a
+000608 driver.s:674  inc y
+000609 driver.s:675  mov a,[ptr]+y
+00060B driver.s:676  mov s_decay+x,a
+00060D driver.s:677  mov a,#1
+00060F driver.s:678  mov s_seq+x,a
+000611 driver.s:679  mov s_qwait+x,a
+000613 driver.s:680  mov a,#0
+000615 driver.s:681  mov s_slide+x,a
+000617 driver.s:682  mov a,chreg
+000619 driver.s:683  or a,#4
+00061B driver.s:684  mov $F2,a
+00061D driver.s:685  mov $F3,t1
+000620 driver.s:686  mov a,chreg
+000622 driver.s:687  or a,#5
+000624 driver.s:688  mov $F2,a
+000626 driver.s:689  mov $F3,#0
+000629 driver.s:690  mov a,chreg
+00062B driver.s:691  or a,#7
+00062D driver.s:692  mov $F2,a
+00062F driver.s:693  mov $F3,#$7F
+000632 driver.s:694  ret
+000633 driver.s:697  s_start:
+000633 driver.s:698  mov a,chreg
+000635 driver.s:699  or a,#4
+000637 driver.s:700  mov $F2,a
+000639 driver.s:701  mov $F3,t1
+00063C driver.s:702  mov a,chreg
+00063E driver.s:703  or a,#5
+000640 driver.s:704  mov $F2,a
+000642 driver.s:705  mov $F3,#0
+000645 driver.s:706  mov a,chreg
+000647 driver.s:707  or a,#7
+000649 driver.s:708  mov $F2,a
+00064B driver.s:709  mov $F3,#$7F
+00064E driver.s:710  call s_regs
+000651 driver.s:711  mov a,!bit_tab+6+x
+000654 driver.s:712  or a,konbits
+000656 driver.s:713  mov konbits,a
+000658 driver.s:714  mov a,!bit_tab+6+x
+00065B driver.s:715  eor a,#$FF
+00065D driver.s:716  and a,kofbits
+00065F driver.s:717  mov kofbits,a
+000661 driver.s:718  ret
+000662 driver.s:721  s_regs:
+000662 driver.s:722  mov a,chreg
+000664 driver.s:723  or a,#2
+000666 driver.s:724  mov $F2,a
+000668 driver.s:725  mov a,s_pl+x
+00066A driver.s:726  mov $F3,a
+00066C driver.s:727  mov a,chreg
+00066E driver.s:728  or a,#3
+000670 driver.s:729  mov $F2,a
+000672 driver.s:730  mov a,s_ph+x
+000674 driver.s:731  mov $F3,a
+000676 driver.s:732  mov a,s_vol+x
+000678 driver.s:733  mov t1,a
+00067A driver.s:734  lsr a
+00067B driver.s:735  mov t0,a
+00067D driver.s:736  mov a,s_pan+x
+00067F driver.s:737  cmp a,#1
+000681 driver.s:738  bne @nl
+000683 driver.s:739  mov $F2,chreg
+000686 driver.s:740  mov $F3,t1
+000689 driver.s:741  mov a,chreg
+00068B driver.s:742  or a,#1
+00068D driver.s:743  mov $F2,a
+00068F driver.s:744  mov $F3,t0
+000692 driver.s:745  ret
+000693 driver.s:746  @nl:
+000693 driver.s:747  cmp a,#2
+000695 driver.s:748  bne @c
+000697 driver.s:749  mov $F2,chreg
+00069A driver.s:750  mov $F3,t0
+00069D driver.s:751  mov a,chreg
+00069F driver.s:752  or a,#1
+0006A1 driver.s:753  mov $F2,a
+0006A3 driver.s:754  mov $F3,t1
+0006A6 driver.s:755  ret
+0006A7 driver.s:756  @c:
+0006A7 driver.s:757  mov $F2,chreg
+0006AA driver.s:758  mov $F3,t1
+0006AD driver.s:759  mov a,chreg
+0006AF driver.s:760  or a,#1
+0006B1 driver.s:761  mov $F2,a
+0006B3 driver.s:762  mov $F3,t1
+0006B6 driver.s:763  ret
+0006B7 driver.s:765  sfx_tick:
+0006B7 driver.s:766  mov x,#0
+0006B9 driver.s:767  @sl:
+0006B9 driver.s:768  mov chx,x
+0006BB driver.s:769  mov a,s_on+x
+0006BD driver.s:770  bne @on
+0006BF driver.s:771  jmp !@next
+0006C2 driver.s:772  @on:
+0006C2 driver.s:773  mov a,x
+0006C3 driver.s:774  clrc
+0006C4 driver.s:775  adc a,#6
+0006C6 driver.s:776  xcn a
+0006C7 driver.s:777  mov chreg,a
+0006C9 driver.s:778  mov a,s_seq+x
+0006CB driver.s:779  beq @oneshot
+0006CD driver.s:781  mov a,s_qwait+x
+0006CF driver.s:782  dec a
+0006D0 driver.s:783  mov s_qwait+x,a
+0006D2 driver.s:784  bne @dec
+0006D4 driver.s:785  mov a,s_ql+x
+0006D6 driver.s:786  mov ptr,a
+0006D8 driver.s:787  mov a,s_qh+x
+0006DA driver.s:788  mov ptr+1,a
+0006DC driver.s:789  mov y,#0
+0006DE driver.s:790  mov a,[ptr]+y
+0006E0 driver.s:791  cmp a,#$FF
+0006E2 driver.s:792  beq @off
+0006E4 driver.s:793  asl a
+0006E5 driver.s:794  mov y,a
+0006E6 driver.s:795  mov a,!AUDIO_PITCH+y
+0006E9 driver.s:796  mov s_pl+x,a
+0006EB driver.s:797  mov a,!AUDIO_PITCH+1+y
+0006EE driver.s:798  mov s_ph+x,a
+0006F0 driver.s:799  mov y,#1
+0006F2 driver.s:800  mov a,[ptr]+y
+0006F4 driver.s:801  mov s_qwait+x,a
+0006F6 driver.s:802  call adv2
+0006F9 driver.s:803  mov a,ptr
+0006FB driver.s:804  mov s_ql+x,a
+0006FD driver.s:805  mov a,ptr+1
+0006FF driver.s:806  mov s_qh+x,a
+000701 driver.s:807  mov a,s_vol0+x
+000703 driver.s:808  mov s_vol+x,a
+000705 driver.s:809  call s_regs
+000708 driver.s:810  mov a,!bit_tab+6+x
+00070B driver.s:811  or a,konbits
+00070D driver.s:812  mov konbits,a
+00070F driver.s:813  bra @next
+000711 driver.s:814  @dec:
+000711 driver.s:815  mov a,s_vol+x
+000713 driver.s:816  setc
+000714 driver.s:817  sbc a,s_decay+x
+000716 driver.s:818  bcs @dv
+000718 driver.s:819  mov a,#0
+00071A driver.s:820  @dv:
+00071A driver.s:821  mov s_vol+x,a
+00071C driver.s:822  call s_regs
+00071F driver.s:823  bra @next
+000721 driver.s:824  @oneshot:
+000721 driver.s:825  mov a,s_vol+x
+000723 driver.s:826  setc
+000724 driver.s:827  sbc a,s_decay+x
+000726 driver.s:828  bcs @v
+000728 driver.s:829  mov a,#0
+00072A driver.s:830  @v:
+00072A driver.s:831  mov s_vol+x,a
+00072C driver.s:832  mov a,s_slide+x
+00072E driver.s:833  beq @nos
+000730 driver.s:834  mov t1,#0
+000733 driver.s:835  mov a,s_slide+x
+000735 driver.s:836  bpl @pos
+000737 driver.s:837  mov t1,#$FF
+00073A driver.s:838  @pos:
+00073A driver.s:839  asl a
+00073B driver.s:840  rol t1
+00073D driver.s:841  asl a
+00073E driver.s:842  rol t1
+000740 driver.s:843  clrc
+000741 driver.s:844  adc a,s_pl+x
+000743 driver.s:845  mov s_pl+x,a
+000745 driver.s:846  mov a,s_ph+x
+000747 driver.s:847  adc a,t1
+000749 driver.s:848  and a,#$3F
+00074B driver.s:849  mov s_ph+x,a
+00074D driver.s:850  @nos:
+00074D driver.s:851  call s_regs
+000750 driver.s:852  mov a,s_time+x
+000752 driver.s:853  dec a
+000753 driver.s:854  mov s_time+x,a
+000755 driver.s:855  beq @off
+000757 driver.s:856  mov a,s_vol+x
+000759 driver.s:857  bne @next
+00075B driver.s:858  @off:
+00075B driver.s:859  mov a,#0
+00075D driver.s:860  mov s_on+x,a
+00075F driver.s:861  mov s_pri+x,a
+000761 driver.s:862  mov a,!bit_tab+6+x
+000764 driver.s:863  or a,kofbits
+000766 driver.s:864  mov kofbits,a
+000768 driver.s:865  @next:
+000768 driver.s:866  mov x,chx
+00076A driver.s:867  inc x
+00076B driver.s:868  mov chx,x
+00076D driver.s:869  cmp x,#2
+00076F driver.s:870  beq @x
+000771 driver.s:871  jmp !@sl
+000774 driver.s:872  @x:
+000774 driver.s:873  ret
+000775 driver.s:875  bit_tab:
+000775 driver.s:876  .db $01,$02,$04,$08,$10,$20,$40,$80
+00077D driver.s:878  dsp_init_tab:
+00077D driver.s:879  .db $6C,$20, $0C,$7F, $1C,$7F, $2C,$00, $3C,$00, $3D,$00, $4D,$00, $2D,$00
+00078D driver.s:880  .db $5D,AUDIO_DIR_PAGE, $6D,ECHO_PAGE, $7D,ECHO_EDL, $0D,$00, $5C,$FF
+000797 driver.s:881  .db $0F,$40, $1F,$20, $2F,$10, $3F,$08, $4F,$04, $5F,$02, $6F,$01, $7F,$00
+0007A7 driver.s:882  .db $6C,$00
+0007A9 driver.s:883  .db $FF
+0007AA driver.s:885  driver_end:
+0007AA driver.s:886  .assert driver_end < AUDIO_DATA_BASE, "driver overlaps audio data"

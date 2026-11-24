@@ -1,0 +1,185 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake:228 (message)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      The target system is: Generic -  - mipsel
+      The host system is: Linux - 6.18.44-fc-v726 - x86_64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler: /bin/mipsel-linux-gnu-gcc 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+      
+      The C compiler identification is GNU, found in:
+        /home/claude/notareal-kit/mini/psx/build/CMakeFiles/3.28.3/CompilerIdC/a.out
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:1131 (message)"
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineASMCompiler.cmake:131 (CMAKE_DETERMINE_COMPILER_ID_VENDOR)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Checking whether the ASM compiler is GNU using "--version" matched "(GNU assembler)|(GCC)|(Free Software Foundation)":
+      mipsel-linux-gnu-gcc (Ubuntu 12.4.0-2ubuntu1~24.04) 12.4.0
+      Copyright (C) 2022 Free Software Foundation, Inc.
+      This is free software; see the source for copying conditions.  There is NO
+      warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "/home/claude/notareal-kit/mini/psx/build/CMakeFiles/CMakeScratch/TryCompile-Nw8EGc"
+      binary: "/home/claude/notareal-kit/mini/psx/build/CMakeFiles/CMakeScratch/TryCompile-Nw8EGc"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      PSN00BSDK_TARGET: "mipsel-linux-gnu"
+      PSN00BSDK_TC: "/"
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: '/home/claude/notareal-kit/mini/psx/build/CMakeFiles/CMakeScratch/TryCompile-Nw8EGc'
+        
+        Run Build Command(s): /usr/local/bin/ninja -v cmTC_b105c
+        [1/2] /bin/mipsel-linux-gnu-gcc -DNDEBUG=1 -DPSN00BSDK=1  -v -g -Wa,--strip-local-absolute -ffreestanding -fno-builtin -nostdlib -fdata-sections -ffunction-sections -fsigned-char -fno-strict-overflow -fdiagnostics-color=always -msoft-float -march=r3000 -mtune=r3000 -mabi=32 -mno-mt -mno-llsc -O2 -o CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj -c /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c
+        Using built-in specs.
+        COLLECT_AS_OPTIONS='--strip-local-absolute'
+        COLLECT_GCC=/bin/mipsel-linux-gnu-gcc
+        Target: mipsel-linux-gnu
+        Configured with: ../src/configure -v --with-pkgversion='Ubuntu 12.4.0-2ubuntu1~24.04' --with-bugurl=file:///usr/share/doc/gcc-12/README.Bugs --enable-languages=c,ada,c++,go,d,fortran,objc,obj-c++,m2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-12 --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-libitm --disable-libsanitizer --disable-libquadmath --disable-libquadmath-support --enable-plugin --with-system-zlib --enable-libphobos-checking=release --without-target-system-zlib --enable-multiarch --disable-werror --enable-multilib --with-arch-32=mips32r2 --with-fp-32=xx --with-madd4=no --with-lxc1-sxc1=no --enable-targets=all --with-arch-64=mips64r2 --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=mipsel-linux-gnu --program-prefix=mipsel-linux-gnu- --includedir=/usr/mipsel-linux-gnu/include
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 12.4.0 (Ubuntu 12.4.0-2ubuntu1~24.04) 
+        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-D' 'NDEBUG=1' '-D' 'PSN00BSDK=1' '-v' '-g' '-ffreestanding' '-fno-builtin' '-nostdlib' '-fdata-sections' '-ffunction-sections' '-fsigned-char' '-fno-strict-overflow' '-msoft-float' '-march=r3000' '-mtune=r3000' '-mabi=32' '-mno-mt' '-mno-llsc' '-O2' '-o' 'CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj' '-c' '-mno-lxc1-sxc1' '-mno-madd4' '-mips1' '-mno-shared' '-EL' '-dumpdir' 'CMakeFiles/cmTC_b105c.dir/'
+         /usr/lib/gcc-cross/mipsel-linux-gnu/12/cc1 -quiet -v -imultiarch mipsel-linux-gnu -D NDEBUG=1 -D PSN00BSDK=1 /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c -D_TIME_BITS=64 -D_FILE_OFFSET_BITS=64 -D_FORTIFY_SOURCE=3 -mel -quiet -dumpdir CMakeFiles/cmTC_b105c.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -msoft-float -march=r3000 -mtune=r3000 -mabi=32 -mno-mt -mno-llsc -mno-lxc1-sxc1 -mno-madd4 -mips1 -mno-shared -g -O2 -version -fdiagnostics-color=always -ffreestanding -fno-builtin -fdata-sections -ffunction-sections -fsigned-char -fno-strict-overflow -Wformat -Wformat-security -o /tmp/ccBtQeAs.s
+        GNU C17 (Ubuntu 12.4.0-2ubuntu1~24.04) version 12.4.0 (mipsel-linux-gnu)
+        	compiled by GNU C version 12.4.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
+        
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring nonexistent directory "/usr/local/include/mipsel-linux-gnu"
+        ignoring nonexistent directory "/usr/lib/gcc-cross/mipsel-linux-gnu/12/include-fixed"
+        ignoring nonexistent directory "/usr/include/mipsel-linux-gnu"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /usr/lib/gcc-cross/mipsel-linux-gnu/12/include
+         /usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/include
+         /usr/include
+        End of search list.
+        GNU C17 (Ubuntu 12.4.0-2ubuntu1~24.04) version 12.4.0 (mipsel-linux-gnu)
+        	compiled by GNU C version 12.4.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
+        
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        Compiler executable checksum: 683c9270ea46a0f9b9384c0a57f4147e
+        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-D' 'NDEBUG=1' '-D' 'PSN00BSDK=1' '-v' '-g' '-ffreestanding' '-fno-builtin' '-nostdlib' '-fdata-sections' '-ffunction-sections' '-fsigned-char' '-fno-strict-overflow' '-msoft-float' '-march=r3000' '-mtune=r3000' '-mabi=32' '-mno-mt' '-mno-llsc' '-O2' '-o' 'CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj' '-c' '-mno-lxc1-sxc1' '-mno-madd4' '-mips1' '-mno-shared' '-EL' '-dumpdir' 'CMakeFiles/cmTC_b105c.dir/'
+         /usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/bin/as -v -EL -mips1 -mno-mt -O2 -g -mabi=32 -march=r3000 -mno-shared -mtune=r3000 -msoft-float -KPIC --strip-local-absolute -o CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj /tmp/ccBtQeAs.s
+        GNU assembler version 2.42 (mipsel-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.42
+        COMPILER_PATH=/usr/lib/gcc-cross/mipsel-linux-gnu/12/:/usr/lib/gcc-cross/mipsel-linux-gnu/12/:/usr/lib/gcc-cross/mipsel-linux-gnu/:/usr/lib/gcc-cross/mipsel-linux-gnu/12/:/usr/lib/gcc-cross/mipsel-linux-gnu/:/usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/bin/
+        LIBRARY_PATH=/usr/lib/gcc-cross/mipsel-linux-gnu/12/:/usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/lib/../lib/:/lib/mipsel-linux-gnu/:/lib/../lib/:/usr/lib/mipsel-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/lib/:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-D' 'NDEBUG=1' '-D' 'PSN00BSDK=1' '-v' '-g' '-ffreestanding' '-fno-builtin' '-nostdlib' '-fdata-sections' '-ffunction-sections' '-fsigned-char' '-fno-strict-overflow' '-msoft-float' '-march=r3000' '-mtune=r3000' '-mabi=32' '-mno-mt' '-mno-llsc' '-O2' '-o' 'CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj' '-c' '-mno-lxc1-sxc1' '-mno-madd4' '-mips1' '-mno-shared' '-EL' '-dumpdir' 'CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.'
+        [2/2] : && /usr/bin/cmake -E rm -f libcmTC_b105c.a && /bin/mipsel-linux-gnu-ar qc libcmTC_b105c.a  CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj && /bin/mipsel-linux-gnu-ranlib libcmTC_b105c.a && :
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:127 (message)"
+      - "/usr/share/cmake-3.28/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed C implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/usr/lib/gcc-cross/mipsel-linux-gnu/12/include]
+          add: [/usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/include]
+          add: [/usr/include]
+        end of search list found
+        collapse include dir [/usr/lib/gcc-cross/mipsel-linux-gnu/12/include] ==> [/usr/lib/gcc-cross/mipsel-linux-gnu/12/include]
+        collapse include dir [/usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/include] ==> [/usr/mipsel-linux-gnu/include]
+        collapse include dir [/usr/include] ==> [/usr/include]
+        implicit include dirs: [/usr/lib/gcc-cross/mipsel-linux-gnu/12/include;/usr/mipsel-linux-gnu/include;/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:159 (message)"
+      - "/usr/share/cmake-3.28/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed C implicit link information:
+        link line regex: [^( *|.*[/\\])(mipsel-linux-gnu-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        ignore line: [Change Dir: '/home/claude/notareal-kit/mini/psx/build/CMakeFiles/CMakeScratch/TryCompile-Nw8EGc']
+        ignore line: []
+        ignore line: [Run Build Command(s): /usr/local/bin/ninja -v cmTC_b105c]
+        ignore line: [[1/2] /bin/mipsel-linux-gnu-gcc -DNDEBUG=1 -DPSN00BSDK=1  -v -g -Wa --strip-local-absolute -ffreestanding -fno-builtin -nostdlib -fdata-sections -ffunction-sections -fsigned-char -fno-strict-overflow -fdiagnostics-color=always -msoft-float -march=r3000 -mtune=r3000 -mabi=32 -mno-mt -mno-llsc -O2 -o CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj -c /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_AS_OPTIONS='--strip-local-absolute']
+        ignore line: [COLLECT_GCC=/bin/mipsel-linux-gnu-gcc]
+        ignore line: [Target: mipsel-linux-gnu]
+        ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 12.4.0-2ubuntu1~24.04' --with-bugurl=file:///usr/share/doc/gcc-12/README.Bugs --enable-languages=c ada c++ go d fortran objc obj-c++ m2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-12 --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-libitm --disable-libsanitizer --disable-libquadmath --disable-libquadmath-support --enable-plugin --with-system-zlib --enable-libphobos-checking=release --without-target-system-zlib --enable-multiarch --disable-werror --enable-multilib --with-arch-32=mips32r2 --with-fp-32=xx --with-madd4=no --with-lxc1-sxc1=no --enable-targets=all --with-arch-64=mips64r2 --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=mipsel-linux-gnu --program-prefix=mipsel-linux-gnu- --includedir=/usr/mipsel-linux-gnu/include]
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 12.4.0 (Ubuntu 12.4.0-2ubuntu1~24.04) ]
+        ignore line: [COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-D' 'NDEBUG=1' '-D' 'PSN00BSDK=1' '-v' '-g' '-ffreestanding' '-fno-builtin' '-nostdlib' '-fdata-sections' '-ffunction-sections' '-fsigned-char' '-fno-strict-overflow' '-msoft-float' '-march=r3000' '-mtune=r3000' '-mabi=32' '-mno-mt' '-mno-llsc' '-O2' '-o' 'CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj' '-c' '-mno-lxc1-sxc1' '-mno-madd4' '-mips1' '-mno-shared' '-EL' '-dumpdir' 'CMakeFiles/cmTC_b105c.dir/']
+        ignore line: [ /usr/lib/gcc-cross/mipsel-linux-gnu/12/cc1 -quiet -v -imultiarch mipsel-linux-gnu -D NDEBUG=1 -D PSN00BSDK=1 /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c -D_TIME_BITS=64 -D_FILE_OFFSET_BITS=64 -D_FORTIFY_SOURCE=3 -mel -quiet -dumpdir CMakeFiles/cmTC_b105c.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -msoft-float -march=r3000 -mtune=r3000 -mabi=32 -mno-mt -mno-llsc -mno-lxc1-sxc1 -mno-madd4 -mips1 -mno-shared -g -O2 -version -fdiagnostics-color=always -ffreestanding -fno-builtin -fdata-sections -ffunction-sections -fsigned-char -fno-strict-overflow -Wformat -Wformat-security -o /tmp/ccBtQeAs.s]
+        ignore line: [GNU C17 (Ubuntu 12.4.0-2ubuntu1~24.04) version 12.4.0 (mipsel-linux-gnu)]
+        ignore line: [	compiled by GNU C version 12.4.0  GMP version 6.3.0  MPFR version 4.2.1  MPC version 1.3.1  isl version isl-0.26-GMP]
+        ignore line: []
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring nonexistent directory "/usr/local/include/mipsel-linux-gnu"]
+        ignore line: [ignoring nonexistent directory "/usr/lib/gcc-cross/mipsel-linux-gnu/12/include-fixed"]
+        ignore line: [ignoring nonexistent directory "/usr/include/mipsel-linux-gnu"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /usr/lib/gcc-cross/mipsel-linux-gnu/12/include]
+        ignore line: [ /usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/include]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [GNU C17 (Ubuntu 12.4.0-2ubuntu1~24.04) version 12.4.0 (mipsel-linux-gnu)]
+        ignore line: [	compiled by GNU C version 12.4.0  GMP version 6.3.0  MPFR version 4.2.1  MPC version 1.3.1  isl version isl-0.26-GMP]
+        ignore line: []
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [Compiler executable checksum: 683c9270ea46a0f9b9384c0a57f4147e]
+        ignore line: [COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-D' 'NDEBUG=1' '-D' 'PSN00BSDK=1' '-v' '-g' '-ffreestanding' '-fno-builtin' '-nostdlib' '-fdata-sections' '-ffunction-sections' '-fsigned-char' '-fno-strict-overflow' '-msoft-float' '-march=r3000' '-mtune=r3000' '-mabi=32' '-mno-mt' '-mno-llsc' '-O2' '-o' 'CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj' '-c' '-mno-lxc1-sxc1' '-mno-madd4' '-mips1' '-mno-shared' '-EL' '-dumpdir' 'CMakeFiles/cmTC_b105c.dir/']
+        ignore line: [ /usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/bin/as -v -EL -mips1 -mno-mt -O2 -g -mabi=32 -march=r3000 -mno-shared -mtune=r3000 -msoft-float -KPIC --strip-local-absolute -o CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj /tmp/ccBtQeAs.s]
+        ignore line: [GNU assembler version 2.42 (mipsel-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.42]
+        ignore line: [COMPILER_PATH=/usr/lib/gcc-cross/mipsel-linux-gnu/12/:/usr/lib/gcc-cross/mipsel-linux-gnu/12/:/usr/lib/gcc-cross/mipsel-linux-gnu/:/usr/lib/gcc-cross/mipsel-linux-gnu/12/:/usr/lib/gcc-cross/mipsel-linux-gnu/:/usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/bin/]
+        ignore line: [LIBRARY_PATH=/usr/lib/gcc-cross/mipsel-linux-gnu/12/:/usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/lib/../lib/:/lib/mipsel-linux-gnu/:/lib/../lib/:/usr/lib/mipsel-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc-cross/mipsel-linux-gnu/12/../../../../mipsel-linux-gnu/lib/:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-D' 'NDEBUG=1' '-D' 'PSN00BSDK=1' '-v' '-g' '-ffreestanding' '-fno-builtin' '-nostdlib' '-fdata-sections' '-ffunction-sections' '-fsigned-char' '-fno-strict-overflow' '-msoft-float' '-march=r3000' '-mtune=r3000' '-mabi=32' '-mno-mt' '-mno-llsc' '-O2' '-o' 'CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj' '-c' '-mno-lxc1-sxc1' '-mno-madd4' '-mips1' '-mno-shared' '-EL' '-dumpdir' 'CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.']
+        ignore line: [[2/2] : && /usr/bin/cmake -E rm -f libcmTC_b105c.a && /bin/mipsel-linux-gnu-ar qc libcmTC_b105c.a  CMakeFiles/cmTC_b105c.dir/CMakeCCompilerABI.c.obj && /bin/mipsel-linux-gnu-ranlib libcmTC_b105c.a && :]
+        ignore line: []
+        ignore line: []
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: []
+        implicit fwks: []
+      
+      
+...

@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/home/claude/notareal-kit/mini/psx/build",
+  "command": "/bin/mipsel-linux-gnu-gcc -DHAL_NCOL=31 -DHAL_RING=64 -DHAL_SCR_H=160 -DHAL_SCR_W=240 -DNDEBUG=1 -DNR3D -DNRMODE=2 -DPSN00BSDK=1 -I/home/claude/tc/psx/PSn00bSDK/build/tree/lib/libpsn00b/cmake/../../../include/libpsn00b -I/home/claude/notareal-kit/psx -I/home/claude/notareal-kit/mini/psx -Wno-unused-parameter -Wno-misleading-indentation -std=gnu99 -g -Wa,--strip-local-absolute -ffreestanding -fno-builtin -nostdlib -fdata-sections -ffunction-sections -fsigned-char -fno-strict-overflow -fdiagnostics-color=always -msoft-float -march=r3000 -mtune=r3000 -mabi=32 -mno-mt -mno-llsc -O2 -G8 -fno-pic -mno-abicalls -mgpopt -mno-extern-sdata -o CMakeFiles/mini.dir/hal_psx.c.obj -c /home/claude/notareal-kit/mini/psx/hal_psx.c",
+  "file": "/home/claude/notareal-kit/mini/psx/hal_psx.c",
+  "output": "CMakeFiles/mini.dir/hal_psx.c.obj"
+},
+{
+  "directory": "/home/claude/notareal-kit/mini/psx/build",
+  "command": "/bin/mipsel-linux-gnu-gcc -DHAL_NCOL=31 -DHAL_RING=64 -DHAL_SCR_H=160 -DHAL_SCR_W=240 -DNDEBUG=1 -DNR3D -DNRMODE=2 -DPSN00BSDK=1 -I/home/claude/tc/psx/PSn00bSDK/build/tree/lib/libpsn00b/cmake/../../../include/libpsn00b -I/home/claude/notareal-kit/psx -I/home/claude/notareal-kit/mini/psx -Wno-unused-parameter -Wno-misleading-indentation -std=gnu99 -g -Wa,--strip-local-absolute -ffreestanding -fno-builtin -nostdlib -fdata-sections -ffunction-sections -fsigned-char -fno-strict-overflow -fdiagnostics-color=always -msoft-float -march=r3000 -mtune=r3000 -mabi=32 -mno-mt -mno-llsc -O2 -G8 -fno-pic -mno-abicalls -mgpopt -mno-extern-sdata -o CMakeFiles/mini.dir/nrd_psx.c.obj -c /home/claude/notareal-kit/mini/psx/nrd_psx.c",
+  "file": "/home/claude/notareal-kit/mini/psx/nrd_psx.c",
+  "output": "CMakeFiles/mini.dir/nrd_psx.c.obj"
+},
+{
+  "directory": "/home/claude/notareal-kit/mini/psx/build",
+  "command": "/bin/mipsel-linux-gnu-gcc -DHAL_NCOL=31 -DHAL_RING=64 -DHAL_SCR_H=160 -DHAL_SCR_W=240 -DNDEBUG=1 -DNR3D -DNRMODE=2 -DPSN00BSDK=1 -I/home/claude/tc/psx/PSn00bSDK/build/tree/lib/libpsn00b/cmake/../../../include/libpsn00b -I/home/claude/notareal-kit/psx -I/home/claude/notareal-kit/mini/psx -Wno-unused-parameter -Wno-misleading-indentation -std=gnu99 -g -Wa,--strip-local-absolute -ffreestanding -fno-builtin -nostdlib -fdata-sections -ffunction-sections -fsigned-char -fno-strict-overflow -fdiagnostics-color=always -msoft-float -march=r3000 -mtune=r3000 -mabi=32 -mno-mt -mno-llsc -O2 -G8 -fno-pic -mno-abicalls -mgpopt -mno-extern-sdata -o CMakeFiles/mini.dir/home/claude/notareal-kit/mini/src/game.c.obj -c /home/claude/notareal-kit/mini/src/game.c",
+  "file": "/home/claude/notareal-kit/mini/src/game.c",
+  "output": "CMakeFiles/mini.dir/home/claude/notareal-kit/mini/src/game.c.obj"
+},
+{
+  "directory": "/home/claude/notareal-kit/mini/psx/build",
+  "command": "/bin/mipsel-linux-gnu-gcc -DHAL_NCOL=31 -DHAL_RING=64 -DHAL_SCR_H=160 -DHAL_SCR_W=240 -DNDEBUG=1 -DNR3D -DNRMODE=2 -DPSN00BSDK=1 -I/home/claude/tc/psx/PSn00bSDK/build/tree/lib/libpsn00b/cmake/../../../include/libpsn00b -I/home/claude/notareal-kit/psx -I/home/claude/notareal-kit/mini/psx -Wno-unused-parameter -Wno-misleading-indentation -std=gnu99 -g -Wa,--strip-local-absolute -ffreestanding -fno-builtin -nostdlib -fdata-sections -ffunction-sections -fsigned-char -fno-strict-overflow -fdiagnostics-color=always -msoft-float -march=r3000 -mtune=r3000 -mabi=32 -mno-mt -mno-llsc -O2 -G8 -fno-pic -mno-abicalls -mgpopt -mno-extern-sdata -o CMakeFiles/mini.dir/home/claude/notareal-kit/psx/notareal_psx.c.obj -c /home/claude/notareal-kit/psx/notareal_psx.c",
+  "file": "/home/claude/notareal-kit/psx/notareal_psx.c",
+  "output": "CMakeFiles/mini.dir/home/claude/notareal-kit/psx/notareal_psx.c.obj"
+},
+{
+  "directory": "/home/claude/notareal-kit/mini/psx/build",
+  "command": "/bin/mipsel-linux-gnu-gcc -DHAL_NCOL=31 -DHAL_RING=64 -DHAL_SCR_H=160 -DHAL_SCR_W=240 -DNDEBUG=1 -DNR3D -DNRMODE=2 -DPSN00BSDK=1 -I/home/claude/tc/psx/PSn00bSDK/build/tree/lib/libpsn00b/cmake/../../../include/libpsn00b -I/home/claude/notareal-kit/psx -I/home/claude/notareal-kit/mini/psx -Wno-unused-parameter -Wno-misleading-indentation -std=gnu99 -g -Wa,--strip-local-absolute -ffreestanding -fno-builtin -nostdlib -fdata-sections -ffunction-sections -fsigned-char -fno-strict-overflow -fdiagnostics-color=always -msoft-float -march=r3000 -mtune=r3000 -mabi=32 -mno-mt -mno-llsc -O2 -G8 -fno-pic -mno-abicalls -mgpopt -mno-extern-sdata -o CMakeFiles/mini.dir/incbin_6409c43bf152fb58600185217425edd46be5bf82.s.obj -c /home/claude/notareal-kit/mini/psx/build/incbin_6409c43bf152fb58600185217425edd46be5bf82.s",
+  "file": "/home/claude/notareal-kit/mini/psx/build/incbin_6409c43bf152fb58600185217425edd46be5bf82.s",
+  "output": "CMakeFiles/mini.dir/incbin_6409c43bf152fb58600185217425edd46be5bf82.s.obj"
+}
+]

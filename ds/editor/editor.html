@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notareal Game Studio · Dev Kit</title>
+<style>
+:root{--bg:#14121c;--panel:#1f1b2b;--panel2:#2a2440;--ink:#f2eefc;--dim:#a9a2c4;--acc:#8b5cf6;--acc2:#22d3ee;--go:#22c55e;--warn:#f59e0b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,Segoe UI,Roboto,sans-serif}
+header{display:flex;align-items:center;gap:10px;padding:8px 14px;background:linear-gradient(90deg,#241a3d,#14121c);border-bottom:2px solid var(--acc)}
+header img{height:34px}header h1{font-size:16px;margin:0 8px 0 0;letter-spacing:.06em}#title{color:var(--acc2);font-weight:600}
+header .sp{flex:1}button{background:var(--panel2);color:var(--ink);border:1px solid #3d3460;border-radius:8px;padding:6px 12px;font:inherit;cursor:pointer}
+button:hover{border-color:var(--acc)}button.go{background:var(--go);border-color:var(--go);color:#062;font-weight:700}button.alt{background:transparent}
+button.on{background:var(--acc);border-color:var(--acc)}button.big{font-size:18px;padding:14px 20px;border-radius:12px;background:var(--acc)}button.big.alt{background:var(--panel2)}
+nav{display:flex;gap:4px;padding:6px 14px;background:var(--panel)}.tabbtn{border-radius:8px 8px 0 0}.tabbtn.on{background:var(--acc)}
+#main{padding:14px}.split{display:flex;gap:14px;align-items:flex-start}.side{width:300px;flex:none;background:var(--panel);padding:12px;border-radius:12px;max-height:calc(100vh - 150px);overflow:auto}
+.canvaswrap{flex:1;overflow:auto;background:#000;border-radius:12px;max-height:calc(100vh - 150px)}.pix{image-rendering:pixelated}canvas.level{display:block;cursor:crosshair}
+.palette{display:flex;flex-wrap:wrap;gap:4px}.pick{background:var(--panel2);border:2px solid transparent;border-radius:8px;padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:40px;min-height:40px;justify-content:center}
+.pick.on{border-color:var(--acc2)}.pick.danger{box-shadow:inset 0 -3px 0 #ef4444}.pick small{font-size:11px;color:var(--dim)}
+.row{display:flex;gap:8px;align-items:center;margin:6px 0;flex-wrap:wrap}.row.end{justify-content:flex-end}label{display:inline-flex;gap:6px;align-items:center;margin:4px 8px 4px 0}
+input,select{background:#0f0d16;color:var(--ink);border:1px solid #3d3460;border-radius:6px;padding:5px 7px;font:inherit}input.wide{min-width:280px}
+h2{margin:4px 0 10px}h3{margin:16px 0 6px;color:var(--acc2);font-size:14px;text-transform:uppercase;letter-spacing:.08em}.hint{color:var(--dim);font-size:13px}
+.pane{background:var(--panel);border-radius:12px;padding:16px;max-width:1100px}.welcome{text-align:center;padding:60px 20px}.welcome h1{font-size:40px;margin:0 0 6px}.welcome .row{justify-content:center;margin-top:24px}
+.modalbg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:10}.modal{background:var(--panel);border:1px solid var(--acc);border-radius:14px;padding:18px;max-width:min(980px,95vw);max-height:92vh;overflow:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}.card{background:var(--panel2);border:2px solid transparent;border-radius:10px;padding:10px;cursor:pointer;display:flex;flex-direction:column;gap:4px;margin:4px 0}
+.card.on{border-color:var(--acc2)}.card.soon{opacity:.45;cursor:not-allowed}.card small{color:var(--dim);font-size:12px}
+.tilecell{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--panel2);padding:5px;border-radius:8px}.tilecell select{font-size:11px;padding:2px}
+.seqwrap{overflow-x:auto;background:#0f0d16;border-radius:8px;padding:6px}.seqrow{display:flex;white-space:nowrap}.seqname{width:70px;flex:none;color:var(--dim);font-size:12px;padding-top:4px}
+.seqcell{width:22px;height:22px;flex:none;border:1px solid #2a2440;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer}.seqcell.bar{border-left-color:var(--acc)}.seqcell.on{background:var(--acc)}.seqcell.hold{background:#5b3fa8}
+.tech{background:var(--panel2);border-radius:10px;padding:10px;margin:8px 0}.tech small{color:var(--dim)}.tech p{margin:4px 0}.tech .num{color:var(--acc2);font-size:13px}.tech .feel{color:#fcd34d;font-size:13px}
+canvas.play{width:768px;height:576px;background:#000;border-radius:8px}.builder{background:var(--panel2);border-radius:12px;padding:10px;margin:12px 0}
+textarea{background:#0f0d16;color:var(--ink);border:1px solid #3d3460;border-radius:6px;padding:8px;font:inherit;width:100%}
+.checkres{background:var(--panel2);border-radius:10px;padding:10px;margin:8px 0}.checkres.bad{border-left:4px solid #ef4444}.checkres.good{border-left:4px solid var(--go)}
+.stylebar{background:var(--panel);padding:6px;border-radius:8px;flex-wrap:wrap}.famrow{margin:4px 0}.cards.small .card{min-width:150px;padding:6px}.genreinfo{background:var(--panel);padding:8px;border-radius:8px;margin:6px 0}
+.songlib{background:var(--panel);padding:8px;border-radius:8px;margin:8px 0}.songchip{display:inline-flex;gap:3px;align-items:center;background:rgba(255,255,255,.08);border-radius:14px;padding:2px 4px 2px 10px;margin:2px}
+button.mini{padding:1px 7px;font-size:12px}.seqname.wide{width:220px;display:inline-flex;gap:4px}.seqname select{max-width:150px}.vol{width:60px}.seqcell{font-size:8px;overflow:hidden}.seqcell.hold{opacity:.55}
+.touchcard canvas{display:block;margin-bottom:4px}.tech.small{padding:4px 8px}.gfxpanel{background:var(--panel);border-radius:12px;padding:12px;margin:12px 0}.gfxopt{display:inline-flex;gap:4px;align-items:center;margin:2px 8px 2px 0}.gfxbox{display:inline-block}.gfxstats{border-collapse:collapse;margin:8px 0}.gfxstats td,.gfxstats th{padding:3px 12px;border-bottom:1px solid #ffffff18;text-align:left}.gfxtips ul{margin:4px 0 4px 18px}.warn{color:#ffd37a}.labgfx canvas{image-rendering:pixelated;margin:4px 8px 4px 0;border-radius:4px}.facewrap canvas{border-radius:6px}.labreport{background:var(--panel);padding:10px;border-radius:8px;margin:8px 0}.labreport .col{flex:1;min-width:280px}
+.bar{display:flex;align-items:center;gap:6px;font-size:12px}.barlab{width:150px}.barfill{height:9px;background:var(--acc);border-radius:4px;display:inline-block}pre{white-space:pre-wrap;font-size:11px;max-height:300px;overflow:auto}
+.worldpane{max-width:none}.wgrid{display:grid;grid-template-columns:210px minmax(0,1fr) 330px;gap:12px;align-items:start}.wleft label,.wright label.prop{display:block;margin:4px 0}.wmap{padding:4px 8px;border-radius:6px;cursor:pointer}.wmap.on{background:var(--acc)}
+.wcanvas{max-height:620px;overflow:auto;max-width:100%}.wmid{min-width:0}.wpal{max-height:120px;overflow:auto}.wpal .pick{min-width:34px;min-height:34px;padding:2px}.rule{background:rgba(255,255,255,.05);border-radius:8px;padding:6px;margin:6px 0}.action{border-left:3px solid var(--acc2);padding:3px 6px;margin:4px 0;font-size:13px}.action .sub{margin-left:10px}.cond{font-size:12px}.wright textarea{width:100%}
+.alltext .textrow{margin:6px 0;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:4px}.alltext textarea{width:100%}.texttool input.wide{min-width:360px}
+</style></head><body>
+<header><img src="__LOGO__" alt="Notareal"><h1>GAME STUDIO <small style="font-size:11px;opacity:.7">v1.0</small></h1><span id="title"></span><span class="sp"></span>
+<button id="new">New</button><button id="open">Open</button><button id="save">Save</button><button id="play">▶ Test play</button><button id="export" class="go">⬇ Export ROM</button></header>
+<nav><button class="tabbtn" data-tab="templates">📦 Templates</button><button class="tabbtn" data-tab="builder">✨ Make me a game</button><button class="tabbtn" data-tab="arcade">🕹 Minigames</button><button class="tabbtn" data-tab="recipes">🧪 Recipes</button><button class="tabbtn" data-tab="about">ℹ About</button><button class="tabbtn" data-tab="advanced">🛠 Advanced</button><button class="tabbtn" data-tab="color">🖍 Coloring</button><button class="tabbtn" data-tab="timeline">🧭 Timeline</button><button class="tabbtn" data-tab="story">🎬 Story &amp; Banner</button><button class="tabbtn" data-tab="fit">🎯 Fit &amp; Balance</button><button class="tabbtn" data-tab="world">🌍 World</button><button class="tabbtn" data-tab="level">🗺 Levels</button><button class="tabbtn" data-tab="chars">🧍 Characters</button><button class="tabbtn" data-tab="art">🎨 Art</button>
+<button class="tabbtn" data-tab="sigil">🎚 Sigil Studio</button><button class="tabbtn" data-tab="bracelet">📿 Bracelets</button><button class="tabbtn" data-tab="godsim">🌌 Cosmos</button><button class="tabbtn" data-tab="frontier">🤠 Frontier</button><button class="tabbtn" data-tab="engines">⚙ Engines</button><button class="tabbtn" data-tab="music">🎵 Music</button><button class="tabbtn" data-tab="sound">🔊 Sounds</button><button class="tabbtn" data-tab="puzzle">🧩 Puzzle</button><button class="tabbtn" data-tab="fight">🤼 Fighting</button><button class="tabbtn" data-tab="gfx">🎨 Graphics</button><button class="tabbtn" data-tab="touch">📱 Bottom screen</button><button class="tabbtn" data-tab="settings">⚙ Game</button><button class="tabbtn" data-tab="tech">📚 Technique Library</button><button class="tabbtn" data-tab="fix">🩺 Fix it</button><button class="tabbtn" data-tab="lab">🔬 Research Lab</button></nav>
+<div id="main"></div>
+<script>__DATA__</script>
+<script>__NRKIT__</script>
+<script>__EDITOR__</script>
+</body></html>

@@ -1,0 +1,845 @@
+Modules list:
+-------------
+game.o:
+    CODE              Offs=000000  Size=003A6C  Align=00001  Fill=0000
+    RODATA            Offs=000000  Size=000010  Align=00001  Fill=0000
+    BSS               Offs=000000  Size=0002FC  Align=00001  Fill=0000
+hal_nes.o:
+    CODE              Offs=003A6C  Size=000808  Align=00001  Fill=0000
+    RODATA            Offs=000010  Size=003742  Align=00001  Fill=0000
+    BSS               Offs=0002FC  Size=000028  Align=00001  Fill=0000
+    OAM               Offs=000000  Size=000100  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(add.o):
+    CODE              Offs=004274  Size=00001C  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(addeqsp.o):
+    CODE              Offs=004290  Size=000011  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(addysp.o):
+    CODE              Offs=0042A1  Size=00000E  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(and.o):
+    CODE              Offs=0042AF  Size=000010  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(aslax2.o):
+    CODE              Offs=0042BF  Size=00000B  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(aslax3.o):
+    CODE              Offs=0042CA  Size=00000E  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(aslax4.o):
+    CODE              Offs=0042D8  Size=000011  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(asrax4.o):
+    CODE              Offs=0042E9  Size=000019  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(callmain.o):
+    CODE              Offs=004302  Size=000017  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=000004  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(condes.o):
+    CODE              Offs=004319  Size=00000C  Align=00001  Fill=0000
+    DATA              Offs=000004  Size=000025  Align=00001  Fill=0000
+    ONCE              Offs=000000  Size=00000C  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(copydata.o):
+    CODE              Offs=004325  Size=00002D  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(crt0.o):
+    HEADER            Offs=000000  Size=000010  Align=00001  Fill=0000
+    STARTUP           Offs=000000  Size=00005D  Align=00001  Fill=0000
+    VECTORS           Offs=000000  Size=000006  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(decsp1.o):
+    CODE              Offs=004352  Size=000009  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(decsp2.o):
+    CODE              Offs=00435B  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(decsp3.o):
+    CODE              Offs=004368  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(decsp4.o):
+    CODE              Offs=004375  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(decsp5.o):
+    CODE              Offs=004382  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(decsp6.o):
+    CODE              Offs=00438F  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(decsp7.o):
+    CODE              Offs=00439C  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(icmp.o):
+    CODE              Offs=0043A9  Size=00002E  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(incsp1.o):
+    CODE              Offs=0043D7  Size=000007  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(incsp2.o):
+    CODE              Offs=0043DE  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(incsp3.o):
+    CODE              Offs=0043F4  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(incsp4.o):
+    CODE              Offs=0043F9  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(incsp5.o):
+    CODE              Offs=0043FE  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(incsp6.o):
+    CODE              Offs=004403  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(incsp7.o):
+    CODE              Offs=004408  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(incsp8.o):
+    CODE              Offs=00440D  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(makebool.o):
+    CODE              Offs=004412  Size=00002C  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(mul8.o):
+    CODE              Offs=00443E  Size=00003A  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(mulax3.o):
+    CODE              Offs=004478  Size=000011  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(mulax5.o):
+    CODE              Offs=004489  Size=000014  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(mulax6.o):
+    CODE              Offs=00449D  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(mulax7.o):
+    CODE              Offs=0044B3  Size=000019  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(neschar.o):
+    CHARS             Offs=000000  Size=001000  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(or.o):
+    CODE              Offs=0044CC  Size=000012  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(popptr1.o):
+    CODE              Offs=0044DE  Size=00000E  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(ppubuf.o):
+    CODE              Offs=0044EC  Size=0000B0  Align=00001  Fill=0000
+    BSS               Offs=000324  Size=000001  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(pusha.o):
+    CODE              Offs=00459C  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(pushax.o):
+    CODE              Offs=0045B2  Size=00001A  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(pushwsp.o):
+    CODE              Offs=0045CC  Size=00001C  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(shl.o):
+    CODE              Offs=0045E8  Size=000033  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(shrax1.o):
+    CODE              Offs=00461B  Size=000008  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(shrax2.o):
+    CODE              Offs=004623  Size=00000B  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(shrax3.o):
+    CODE              Offs=00462E  Size=00000E  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(shrax4.o):
+    CODE              Offs=00463C  Size=000011  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(staspidx.o):
+    CODE              Offs=00464D  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(staxsp.o):
+    CODE              Offs=004663  Size=00000B  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(staxspi.o):
+    CODE              Offs=00466E  Size=00001B  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(sub.o):
+    CODE              Offs=004689  Size=000015  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(subeqsp.o):
+    CODE              Offs=00469E  Size=000015  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(udiv.o):
+    CODE              Offs=0046B3  Size=00004F  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(umod.o):
+    CODE              Offs=004702  Size=000011  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(zerobss.o):
+    CODE              Offs=004713  Size=000023  Align=00001  Fill=0000
+/usr/share/cc65/lib/nes.lib(zeropage.o):
+    ZEROPAGE          Offs=000000  Size=00001A  Align=00001  Fill=0000
+
+
+Segment list:
+-------------
+Name                   Start     End    Size  Align
+----------------------------------------------------
+CHARS                 000000  000FFF  001000  00001
+HEADER                000000  00000F  000010  00001
+ZEROPAGE              000002  00001B  00001A  00001
+OAM                   000200  0002FF  000100  00001
+DATA                  000300  000328  000029  00001
+BSS                   000329  00064D  000325  00001
+STARTUP               008000  00805C  00005D  00001
+ONCE                  00805D  008068  00000C  00001
+CODE                  008069  00C79E  004736  00001
+RODATA                00C79F  00FEF0  003752  00001
+VECTORS               00FFFA  00FFFF  000006  00001
+
+
+Exports list by name:
+---------------------
+NESfont                   000000 RLA    _NRD                      00C841 RLA    
+__BSS_RUN__               000329 RLA    __BSS_SIZE__              000325 REA    
+__CONSTRUCTOR_COUNT__     000000 REA    __CONSTRUCTOR_TABLE__     008069 RLA    
+__DATA_LOAD__             00FEF1 RLA    __DATA_RUN__              000300 RLA    
+__DATA_SIZE__             000029 REA    __DESTRUCTOR_COUNT__      000000 REA    
+__DESTRUCTOR_TABLE__      00FEF1 RLA    __SRAM_SIZE__             000100 REA    
+__SRAM_START__            000700 RLA    __STACKSIZE__             000100 REA    
+__STARTUP__               000001 REA    _game_main                00B9C6 RLA    
+_hal_col_begin            00BD5D RLA    _hal_col_end              00BD97 RLA    
+_hal_col_put              00BD74 RLA    _hal_frame                00BB26 RLA    
+_hal_hud_begin            00BF68 RLA    _hal_hud_end              00BF78 RLA    
+_hal_init                 00BAD5 RLA    _hal_level_begin          00BCF1 RLA    
+_hal_level_end            00BD0C RLA    _hal_pad                  00BB57 RLA    
+_hal_put_tiles            00BE08 RLA    _hal_scroll               00BDA5 RLA    
+_hal_show_screen          00BBF5 RLA    _hal_snd_init             00BEC0 RLA    
+_hal_spr                  00BFB4 RLA    _hal_spr_begin            00BFA4 RLA    
+_hal_spr_end              00C088 RLA    _hal_text_begin           00BDB8 RLA    
+_hal_text_end             00BE60 RLA    _hal_tone                 00BED3 RLA    
+_main                     00C2DA RLA    addeq0sp                  00C2F9 RLA    
+addeqysp                  00C2FB RLA    addysp                    00C30B RLA    
+addysp1                   00C30A RLA    aslax3                    00C333 RLA    
+aslax4                    00C341 RLA    aslaxy                    00C658 RLA    
+asrax4                    00C352 RLA    booleq                    00C481 RLA    
+callmain                  00C36B RLA    copydata                  00C38E RLA    
+decsp1                    00C3BB RLA    decsp2                    00C3C4 RLA    
+decsp3                    00C3D1 RLA    decsp4                    00C3DE RLA    
+decsp5                    00C3EB RLA    decsp6                    00C3F8 RLA    
+decsp7                    00C405 RLA    donelib                   00C382 RLA    
+incsp1                    00C440 RLA    incsp2                    00C44F RLA    
+incsp3                    00C45D RLA    incsp4                    00C462 RLA    
+incsp5                    00C467 RLA    incsp6                    00C46C RLA    
+incsp7                    00C471 RLA    incsp8                    00C476 RLA    
+initlib                   00805D RLA    mulax3                    00C4E1 RLA    
+mulax5                    00C4F2 RLA    mulax6                    00C506 RLA    
+mulax7                    00C51C RLA    popax                     00C447 RLA    
+popptr1                   00C547 RLA    ppubuf_flush              00C581 RLA    
+ptr1                      00000A RLZ    ptr2                      00000C RLZ    
+ptr4                      000010 RLZ    pusha                     00C609 RLA    
+pusha0                    00C61D RLA    pushax                    00C61F RLA    
+pushw0sp                  00C635 RLA    pushwysp                  00C637 RLA    
+regsave                   000006 RLZ    shlax2                    00C328 RLA    
+shlax3                    00C333 RLA    shlax4                    00C341 RLA    
+shrax1                    00C684 RLA    shrax2                    00C68C RLA    
+shrax3                    00C697 RLA    shrax4                    00C6A5 RLA    
+sp                        000002 RLZ    sreg                      000004 RLZ    
+staspidx                  00C6B6 RLA    stax0sp                   00C6CC RLA    
+staxspidx                 00C6D7 RLA    staxysp                   00C6CE RLA    
+subeq0sp                  00C707 RLA    tmp1                      000012 RLZ    
+tosadda0                  00C2DD RLA    tosaddax                  00C2DF RLA    
+tosandax                  00C31A RLA    tosicmp                   00C414 RLA    
+tosicmp0                  00C412 RLA    tosorax                   00C537 RLA    
+tossubax                  00C6F4 RLA    tosudiva0                 00C71C RLA    
+tosumoda0                 00C76B RLA    tosumula0                 00C4A7 RLA    
+udiv16                    00C72D RLA    zerobss                   00C77C RLA    
+
+
+
+Exports list by value:
+----------------------
+NESfont                   000000 RLA    __CONSTRUCTOR_COUNT__     000000 REA    
+__DESTRUCTOR_COUNT__      000000 REA    __STARTUP__               000001 REA    
+sp                        000002 RLZ    sreg                      000004 RLZ    
+regsave                   000006 RLZ    ptr1                      00000A RLZ    
+ptr2                      00000C RLZ    ptr4                      000010 RLZ    
+tmp1                      000012 RLZ    __DATA_SIZE__             000029 REA    
+__SRAM_SIZE__             000100 REA    __STACKSIZE__             000100 REA    
+__DATA_RUN__              000300 RLA    __BSS_SIZE__              000325 REA    
+__BSS_RUN__               000329 RLA    __SRAM_START__            000700 RLA    
+initlib                   00805D RLA    __CONSTRUCTOR_TABLE__     008069 RLA    
+_game_main                00B9C6 RLA    _hal_init                 00BAD5 RLA    
+_hal_frame                00BB26 RLA    _hal_pad                  00BB57 RLA    
+_hal_show_screen          00BBF5 RLA    _hal_level_begin          00BCF1 RLA    
+_hal_level_end            00BD0C RLA    _hal_col_begin            00BD5D RLA    
+_hal_col_put              00BD74 RLA    _hal_col_end              00BD97 RLA    
+_hal_scroll               00BDA5 RLA    _hal_text_begin           00BDB8 RLA    
+_hal_put_tiles            00BE08 RLA    _hal_text_end             00BE60 RLA    
+_hal_snd_init             00BEC0 RLA    _hal_tone                 00BED3 RLA    
+_hal_hud_begin            00BF68 RLA    _hal_hud_end              00BF78 RLA    
+_hal_spr_begin            00BFA4 RLA    _hal_spr                  00BFB4 RLA    
+_hal_spr_end              00C088 RLA    _main                     00C2DA RLA    
+tosadda0                  00C2DD RLA    tosaddax                  00C2DF RLA    
+addeq0sp                  00C2F9 RLA    addeqysp                  00C2FB RLA    
+addysp1                   00C30A RLA    addysp                    00C30B RLA    
+tosandax                  00C31A RLA    shlax2                    00C328 RLA    
+aslax3                    00C333 RLA    shlax3                    00C333 RLA    
+aslax4                    00C341 RLA    shlax4                    00C341 RLA    
+asrax4                    00C352 RLA    callmain                  00C36B RLA    
+donelib                   00C382 RLA    copydata                  00C38E RLA    
+decsp1                    00C3BB RLA    decsp2                    00C3C4 RLA    
+decsp3                    00C3D1 RLA    decsp4                    00C3DE RLA    
+decsp5                    00C3EB RLA    decsp6                    00C3F8 RLA    
+decsp7                    00C405 RLA    tosicmp0                  00C412 RLA    
+tosicmp                   00C414 RLA    incsp1                    00C440 RLA    
+popax                     00C447 RLA    incsp2                    00C44F RLA    
+incsp3                    00C45D RLA    incsp4                    00C462 RLA    
+incsp5                    00C467 RLA    incsp6                    00C46C RLA    
+incsp7                    00C471 RLA    incsp8                    00C476 RLA    
+booleq                    00C481 RLA    tosumula0                 00C4A7 RLA    
+mulax3                    00C4E1 RLA    mulax5                    00C4F2 RLA    
+mulax6                    00C506 RLA    mulax7                    00C51C RLA    
+tosorax                   00C537 RLA    popptr1                   00C547 RLA    
+ppubuf_flush              00C581 RLA    pusha                     00C609 RLA    
+pusha0                    00C61D RLA    pushax                    00C61F RLA    
+pushw0sp                  00C635 RLA    pushwysp                  00C637 RLA    
+aslaxy                    00C658 RLA    shrax1                    00C684 RLA    
+shrax2                    00C68C RLA    shrax3                    00C697 RLA    
+shrax4                    00C6A5 RLA    staspidx                  00C6B6 RLA    
+stax0sp                   00C6CC RLA    staxysp                   00C6CE RLA    
+staxspidx                 00C6D7 RLA    tossubax                  00C6F4 RLA    
+subeq0sp                  00C707 RLA    tosudiva0                 00C71C RLA    
+udiv16                    00C72D RLA    tosumoda0                 00C76B RLA    
+zerobss                   00C77C RLA    _NRD                      00C841 RLA    
+__DATA_LOAD__             00FEF1 RLA    __DESTRUCTOR_TABLE__      00FEF1 RLA    
+
+
+
+Imports list:
+-------------
+NESfont (neschar.o):
+    crt0.o                    nes/crt0.s(26)
+_NRD (hal_nes.o):
+    game.o                    ../src/game.s(33)
+__BSS_RUN__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+__BSS_SIZE__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+__CONSTRUCTOR_COUNT__ ([linker generated]):
+    condes.o                  runtime/condes.s(18)
+__CONSTRUCTOR_TABLE__ ([linker generated]):
+    condes.o                  runtime/condes.s(18)
+__DATA_LOAD__ ([linker generated]):
+    copydata.o                common/copydata.s(8)
+__DATA_RUN__ ([linker generated]):
+    copydata.o                common/copydata.s(8)
+__DATA_SIZE__ ([linker generated]):
+    copydata.o                common/copydata.s(8)
+__DESTRUCTOR_COUNT__ ([linker generated]):
+    condes.o                  runtime/condes.s(19)
+__DESTRUCTOR_TABLE__ ([linker generated]):
+    condes.o                  runtime/condes.s(19)
+__SRAM_SIZE__ ([linker generated]):
+    crt0.o                    nes/crt0.s(17)
+__SRAM_START__ ([linker generated]):
+    crt0.o                    nes/crt0.s(17)
+__STACKSIZE__ ([linker generated]):
+    [linker generated]        nr_nes.cfg(9)
+__STARTUP__ (crt0.o):
+    hal_nes.o                 hal_nes.s(13)
+_game_main (game.o):
+    hal_nes.o                 hal_nes.s(36)
+_hal_col_begin (hal_nes.o):
+    game.o                    ../src/game.s(19)
+_hal_col_end (hal_nes.o):
+    game.o                    ../src/game.s(21)
+_hal_col_put (hal_nes.o):
+    game.o                    ../src/game.s(20)
+_hal_frame (hal_nes.o):
+    game.o                    ../src/game.s(14)
+_hal_hud_begin (hal_nes.o):
+    game.o                    ../src/game.s(28)
+_hal_hud_end (hal_nes.o):
+    game.o                    ../src/game.s(29)
+_hal_init (hal_nes.o):
+    game.o                    ../src/game.s(13)
+_hal_level_begin (hal_nes.o):
+    game.o                    ../src/game.s(17)
+_hal_level_end (hal_nes.o):
+    game.o                    ../src/game.s(18)
+_hal_pad (hal_nes.o):
+    game.o                    ../src/game.s(15)
+_hal_put_tiles (hal_nes.o):
+    game.o                    ../src/game.s(24)
+_hal_scroll (hal_nes.o):
+    game.o                    ../src/game.s(22)
+_hal_show_screen (hal_nes.o):
+    game.o                    ../src/game.s(16)
+_hal_snd_init (hal_nes.o):
+    game.o                    ../src/game.s(26)
+_hal_spr (hal_nes.o):
+    game.o                    ../src/game.s(31)
+_hal_spr_begin (hal_nes.o):
+    game.o                    ../src/game.s(30)
+_hal_spr_end (hal_nes.o):
+    game.o                    ../src/game.s(32)
+_hal_text_begin (hal_nes.o):
+    game.o                    ../src/game.s(23)
+_hal_text_end (hal_nes.o):
+    game.o                    ../src/game.s(25)
+_hal_tone (hal_nes.o):
+    game.o                    ../src/game.s(27)
+_main (hal_nes.o):
+    callmain.o                runtime/callmain.s(11)
+addeq0sp (addeqsp.o):
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+addeqysp (addeqsp.o):
+    game.o                    ../src/game.s(8415)
+addysp (addysp.o):
+    incsp8.o                  runtime/incsp8.s(8)
+    incsp7.o                  runtime/incsp7.s(8)
+    incsp6.o                  runtime/incsp6.s(8)
+    incsp5.o                  runtime/incsp5.s(8)
+    incsp4.o                  runtime/incsp4.s(8)
+    incsp3.o                  runtime/incsp3.s(8)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+addysp1 (addysp.o):
+    sub.o                     runtime/sub.s(8)
+    or.o                      runtime/or.s(9)
+    and.o                     runtime/and.s(8)
+aslax3 (aslax3.o):
+    game.o                    ../src/game.s(8415)
+aslax4 (aslax4.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+aslaxy (shl.o):
+    game.o                    ../src/game.s(8415)
+asrax4 (asrax4.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+booleq (makebool.o):
+    game.o                    ../src/game.s(8415)
+callmain (callmain.o):
+    crt0.o                    nes/crt0.s(11)
+copydata (copydata.o):
+    crt0.o                    nes/crt0.s(12)
+decsp1 (decsp1.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+decsp2 (decsp2.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+decsp3 (decsp3.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+decsp4 (decsp4.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+decsp5 (decsp5.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+decsp6 (decsp6.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+decsp7 (decsp7.o):
+    game.o                    ../src/game.s(8415)
+donelib (condes.o):
+    crt0.o                    nes/crt0.s(11)
+incsp1 (incsp1.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+incsp2 (incsp2.o):
+    staxspi.o                 runtime/staxspi.s(9)
+    staspidx.o                runtime/staspidx.s(8)
+    popptr1.o                 runtime/popptr1.s(8)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+incsp3 (incsp3.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+incsp4 (incsp4.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+incsp5 (incsp5.o):
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+incsp6 (incsp6.o):
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+incsp7 (incsp7.o):
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+incsp8 (incsp8.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+initlib (condes.o):
+    crt0.o                    nes/crt0.s(11)
+mulax3 (mulax3.o):
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+mulax5 (mulax5.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+mulax6 (mulax6.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+mulax7 (mulax7.o):
+    game.o                    ../src/game.s(8415)
+popax (incsp2.o):
+    shl.o                     runtime/shl.s(15)
+popptr1 (popptr1.o):
+    umod.o                    runtime/umod.s(8)
+    udiv.o                    runtime/udiv.s(9)
+    mul8.o                    runtime/mul8.s(9)
+ppubuf_flush (ppubuf.o):
+    crt0.o                    nes/crt0.s(13)
+ptr1 (zeropage.o):
+    copydata.o                common/copydata.s(9)
+    zerobss.o                 common/zerobss.s(9)
+    udiv.o                    runtime/udiv.s(10)
+    staxspi.o                 runtime/staxspi.s(10)
+    staspidx.o                runtime/staspidx.s(9)
+    popptr1.o                 runtime/popptr1.s(9)
+    mulax7.o                  runtime/mulax7.s(10)
+    mulax6.o                  runtime/mulax6.s(9)
+    mulax5.o                  runtime/mulax5.s(9)
+    mulax3.o                  runtime/mulax3.s(9)
+    mul8.o                    runtime/mul8.s(10)
+    hal_nes.o                 hal_nes.s(11)
+    game.o                    ../src/game.s(11)
+ptr2 (zeropage.o):
+    copydata.o                common/copydata.s(9)
+ptr4 (zeropage.o):
+    umod.o                    runtime/umod.s(9)
+    udiv.o                    runtime/udiv.s(10)
+    mul8.o                    runtime/mul8.s(10)
+pusha (pusha.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+pusha0 (pushax.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+pushax (pushax.o):
+    callmain.o                runtime/callmain.s(11)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+pushw0sp (pushwsp.o):
+    game.o                    ../src/game.s(8415)
+pushwysp (pushwsp.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+regsave (zeropage.o):
+    hal_nes.o                 hal_nes.s(10)
+    game.o                    ../src/game.s(10)
+shlax2 (aslax2.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+shlax3 (aslax3.o):
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+shlax4 (aslax4.o):
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+shrax1 (shrax1.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+shrax2 (shrax2.o):
+    game.o                    ../src/game.s(8415)
+shrax3 (shrax3.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+shrax4 (shrax4.o):
+    game.o                    ../src/game.s(8415)
+sp (zeropage.o):
+    subeqsp.o                 runtime/subeqsp.s(8)
+    sub.o                     runtime/sub.s(9)
+    staxspi.o                 runtime/staxspi.s(10)
+    staxsp.o                  runtime/staxsp.s(8)
+    staspidx.o                runtime/staspidx.s(9)
+    pushwsp.o                 runtime/pushwsp.s(8)
+    pushax.o                  runtime/pushax.s(8)
+    pusha.o                   runtime/pusha.s(8)
+    popptr1.o                 runtime/popptr1.s(9)
+    or.o                      runtime/or.s(10)
+    incsp2.o                  runtime/incsp2.s(8)
+    incsp1.o                  runtime/incsp1.s(8)
+    icmp.o                    runtime/icmp.s(9)
+    decsp7.o                  runtime/decsp7.s(8)
+    decsp6.o                  runtime/decsp6.s(8)
+    decsp5.o                  runtime/decsp5.s(8)
+    decsp4.o                  runtime/decsp4.s(8)
+    decsp3.o                  runtime/decsp3.s(8)
+    decsp2.o                  runtime/decsp2.s(8)
+    decsp1.o                  runtime/decsp1.s(8)
+    crt0.o                    /build/cc65-5FfAbq/cc65-2.19/asminc/zeropage.inc(11)
+    and.o                     runtime/and.s(9)
+    addysp.o                  runtime/addysp.s(8)
+    addeqsp.o                 runtime/addeqsp.s(8)
+    add.o                     runtime/add.s(12)
+    hal_nes.o                 hal_nes.s(10)
+    game.o                    ../src/game.s(10)
+sreg (zeropage.o):
+    umod.o                    runtime/umod.s(9)
+    udiv.o                    runtime/udiv.s(10)
+    icmp.o                    runtime/icmp.s(9)
+    hal_nes.o                 hal_nes.s(10)
+    game.o                    ../src/game.s(10)
+staspidx (staspidx.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+stax0sp (staxsp.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+staxspidx (staxspi.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+staxysp (staxsp.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+subeq0sp (subeqsp.o):
+    game.o                    ../src/game.s(8415)
+tmp1 (zeropage.o):
+    copydata.o                common/copydata.s(9)
+    staxspi.o                 runtime/staxspi.s(10)
+    staspidx.o                runtime/staspidx.s(9)
+    shrax4.o                  runtime/shrax4.s(8)
+    shrax3.o                  runtime/shrax3.s(8)
+    shrax2.o                  runtime/shrax2.s(8)
+    shrax1.o                  runtime/shrax1.s(8)
+    shl.o                     runtime/shl.s(16)
+    or.o                      runtime/or.s(10)
+    asrax4.o                  runtime/asrax4.s(9)
+    aslax4.o                  runtime/aslax4.s(8)
+    aslax3.o                  runtime/aslax3.s(8)
+    aslax2.o                  runtime/aslax2.s(8)
+    add.o                     runtime/add.s(12)
+    hal_nes.o                 hal_nes.s(11)
+    game.o                    ../src/game.s(11)
+tosadda0 (add.o):
+    game.o                    ../src/game.s(8415)
+tosaddax (add.o):
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+tosandax (and.o):
+    game.o                    ../src/game.s(8415)
+tosicmp (icmp.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+tosicmp0 (icmp.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+tosorax (or.o):
+    hal_nes.o                 hal_nes.s(1510)
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+tossubax (sub.o):
+    game.o                    ../src/game.s(8415)
+tosudiva0 (udiv.o):
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+tosumoda0 (umod.o):
+    hal_nes.o                 hal_nes.s(1510)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+tosumula0 (mul8.o):
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+    game.o                    ../src/game.s(8415)
+udiv16 (udiv.o):
+    umod.o                    runtime/umod.s(8)
+zerobss (zerobss.o):
+    crt0.o                    nes/crt0.s(12)
+

@@ -1,0 +1,282 @@
+[
+ [
+  "welcome screen",
+  true,
+  ""
+ ],
+ [
+  "wizard lists the game types from the catalog",
+  true,
+  ""
+ ],
+ [
+  "wizard art style filters heroes",
+  true,
+  ""
+ ],
+ [
+  "wizard creates a DS sidescroller project",
+  true,
+  ""
+ ],
+ [
+  "new projects get instrument songs and a touch layout",
+  true,
+  ""
+ ],
+ [
+  "level painter sets a tile",
+  true,
+  ""
+ ],
+ [
+  "level painter places a thing",
+  true,
+  ""
+ ],
+ [
+  "right-click removes a thing",
+  true,
+  ""
+ ],
+ [
+  "checker finds the buried spring and the spike block",
+  true,
+  ""
+ ],
+ [
+  "one-click repair makes the level playable",
+  true,
+  ""
+ ],
+ [
+  "add a level",
+  true,
+  ""
+ ],
+ [
+  "fix-it: typed complaint + offline checks list the problem",
+  true,
+  ""
+ ],
+ [
+  "fix-it: AI prompt carries the complaint and the level map",
+  true,
+  ""
+ ],
+ [
+  "fix-it: AI edits validated (bad op dropped) and previewed",
+  true,
+  ""
+ ],
+ [
+  "fix-it: applying AI edits changes the project and logs it",
+  true,
+  ""
+ ],
+ [
+  "fix-it: automatic repair logged",
+  true,
+  ""
+ ],
+ [
+  "fix log downloads with rules + entries",
+  true,
+  ""
+ ],
+ [
+  "character builder makes a 32x64 hero",
+  true,
+  ""
+ ],
+ [
+  "import art for an enemy (converted to 16x16 frames)",
+  true,
+  ""
+ ],
+ [
+  "make a tile from a picture",
+  true,
+  ""
+ ],
+ [
+  "import a background picture",
+  true,
+  ""
+ ],
+ [
+  "image converter pixelizes and saves a PNG",
+  true,
+  ""
+ ],
+ [
+  "music grid places a note",
+  true,
+  ""
+ ],
+ [
+  "song library adds a lofi vaporwave song with instruments",
+  true,
+  ""
+ ],
+ [
+  "generator writes a new 90s cloud rap song",
+  true,
+  ""
+ ],
+ [
+  "track instrument can be changed (sitar)",
+  true,
+  ""
+ ],
+ [
+  "MIDI import adds a song with the notes",
+  true,
+  ""
+ ],
+ [
+  "MP3 \u2192 song finds the melody notes",
+  true,
+  "8 notes: [60, 62, 64, 67, 69]"
+ ],
+ [
+  "import a WAV as the jump sound",
+  true,
+  ""
+ ],
+ [
+  "import an MP3 as the stomp sound",
+  true,
+  ""
+ ],
+ [
+  "record a sound with the microphone",
+  true,
+  ""
+ ],
+ [
+  "movement style from the Technique Library",
+  true,
+  ""
+ ],
+ [
+  "Technique Library search",
+  true,
+  ""
+ ],
+ [
+  "studio mode shows advanced options",
+  true,
+  ""
+ ],
+ [
+  "bottom screen: pick the pocket-monster command menu + sleek look",
+  true,
+  ""
+ ],
+ [
+  "bottom screen: rename a button",
+  true,
+  ""
+ ],
+ [
+  "opening screen picture is fitted to 256x192",
+  true,
+  ""
+ ],
+ [
+  "face wrap maker finds the face",
+  true,
+  ""
+ ],
+ [
+  "face wrap maker shows all console versions",
+  true,
+  ""
+ ],
+ [
+  "face goes onto the hero sprite",
+  true,
+  ""
+ ],
+ [
+  "style pack switches enemies, items, tiles and background",
+  true,
+  ""
+ ],
+ [
+  "research lab scans a Game Boy ROM and maps its code",
+  true,
+  ""
+ ],
+ [
+  "research lab saves to the studio database",
+  true,
+  ""
+ ],
+ [
+  "code database search finds pre-scanned games",
+  true,
+  ""
+ ],
+ [
+  "Technique Library includes Research Lab findings",
+  true,
+  ""
+ ],
+ [
+  "save and reopen keeps the project",
+  true,
+  ""
+ ],
+ [
+  "test play runs",
+  true,
+  ""
+ ],
+ [
+  "export ROM",
+  true,
+  ""
+ ],
+ [
+  "console switch to SNES",
+  true,
+  ""
+ ],
+ [
+  "export SNES ROM",
+  true,
+  ""
+ ],
+ [
+  "no script errors during the whole session",
+  true,
+  ""
+ ],
+ [
+  "exported ROM (custom hero, tile, background, sounds, songs) boots and plays in DeSmuME",
+  true,
+  ""
+ ],
+ [
+  "exported ROM shows the touch layout on the bottom screen",
+  true,
+  ""
+ ],
+ [
+  "exported ROM shows the opening screen after the logo",
+  true,
+  ""
+ ],
+ [
+  "exported SNES ROM boots and plays in Snes9x",
+  true,
+  ""
+ ],
+ [
+  "exported SNES ROM plays music on the SPC700",
+  true,
+  ""
+ ]
+]

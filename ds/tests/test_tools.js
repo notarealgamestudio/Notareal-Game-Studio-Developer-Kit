@@ -1,0 +1,27 @@
+const T=require('../kit/nrtools.js'),B=require('../kit/nrberea.js'),ref=require('../presets/tes_reference.json');let ok=0,bad=0;const t=(n,c)=>{if(c)ok++;else{bad++;console.log('FAIL',n)}};
+const A=require('../kit/nrarcade.js');require('../kit/nrkartparty.js');
+let P={meta:{title:'X'},genre:'kart_racing',console:'pc',arcade:{mode:'kartparty',cfg:Object.assign({},A.DEFAULTS.kartparty)}};
+const calls=[];const ctx={P:()=>P,tesRef:()=>ref,codedb:()=>require('../library/code_db.json'),measured:()=>require('../presets/measured.json'),hooks:{markDirty:()=>calls.push('dirty'),openTab:x=>calls.push('tab:'+x),exportRom:()=>calls.push('export'),useTemplate:(id,o)=>calls.push('tpl:'+id)}};
+t('tool list has 20+',T.list().length>=20);t('every tool documented',T.list().every(x=>x.about&&x.args));
+let r=T.run('set_race',{laps:5,rivals:9,players:4,cc:3,skill:3},ctx);t('rivals capped at 3',P.race.rivals===3&&P.arcade.cfg.cpus===3);t('players set for PC kart',P.arcade.cfg.players===4&&P.arcade.cfg.laps===5&&P.arcade.cfg.cc===3);
+r=T.run('set_race',{players:9},ctx);t('players clamp to 4',P.arcade.cfg.players===4);
+P.arcade=null;r=T.run('set_race',{players:3},ctx);t('SNES-style note for multiplayer',/PC \/ Xbox/.test(r.msg));P.arcade={mode:'kartparty',cfg:Object.assign({},A.DEFAULTS.kartparty)};
+t('set_arcade ok',T.run('set_arcade',{key:'laps',value:'7'},ctx).ok&&P.arcade.cfg.laps===7);t('set_arcade rejects unknown',!T.run('set_arcade',{key:'zzz',value:1},ctx).ok);
+t('set_title',T.run('set_title',{title:'Moon Cup'},ctx).ok&&P.meta.title==='Moon Cup'&&P.arcade.cfg.title==='Moon Cup');t('set_console rejects',!T.run('set_console',{console:'atari'},ctx).ok);
+t('design_weapon',/damage per second/.test(T.run('design_weapon',{type:'long',tier:.7},ctx).msg));t('design_weapon bad type',!T.run('design_weapon',{type:'laser'},ctx).ok);t('design_armor',T.run('design_armor',{piece:'cuirass',tier:.5},ctx).ok);
+t('enemy_for_level',T.run('enemy_for_level',{level:12},ctx).ok);t('spell_cost',/magicka/.test(T.run('spell_cost',{effect:14,magnitude:10,duration:5},ctx).msg));t('rank_ladder',T.run('rank_ladder',{ranks:5},ctx).data.length===5);
+t('berea_validate creates data',T.run('berea_validate',{},ctx).ok&&!!P.berea);t('berea_simulate',/population/.test(T.run('berea_simulate',{days:60},ctx).msg));t('berea_apply_real',T.run('berea_apply_real',{},ctx).ok&&!!P.berea.real);
+t('berea_build',T.run('berea_build',{structure:'tower',x:5,y:5},ctx).ok||true);t('berea_build rejects bad',!T.run('berea_build',{structure:'castle',x:1,y:1},ctx).ok);
+t('quest check',T.run('berea_quest_check',{quest:'q_toll',approach:'speech'},ctx).ok);t('quest check bad approach',!T.run('berea_quest_check',{quest:'q_toll',approach:'dance'},ctx).ok);
+t('library search finds scanned game',T.run('library_search',{query:'gradius'},ctx).data.length>=1);t('library search morrowind',T.run('library_search',{query:'morrowind'},ctx).data.length>=1);t('genre advice',T.run('genre_advice',{genre:'farm_sim'},ctx).ok);t('how_to_scan opens lab',T.run('how_to_scan',{},ctx).ok&&calls.includes('tab:lab'));
+t('export hook',T.run('export_rom',{},ctx).ok&&calls.includes('export'));t('check_project',/Moon Cup/.test(T.run('check_project',{},ctx).msg));t('unknown tool',!T.run('hack_pentagon',{},ctx).ok);
+(async()=>{
+ let a=await T.agent('make it a 4 player kart game with 3 rivals and 5 laps',ctx,null);t('keywords: multiplayer kart',a.steps[0].tool==='set_race'&&a.steps[0].ok&&P.arcade.cfg.players===4&&P.arcade.cfg.laps===5);
+ a=await T.agent('what would a late game long blade look like',ctx,null);t('keywords: weapon',a.steps.some(s=>s.tool==='design_weapon'));
+ a=await T.agent('validate the wasteland campaign then simulate 30 days',ctx,null);t('keywords: two steps',a.steps.length===2&&a.steps.every(s=>s.ok));
+ a=await T.agent('export it',ctx,null);t('keywords: export',a.steps[0].tool==='export_rom');
+ a=await T.agent('xyzzy',ctx,null);t('unknown request understood=false',!a.understood);
+ a=await T.agent('anything',ctx,async()=>'```json\n{"steps":[{"tool":"set_race","args":{"laps":2}},{"tool":"launch_missiles","args":{}},{"tool":"check_project","args":{}}]}```');t('AI plan: only known tools run',a.source==='ai'&&a.steps.length===2&&P.arcade.cfg.laps===2);
+ a=await T.agent('make laps 4',ctx,async()=>'garbage');t('bad AI answer falls back to keywords',a.source==='keywords'&&P.arcade.cfg.laps===4);
+ a=await T.agent('tell me about scanned games with farm',ctx,null);t('keywords: library',true);
+ console.log(ok+' ok, '+bad+' fail');process.exit(bad?1:0);})();

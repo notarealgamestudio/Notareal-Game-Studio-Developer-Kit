@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.21)
+project(nr_w3soft_psx LANGUAGES C ASM VERSION 1.0.0)
+set(KIT /home/claude/notareal-kit/psx)
+psn00bsdk_add_executable(w3soft GPREL hal_psx.c nrg_data_psx.c nr_softfloat.c ${KIT}/notareal_psx.c)
+target_include_directories(w3soft PRIVATE ${KIT} ${PROJECT_SOURCE_DIR})
+target_compile_options(w3soft PRIVATE -Wno-unused-parameter -Wno-misleading-indentation -std=gnu99 -O2 -fno-builtin)
+psn00bsdk_target_incbin(w3soft PRIVATE nr_splash ${PROJECT_SOURCE_DIR}/assets/splash.raw)

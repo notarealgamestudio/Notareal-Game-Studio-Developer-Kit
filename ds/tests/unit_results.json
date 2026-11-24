@@ -1,0 +1,170 @@
+{
+ "pass": 41,
+ "fail": 0,
+ "results": [
+  [
+   "PASS",
+   "image: resize keeps size and averages"
+  ],
+  [
+   "PASS",
+   "image: pixelize limits colour count"
+  ],
+  [
+   "PASS",
+   "image: transparency survives pixelize"
+  ],
+  [
+   "PASS",
+   "sound: WAV parse + PCM8 conversion"
+  ],
+  [
+   "PASS",
+   "sound: 16-bit stereo WAV parses"
+  ],
+  [
+   "PASS",
+   "music: MIDI import gives melody + drums"
+  ],
+  [
+   "PASS",
+   "build: every section present and inside the block"
+  ],
+  [
+   "PASS",
+   "build: palettes keep index 0 transparent/backdrop"
+  ],
+  [
+   "PASS",
+   "build: 32x64 hero sheets are accepted"
+  ],
+  [
+   "PASS",
+   "rom: patch finds the real block, keeps capacity"
+  ],
+  [
+   "PASS",
+   "rom: oversize game is refused with a clear message"
+  ],
+  [
+   "PASS",
+   "rom: non-template ROM refused"
+  ],
+  [
+   "PASS",
+   "checker: flat level is playable"
+  ],
+  [
+   "PASS",
+   "checker: buried spring found and lifted (Steve's bug 1)"
+  ],
+  [
+   "PASS",
+   "checker: spikes before a wide gap block the level (Steve's bug 2) and get fixed"
+  ],
+  [
+   "PASS",
+   "checker: an impossible gap gets a platform"
+  ],
+  [
+   "PASS",
+   "checker: a wall too tall gets lowered"
+  ],
+  [
+   "PASS",
+   "checker: springs let the hero reach a high ledge"
+  ],
+  [
+   "PASS",
+   "checker: missing start/goal reported and added"
+  ],
+  [
+   "PASS",
+   "checker: all three example levels pass"
+  ],
+  [
+   "PASS",
+   "ai ops: valid edits applied to a copy, invalid ones rejected"
+  ],
+  [
+   "PASS",
+   "ai ops: level text map matches the level"
+  ],
+  [
+   "PASS",
+   "physics presets carry their catalog source"
+  ],
+  [
+   "PASS",
+   "graphics: blocky sprite scores as blocky, flat, unoutlined"
+  ],
+  [
+   "PASS",
+   "graphics: upgrade adds shade steps, outline and cuts blockiness"
+  ],
+  [
+   "PASS",
+   "graphics: upgrade keeps silhouette and transparency"
+  ],
+  [
+   "PASS",
+   "graphics: console colour budget respected (SNES 15, Game Boy 4 greys)"
+  ],
+  [
+   "PASS",
+   "graphics: pad option adds an outer outline ring"
+  ],
+  [
+   "PASS",
+   "graphics: shadows shift cooler than highlights (hue shift)"
+  ],
+  [
+   "PASS",
+   "graphics: grade gives actionable tips for blocky art, fewer for upgraded"
+  ],
+  [
+   "PASS",
+   "graphics: textures tile without seams and fit console checks"
+  ],
+  [
+   "PASS",
+   "graphics lab: finds picture-like SNES tiles and palettes in a ROM"
+  ],
+  [
+   "PASS",
+   "graphics lab: random data is not mistaken for art"
+  ],
+  [
+   "PASS",
+   "graphics lab: PlayStation TIM textures are counted with sizes"
+  ],
+  [
+   "PASS",
+   "graphics lab: findings and design rules reach the Technique Library"
+  ],
+  [
+   "PASS",
+   "graphics lab: Research Lab scan carries graphics facts and keeps previews out of the database record"
+  ],
+  [
+   "PASS",
+   "graphics lab (real ROMs, skipped if absent): wrestling SNES + PSX"
+  ],
+  [
+   "PASS",
+   "fight: strikes damage the opponent and build momentum"
+  ],
+  [
+   "PASS",
+   "fight: block cuts damage"
+  ],
+  [
+   "PASS",
+   "fight: a pin on a weak downed fighter usually wins the match"
+  ],
+  [
+   "PASS",
+   "fight: KO ends the match and the AI fights back"
+  ]
+ ]
+}

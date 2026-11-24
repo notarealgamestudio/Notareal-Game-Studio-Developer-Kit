@@ -1,0 +1,83 @@
+
+Discarded input sections
+
+ .MIPS.abiflags
+                0x00000000       0x18 /tmp/cc7n9pd0.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom_dmem         0x00000000         0x00001000
+rom_imem         0x00001000         0x00001000
+ram_data         0xa4000000         0x00001000
+ram_text         0xa4001000         0x00001000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+
+.text           0xa4001000       0x18 load address 0x00001000
+                0xa4001000                        _start = .
+ *(.text)
+ .text          0xa4001000       0x18 /tmp/cc7n9pd0.o
+ *(.text.*)
+                0xa4001018                        _text_end = .
+
+.data           0xa4000000        0x4 load address 0x00000000
+ *(.data)
+ .data          0xa4000000        0x4 /tmp/cc7n9pd0.o
+ *(.data.*)
+                0xa4000004                        _data_end = .
+                0xa4000008                        . = ALIGN (0x8)
+
+.bss            0xa4000004        0x0 load address 0x00000004
+ *(.bss)
+ .bss           0xa4000004        0x0 /tmp/cc7n9pd0.o
+ *(.bss.*)
+                [!provide]                        PROVIDE (__load_start_bss = LOADADDR (.bss))
+                [!provide]                        PROVIDE (__load_stop_bss = (LOADADDR (.bss) + SIZEOF (.bss)))
+
+.bssovl1        0xa4000004        0x0 load address 0x00000004
+ *(.bssovl1)
+ *(.bssovl1.*)
+                [!provide]                        PROVIDE (__load_start_bssovl1 = LOADADDR (.bssovl1))
+                [!provide]                        PROVIDE (__load_stop_bssovl1 = (LOADADDR (.bssovl1) + SIZEOF (.bssovl1)))
+
+.bssovl2        0xa4000004        0x0 load address 0x00000004
+ *(.bssovl2)
+ *(.bssovl2.*)
+                [!provide]                        PROVIDE (__load_start_bssovl2 = LOADADDR (.bssovl2))
+                [!provide]                        PROVIDE (__load_stop_bssovl2 = (LOADADDR (.bssovl2) + SIZEOF (.bssovl2)))
+
+.bssovl3        0xa4000004        0x0 load address 0x00000004
+ *(.bssovl3)
+ *(.bssovl3.*)
+                [!provide]                        PROVIDE (__load_start_bssovl3 = LOADADDR (.bssovl3))
+                [!provide]                        PROVIDE (__load_stop_bssovl3 = (LOADADDR (.bssovl3) + SIZEOF (.bssovl3)))
+
+.meta
+ *(.meta)
+ *(.meta.*)
+
+/DISCARD/
+ *(.MIPS.abiflags)
+LOAD /tmp/cc7n9pd0.o
+LOAD /opt/libdragon/bin/../lib/gcc/mips64-elf/16.2.0/o32/libgcc.a
+LOAD /opt/libdragon/bin/../lib/gcc/mips64-elf/16.2.0/o32/libgcc.a
+OUTPUT(build/rsp_nrcheck.o elf32-bigmips)
+
+.reginfo        0x00000000       0x18
+ .reginfo       0x00000000       0x18 /tmp/cc7n9pd0.o
+
+.pdr            0x00000000        0x0
+ .pdr           0x00000000        0x0 /tmp/cc7n9pd0.o
+
+.gnu.attributes
+                0x00000000       0x10
+ .gnu.attributes
+                0x00000000       0x10 /tmp/cc7n9pd0.o
+
+Cross Reference Table
+
+Symbol                                            File
+_start                                            /tmp/cc7n9pd0.o

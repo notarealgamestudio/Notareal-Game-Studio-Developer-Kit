@@ -1,0 +1,88 @@
+{
+ "_note": "Research notes: the three most popular games of each type and what the kit borrows. Used to shape presets; not game content.",
+ "life_fashion_sim": {
+  "refs": [
+   "The Sims 4",
+   "Animal Crossing: New Horizons",
+   "Stardew Valley",
+   "(handheld) Style Savvy: Trendsetters"
+  ],
+  "borrowed": [
+   "relationship stages and gifts by taste (Sims/AC)",
+   "daily clock, seasons, calendar events (Stardew/AC)",
+   "shop rank unlocks features, customers buy by taste, trend of the week (Style Savvy)",
+   "skills that grow with use (Sims)"
+  ],
+  "kit": "life3d (Friendship Bracelets)"
+ },
+ "open_world_rpg": {
+  "refs": [
+   "Fallout 3/New Vegas/4",
+   "Skyrim",
+   "The Witcher 3"
+  ],
+  "borrowed": [
+   "SPECIAL stats and perks",
+   "targeted-shot slow-motion (VATS)",
+   "companions with affinity",
+   "factions and multiple endings",
+   "radiation/survival, barter, crafting"
+  ],
+  "kit": "planned: rpg3d open-world engine (not built yet)"
+ },
+ "military_shooter": {
+  "refs": [
+   "Halo",
+   "Call of Duty",
+   "Battlefield"
+  ],
+  "borrowed": [
+   "regenerating shield, dual weapons, grenades, melee, vehicle hijack (Halo)",
+   "scripted set-piece campaign (CoD)",
+   "large sandbox maps, squads, vehicles (Battlefield)"
+  ],
+  "kit": "warfare3d (large map, first person); third-person toggle and open map planned"
+ },
+ "skating": {
+  "refs": [
+   "Tony Hawk's Pro Skater 3",
+   "Tony Hawk's Underground",
+   "skate 3 / Skate It (DS)"
+  ],
+  "borrowed": [
+   "flip + grab + grind + manual + revert combos",
+   "wall plants, off-board walking (THUG)",
+   "flick-stick and touch-screen tricks (Skate It DS)",
+   "goals per level and create-a-park"
+  ],
+  "kit": "skate engine exists; DS rebuild planned"
+ },
+ "fighting": {
+  "refs": [
+   "Street Fighter 6",
+   "Tekken 8",
+   "Super Smash Bros. Ultimate"
+  ],
+  "borrowed": [
+   "Drive system / modern simple controls",
+   "3D movement and combo strings",
+   "platform fighter percent damage and ring-outs"
+  ],
+  "kit": "fight engine (Fighting studio only appears for fighting game types)"
+ },
+ "gta_style_job_sim": {
+  "refs": [
+   "Grand Theft Auto III / San Andreas",
+   "The Sims (job and needs loop)",
+   "Urbz / Retail simulators"
+  ],
+  "borrowed": [
+   "third-person on-foot controls, radar, wanted-style stars (reputation)",
+   "a living street: traffic, pedestrians, lamps, day/night",
+   "street characters with dialogue and shops (hobo, dealer)",
+   "weapon and gear upgrades bought with earned money",
+   "pedestrian temperament values from GTA III PEDSTATS.DAT"
+  ],
+  "kit": "store3d (Convenience Store 64)"
+ }
+}

@@ -1,0 +1,12 @@
+const G = require('../kit/nrgodsim.js'); let ok = 0, bad = 0; const t = (n, c) => { c ? ok++ : bad++; console.log(c ? 'PASS' : 'FAIL', n); };
+const r = G.build({}), b = r.block, dv = new DataView(b.buffer);
+t('block is NRGDATA1 with one GSDT section', String.fromCharCode(...b.slice(0, 8)) === 'NRGDATA1' && String.fromCharCode(...b.slice(20, 24)) === 'GSDT' && dv.getUint32(16, true) === 1);
+t('12 stages, 72 upgrades, 108 traits, 12 people', r.stats.stages === 12 && r.stats.upgrades === 72 && r.stats.traits === 108 && r.stats.people === 12);
+t('goals fit u32 and grow every stage', G.STAGES.every((_, i) => G.goal(i) < 4294967296 && (i === 0 || G.goal(i) > G.goal(i - 1))));
+t('every stage has 3 slots x 3 traits, 6 upgrades, 2 facts', G.STAGES.every(s => s[7].length === 3 && s[9].length === 9 && s[8].length === 6 && s[10].length === 2));
+t('all text fits its fields', G.STAGES.every(s => s[0].length <= 19 && s[1].length <= 14 && s[2].length <= 12 && s[8].every(n => n.length <= 16) && s[9].every(x => x[0].length <= 12) && s[10].every(f => f.length <= 40)));
+const sim = G.simulate(); t('pacing: every stage takes 0.5-5 minutes for a tap+buy player', sim.every(s => s >= 30 && s <= 300));
+t('full run is 25-50 minutes', (a => a >= 1500 && a <= 3000)(sim.reduce((x, y) => x + y, 0)));
+t('slower pace setting slows the game', G.simulate({ pace: 60 }).reduce((x, y) => x + y) > sim.reduce((x, y) => x + y));
+t('the same seed gives the same data', Buffer.from(G.build({ godsim: { cfg: { seed: 3 } } }).block).equals(Buffer.from(G.build({ godsim: { cfg: { seed: 3 } } }).block)));
+console.log('godsim data tests', ok, 'pass', bad, 'fail'); process.exit(bad ? 1 : 0);

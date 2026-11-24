@@ -1,0 +1,12 @@
+const S = require('../kit/nrsnes.js'), fs = require('fs'), rom = fs.readFileSync('/home/claude/notareal-kit/snes/kart/nr_kart.sfc');
+let bad = 0; const ck = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) bad++; };
+const o = S.patchKart(new Uint8Array(rom), { laps: 5, cc: 3, rivals: 2, skill: 1, title: 'Moon Cup!' }).rom;
+ck(o.length === rom.length && o.length === 524288, 'size unchanged (512 KB)');
+ck(o[0x8008] === 5 && o[0x8009] === 3 && o[0x800A] === 2 && o[0x800B] === 1, 'laps / class / rivals / skill written');
+ck(String.fromCharCode(...o.subarray(0x8010, 0x8010 + 9)) === 'MOON CUP!', 'title written uppercase');
+ck(((o[0x7FDE] | o[0x7FDF] << 8) ^ (o[0x7FDC] | o[0x7FDD] << 8)) === 0xFFFF, 'checksum and complement match');
+const lim = S.patchKart(new Uint8Array(rom), { laps: 99, cc: 9, rivals: 40, skill: -5 }).rom;
+ck(lim[0x8008] === 9 && lim[0x8009] === 3 && lim[0x800A] === 5 && lim[0x800B] === 1, 'values are clamped to the engine limits');
+let threw = false; try { S.patchKart(new Uint8Array(1 << 18), {}); } catch (e) { threw = true; } ck(threw, 'refuses a non-kart ROM');
+threw = false; try { S.patchKart(new Uint8Array(fs.readFileSync('/home/claude/notareal-kit/snes/basket/nr_basket.sfc')), {}); } catch (e) { threw = true; } ck(threw, 'refuses the basketball ROM');
+process.exit(bad ? 1 : 0);

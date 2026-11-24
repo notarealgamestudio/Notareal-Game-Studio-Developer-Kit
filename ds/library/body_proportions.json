@@ -1,0 +1,31 @@
+{
+ "source": "WWE SmackDown vs Raw 2009 (DS): shared 26-joint rig, measured from 34 wrestler models + 50 create-a-wrestler body parts. Numbers only; no meshes or textures are copied.",
+ "unit": "fraction of standing height (head top to sole)",
+ "hip_height": 0.496,
+ "thigh": 0.223,
+ "shin": 0.223,
+ "waist": 0.096,
+ "chest": 0.114,
+ "neck_to_head_joint": 0.151,
+ "head": 0.143,
+ "shoulder_offset": 0.102,
+ "upper_arm": 0.144,
+ "forearm": 0.144,
+ "hip_width": 0.058,
+ "arm_span_over_height": 0.997,
+ "build_depth_range": [
+  0.161,
+  0.248
+ ],
+ "build_examples": {
+  "lean": 0.161,
+  "average": 0.189,
+  "heavy": 0.248
+ },
+ "heads_tall": 6.99,
+ "notes": [
+  "Everyone shares one skeleton; size differences come from a per-character scale at runtime plus mesh bulk.",
+  "Legs are half the height; arm span equals height; about 7 heads tall (heroic proportions).",
+  "Body bulk (front-to-back depth) varies about 1.5x between the leanest and heaviest wrestlers."
+ ]
+}

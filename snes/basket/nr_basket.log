@@ -1,0 +1,48 @@
+--- Starting Build ---
+make[1]: Entering directory '/home/claude/notareal-kit/snes/basket'
+Debug mode: DISABLED
+Enable it with: export PVSNESLIB_DEBUG=1
+LoROM FastROM compilation is enabled
+Compiling to .ps ... main.c
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/816-tcc -I/home/claude/tc/snes/pvsneslib/pvsneslib/include -I/home/claude/tc/snes/pvsneslib/devkitsnes/include -I/home/claude/notareal-kit/snes/basket -Wall -c src/main.c -F -o src/main.ps
+Assembling ... main.ps
+/home/claude/tc/snes/pvsneslib/devkitsnes/tools/816-opt  -i src/main.ps -o src/main.asm
+[97m816opt[0m: (2.0.0) version 20261112
+[97m816opt[0m: optimization pass 1: 
+[97m816opt[0m: 1510 optimizations performed
+[97m816opt[0m: optimization pass 2: 
+[97m816opt[0m: 574 optimizations performed
+[97m816opt[0m: optimization pass 3: 
+[97m816opt[0m: 80 optimizations performed
+[97m816opt[0m: optimization pass 4: 
+[97m816opt[0m: 4 optimizations performed
+[97m816opt[0m: optimization pass 5: 
+[97m816opt[0m: 0 optimizations performed
+[97m816opt[0m: 2168 optimizations performed in total
+[97m816opt[0m: flow analysis: 781 dead instructions removed, 249 array accesses indexed
+[97m816opt[0m: optimization pass 1: 
+[97m816opt[0m: 57 optimizations performed
+[97m816opt[0m: optimization pass 2: 
+[97m816opt[0m: 1 optimizations performed
+[97m816opt[0m: optimization pass 3: 
+[97m816opt[0m: 0 optimizations performed
+[97m816opt[0m: 58 optimizations performed in total
+[97m816opt[0m: processed in 2490ms
+Doing obj files from asm ...
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/wla-65816 -d -s -x -o src/main.obj src/main.asm
+Doing obj files from asm ...
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/wla-65816 -d -s -x -o data.obj data.asm
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+Doing obj files from asm ...
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/wla-65816 -d -s -x -o hdr.obj hdr.asm
+Doing obj files from asm ...
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/wla-65816 -d -s -x -o src/nrio.obj src/nrio.asm
+Creating linkfile ...
+Linking ... nr_basket.sfc
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/wlalink -d -s -A -c -L /home/claude/tc/snes/pvsneslib/pvsneslib/lib/LoROM_FastROM linkfile nr_basket.sfc
+OBTAIN_ROMBANKS: Using the biggest selected amount of ROM banks (16).
+
+Build finished successfully !
+
+rm src/main.ps src/main.obj src/main.asm src/nrio.obj hdr.obj data.obj
+make[1]: Leaving directory '/home/claude/notareal-kit/snes/basket'

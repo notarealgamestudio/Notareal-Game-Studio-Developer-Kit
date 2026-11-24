@@ -1,0 +1,8 @@
+[objects]
+src/main.obj
+data.obj
+hdr.obj
+/home/claude/tc/snes/pvsneslib/pvsneslib/lib/LoROM_FastROM/crt0_snes.obj
+/home/claude/tc/snes/pvsneslib/pvsneslib/lib/LoROM_FastROM/libc.obj
+/home/claude/tc/snes/pvsneslib/pvsneslib/lib/LoROM_FastROM/libm.obj
+/home/claude/tc/snes/pvsneslib/pvsneslib/lib/LoROM_FastROM/libtcc.obj

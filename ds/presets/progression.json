@@ -1,0 +1,37 @@
+{
+ "source": "Super Mario World (USA), sprite lists of 220 levels parsed from the ROM; Measurements only, no game content.",
+ "levels": 220,
+ "spritesPerScreen": {
+  "p10": 1.0,
+  "p25": 1.06,
+  "p50": 2.0,
+  "p75": 2.6,
+  "p90": 3.44
+ },
+ "thirds": {
+  "early": {
+   "levels": 34,
+   "spritesPerScreen": 2.15,
+   "enemyTypes": 6.35,
+   "screens": 11.6
+  },
+  "middle": {
+   "levels": 28,
+   "spritesPerScreen": 2.15,
+   "enemyTypes": 7.39,
+   "screens": 13.3
+  },
+  "late": {
+   "levels": 17,
+   "spritesPerScreen": 2.65,
+   "enemyTypes": 9.35,
+   "screens": 14.2
+  }
+ },
+ "growth": {
+  "length": 1.22,
+  "density": 1.23,
+  "variety": 1.46
+ },
+ "note": "Levels are taken in ROM level-number order (0x00-0x24, 0x101-0x120, 0x120-0x13B), which follows the game's progression only roughly; Donkey Kong Country / Land levels are compressed and were not parsed."
+}

@@ -1,0 +1,15 @@
+// 3D gem / bead / charm library: every component renders something, cuts and charms are distinct, sparkle changes over time
+const G = require('../kit/nrgems.js'), N3 = require('../kit/nr3d.js'), LD = require('../kit/nrlife_data.js'); let ok = 0, bad = 0; const t = (n, c) => { c ? ok++ : (bad++, console.log('FAIL', n)); };
+const comps = LD.buildComps(), SZ = 48, KEY = [255, 0, 255], R = N3.create(SZ, SZ);
+const render = (c, tm) => { R.begin({ x: 0, y: .06, z: 2.7, yaw: Math.PI, pitch: -.02, fov: .62 }, { top: KEY, bottom: KEY, fogNear: 99, fogFar: 200, ambient: .72 }); G.draw(R, c, 0, 0, 0, .85, .55, tm || 1.2); let n = 0, sum = 0; for (let i = 0; i < SZ * SZ; i++) if (!(R.buf[i * 4] > 245 && R.buf[i * 4 + 1] < 12 && R.buf[i * 4 + 2] > 245)) { n++; sum += R.buf[i * 4] + R.buf[i * 4 + 1] * 3 + R.buf[i * 4 + 2]; } return { n, sum, img: Uint8ClampedArray.from(R.buf) }; };
+let empty = 0, meshes = new Set(), sheet = []; const seen = {};
+for (const c of comps) { if (c.kind === 'cord') continue; const p = G.partOf(c); meshes.add(p.mesh.split(':')[0] === 'nugget' ? 'nugget' : p.mesh); const r = render(c); if (r.n < 120) { empty++; console.log('  empty', c.id, r.n); } const key = p.mesh + '/' + p.mat; if (!seen[key] && sheet.length < 110) { seen[key] = 1; sheet.push(r.img); } }
+t('every bead / stone / charm draws visible pixels', empty === 0);
+t('many distinct meshes (cuts, beads, charms)', meshes.size >= 24); t('charm shapes >= 22', G.CHARMS.length >= 22);
+const dia = comps.find(c => c.id === 'prem_diamond'), a = render(dia, 0), b = render(dia, 1.7); t('gem sparkle twinkles over time', a.sum !== b.sum);
+const g1 = render(comps.find(c => c.id === 'gem_amethyst_faceted')), g2 = render(comps.find(c => c.id === 'gem_rosequartz_faceted')); t('different cuts look different', Math.abs(g1.n - g2.n) > 10 || g1.sum !== g2.sum);
+const tris = comps.filter(c => /^(gem_amethyst_faceted|charm_heart|pearl_white)$/.test(c.id)).map(c => { const m = G.meshFor(G.partOf(c).mesh); return m.length; }); t('meshes are detailed (facets / puffy charms)', tris.every(n => n >= 60));
+t('letters get a cube', G.partOf(comps.find(c => c.kind === 'letter')).mesh === 'cube'); t('pearls use the pearl material', G.partOf(comps.find(c => c.id === 'pearl_white')).mat === 'pearl'); t('gold is metal', G.partOf(comps.find(c => /gold_bead/.test(c.id))).mat === 'metal');
+const fs = require('fs'); const cols = 11, rows = Math.ceil(sheet.length / cols), W = cols * SZ, H = rows * SZ, out = Buffer.alloc(W * H * 3, 60); sheet.forEach((im, k) => { const ox = (k % cols) * SZ, oy = Math.floor(k / cols) * SZ; for (let y = 0; y < SZ; y++) for (let x = 0; x < SZ; x++) { const i = (y * SZ + x) * 4; if (im[i] > 245 && im[i + 1] < 12 && im[i + 2] > 245) continue; const o = ((oy + y) * W + ox + x) * 3; out[o] = im[i]; out[o + 1] = im[i + 1]; out[o + 2] = im[i + 2]; } }); fs.writeFileSync('/tmp/gems.ppm', Buffer.concat([Buffer.from(`P6 ${W} ${H} 255\n`), out]));
+console.log('gems tests', ok, 'pass', bad, 'fail', '| contact sheet', sheet.length, 'pieces');
+process.exit(bad ? 1 : 0);

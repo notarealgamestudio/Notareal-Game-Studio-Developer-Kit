@@ -1,0 +1,531 @@
+--- /tmp/emux.h.orig	2026-11-17 10:45:01.727496468 -0500
++++ include/emux.h	2026-11-17 10:45:01.743198960 -0500
+@@ -172,6 +172,13 @@
+      *  1) encode the instruction to write into a fixed scratch GPR (here: t0)
+      *  2) copy the scratch GPR into a GCC output register
+      */
++#ifndef NOTAREAL_ALLOW_EMUX
++    // NOTAREAL: the EMUX probe is a reserved COP0 opcode. Older mupen64plus-based
++    // cores (stock ParaLLEl N64 on handhelds, n64wasm) treat it as fatal and quit.
++    // Report "no EMUX" without executing it, so ROMs run everywhere.
++    (void)subcode;
++    return 0;
++#endif
+     const int REG_T0 = 8;
+     register uint64_t result asm("t0") = 0;
+ 
+--- /tmp/n64sys.h.orig	2026-11-17 10:46:46.465923996 -0500
++++ include/n64sys.h	2026-11-17 10:46:46.482382833 -0500
+@@ -119,7 +119,12 @@
+  * 
+  * @return A 64-bit virtual address to access the physical address
+  */
+- #define VirtualUncachedAddr64(_addr) ((vaddr64_t)(((_addr))|0x9000000000000000ull))
++ // NOTAREAL: addresses below 512 MiB go through the 32-bit KSEG1 window (sign-extended),
++ // which every emulator supports; only higher PI addresses need 64-bit XKPHYS. Older
++ // mupen64plus-based cores (ParaLLEl N64 on handhelds, n64wasm) fault on XKPHYS.
++ #define VirtualUncachedAddr64(_addr) ((vaddr64_t)((uint64_t)(_addr) < 0x20000000ull ? \
++     (uint64_t)(int64_t)(int32_t)((uint32_t)(_addr) | 0xA0000000u) : \
++     ((uint64_t)(_addr) | 0x9000000000000000ull)))
+ 
+ /**
+  * @brief Return the uncached memory address for a given virtual address
+--- /tmp/cop0.h.orig	2026-11-17 10:46:46.467697902 -0500
++++ include/cop0.h	2026-11-17 12:04:35.619394663 -0500
+@@ -49,8 +49,12 @@
+ })
+ 
+ /** @brief Write the COP0 Status register. */
++/* NOTAREAL: the direct branch right after MTC0 gives the recompiler a block boundary
++ * where a just-unmasked interrupt is delivered correctly. Without it, an interrupt
++ * unmasked here can first be noticed at a following JR, where the ARM64 new_dynarec in
++ * older ParaLLEl N64 builds sets EXL but skips the handler (game freezes). */
+ #define C0_WRITE_STATUS(x) ({ \
+-    asm volatile("mtc0 %0,$12"::"r"(x)); \
++    asm volatile("mtc0 %0,$12\n\t.set push\n\t.set noreorder\n\tb 1f\n\tnop\n1:\n\t.set pop"::"r"(x) : "memory"); \
+ })
+ 
+ /**
+@@ -92,7 +96,7 @@
+  */
+ #define C0_BADVADDR() ({ \
+ 	uint64_t x; \
+-	asm volatile("dmfc0 %0,$8" : "=r" (x) : ); \
++	asm volatile("mfc0 %0,$8" : "=r" (x) : ); /* NOTAREAL: mfc0 (sign-extended) - older cores lack dmfc0 */ \
+ 	x; \
+ })
+ 
+--- /tmp/rsp.h.orig	2026-11-17 11:58:38.738337358 -0500
++++ include/rsp.h	2026-11-17 12:03:32.348007102 -0500
+@@ -187,6 +187,20 @@
+ /** @brief SP status register */
+ #define SP_STATUS     ((volatile uint32_t*)0xA4040010)
+ 
++/* NOTAREAL: write SP_STATUS with interrupts masked. On older mupen64plus-based cores
++ * a write that starts or wakes the RSP runs the RSP (and RDP) synchronously, and the
++ * resulting interrupt is raised *inside* the store. The ARM64 new_dynarec in handheld
++ * ParaLLEl N64 builds then marks the exception taken without jumping to the handler,
++ * leaving EXL set and the game frozen. Masked, the interrupt stays pending and is
++ * delivered normally when interrupts are re-enabled. */
++void disable_interrupts(void);
++void enable_interrupts(void);
++static inline void __sp_status_write(uint32_t value) {
++    disable_interrupts();
++    *SP_STATUS = value;
++    enable_interrupts();
++}
++
+ /** @brief SP DMA full register */
+ #define SP_DMA_FULL   ((volatile uint32_t*)0xA4040014)
+ 
+@@ -551,9 +565,12 @@
+  *                         the application should wait for such a long time.
+  * 
+  */
++/* NOTAREAL: time out only after BOTH the tick deadline and a minimum number of
++ * polls. Recompilers that fast-forward the CPU counter on idle loops (ParaLLEl N64
++ * new_dynarec on ARM handhelds) otherwise hit the deadline before the RSP ran. */
+ #define RSP_WAIT_LOOP(timeout_ms) \
+-    for (uint32_t __t = TICKS_READ() + TICKS_FROM_MS(timeout_ms); \
+-         TICKS_BEFORE(TICKS_READ(), __t) || (rsp_crashf("wait loop timed out (%d ms)", timeout_ms), false); \
++    for (uint32_t __t = TICKS_READ() + TICKS_FROM_MS(timeout_ms), __n = 0; \
++         (++__n < 4000000u) || TICKS_BEFORE(TICKS_READ(), __t) || (rsp_crashf("wait loop timed out (%d ms)", timeout_ms), false); \
+          __rsp_check_assert(__FILE__, __LINE__, __func__))
+ 
+ static inline __attribute__((deprecated("use rsp_load_code instead")))
+--- /tmp/rsp_queue.inc.orig	2026-11-17 12:36:30.732265796 -0500
++++ include/rsp_queue.inc	2026-11-17 12:36:59.235668152 -0500
+@@ -893,6 +893,12 @@
+     #############################################################
+     .func RSPQCmd_RdpAppendBuffer
+ RSPQCmd_RdpAppendBuffer:
++    # NOTAREAL: keep only the 24-bit RDRAM address. a0 is a command word whose top
++    # byte is the command ID; real hardware ignores it, but older emulator cores
++    # (ParaLLEl N64 + angrylion on handhelds) don't, so the RDP walked ~128 MiB of
++    # memory, ran CPU code as RDP commands and "crashed". (RdpSetBuffer falls through here.)
++    sll a0, 8
++    srl a0, 8
+     lbu t0, %lo(RDPQ_SYNCFULL_ONGOING)
+     bnez t0, JrRa
+     sw a0, %lo(RDPQ_CURRENT)
+--- /tmp/rand.c.orig	2026-11-17 10:47:45.104904947 -0500
++++ src/rand.c	2026-11-17 10:47:45.133766352 -0500
+@@ -7,7 +7,7 @@
+ #include "rand_internal.h"
+ #include "n64types.h"
+ #include "entropy.h"
+-#include <stdatomic.h>
++#include "cop0.h"
+ #include <unistd.h>
+ #include <string.h>
+ 
+@@ -15,22 +15,21 @@
+ uint64_t __xorshift64_mul_K = 0x2545F4914F6CDD1Dull;
+ 
+ __attribute__((noinline))
+-uint64_t __xorshift64(_Atomic uint64_t *state) {
+-    uint64_t old = atomic_load_explicit(state, memory_order_relaxed);
+-    while (1) {
+-        uint64_t x = old;
+-        x ^= x >> 12;
+-        x ^= x << 25;
+-        x ^= x >> 27;
+-        if (atomic_compare_exchange_weak_explicit(
+-                state, &old, x,
+-                memory_order_relaxed, memory_order_relaxed))  
+-            return x * __xorshift64_mul_K;
+-    }
++uint64_t __xorshift64(volatile uint64_t *state) {
++    // NOTAREAL: no LLD/SCD (older emulator cores don't implement them);
++    // the N64 is single-core, so masking interrupts is enough.
++    uint32_t sr = C0_STATUS(); C0_WRITE_STATUS(sr & ~1);
++    uint64_t x = *state;
++    x ^= x >> 12;
++    x ^= x << 25;
++    x ^= x >> 27;
++    *state = x;
++    C0_WRITE_STATUS(sr);
++    return x * __xorshift64_mul_K;
+ }
+ 
+ __attribute__((noinline))
+-void __xorshift64_buffer(void *buf, size_t len, _Atomic uint64_t *state)
++void __xorshift64_buffer(void *buf, size_t len, volatile uint64_t *state)
+ {
+     while (len >= 8) {
+         uint64_t x = __xorshift64(state);
+@@ -46,7 +45,7 @@
+ }
+ 
+ // Seeded at construction time, but anyway avoid 0 which is invalid
+-static _Atomic uint64_t rand_state = 1;
++static volatile uint64_t rand_state = 1;
+ 
+ __attribute__((noinline))
+ uint64_t __rand64(void)
+--- /tmp/entropy.c.orig	2026-11-17 10:47:45.108630118 -0500
++++ src/entropy.c	2026-11-17 10:47:45.134098771 -0500
+@@ -9,6 +9,7 @@
+ #include "rand_internal.h"
+ #include "interrupt_internal.h"
+ #include <stdatomic.h>
++#include "cop0.h"
+ #include <string.h>
+ 
+ /** @brief Current entropy state */
+@@ -87,13 +88,13 @@
+     return h;
+ }
+ 
+-static _Atomic uint64_t xs_state = 88172645463325252ULL;
++static volatile uint64_t xs_state = 88172645463325252ULL;
+ 
+ __attribute__((noinline))
+ static void reseed_from_entropy(void) {
+     __entropy_add_internal();
+     uint64_t e = __entropy_get();
+-    atomic_fetch_xor_explicit(&xs_state, e, memory_order_relaxed);
++    { uint32_t sr = C0_STATUS(); C0_WRITE_STATUS(sr & ~1); xs_state ^= e; C0_WRITE_STATUS(sr); } // NOTAREAL: no LLD/SCD
+ }
+ 
+ int getentropy(void *buf, size_t len) {
+--- /tmp/rand_internal.h.orig	2026-11-17 10:47:45.112448640 -0500
++++ src/rand_internal.h	2026-11-17 10:47:45.134239445 -0500
+@@ -19,10 +19,10 @@
+ #include <stdatomic.h>
+ 
+ /** @brief Main PRNG (xorshift64*) */
+-uint64_t __xorshift64(_Atomic uint64_t *state);
++uint64_t __xorshift64(volatile uint64_t *state);
+ 
+ /** @brief Fill a buffer with xorshift64 */
+-void __xorshift64_buffer(void *buf, size_t n, _Atomic uint64_t *state);
++void __xorshift64_buffer(void *buf, size_t n, volatile uint64_t *state);
+ 
+ /** 
+  * @brief Generate a random 64-bit unsigned integer.
+--- /tmp/debug.c.orig	2026-11-17 11:59:30.958643166 -0500
++++ src/debug.c	2026-11-17 11:59:30.972981426 -0500
+@@ -388,9 +388,16 @@
+ 	debugfv(msg, args);
+ }
+ 
++/// NOTAREAL: last crash/assert reason, readable from RAM by the kit's test rig and debugger.
++char __notareal_crash_msg[256] __attribute__((used)) = "";
++
+ void debug_assert_func_f(const char *file, int line, const char *func, const char *failedexpr, const char *msg, ...)
+ {
+ 	disable_interrupts();
++	{
++		int n = snprintf(__notareal_crash_msg, 256, "ASSERT %s:%d %s: %s: ", file, line, func ? func : "", failedexpr ? failedexpr : "");
++		if (msg && n > 0 && n < 256) { va_list ap; va_start(ap, msg); vsnprintf(__notareal_crash_msg + n, 256 - n, msg, ap); va_end(ap); }
++	}
+ 
+ 	// As first step, immediately print the assertion on stderr. This is
+ 	// very likely to succeed as it should not cause any further allocations
+--- /tmp/dma.c.orig	2026-11-17 10:50:30.401975495 -0500
++++ src/dma.c	2026-11-17 10:51:13.950000423 -0500
+@@ -172,7 +172,10 @@
+     // first DMA block, which is either 127 bytes or up to the end of the
+     // current RDRAM row (0x800 bytes).
+     int first_block_len = MIN(127, 0x800 - ((uint32_t)ram & 0x7ff));
+-    if ((len & 1) && len >= first_block_len) {
++    (void)first_block_len;
++    // NOTAREAL: always copy a trailing odd byte with the CPU. Older emulator cores
++    // round odd DMA lengths up and overwrite one extra byte; this works everywhere.
++    if (len & 1) {
+         // Odd transfers would not work correctly. Transfer the last byte
+         // manually.
+         pi_cpu_read(ram+len-1, pi_address+len-1, 1);
+@@ -370,7 +373,7 @@
+     // Misaligned reads are executed at dequeue time: the CPU fixups for the
+     // borders run either right now in caller context (if the queue is empty
+     // and PI is idle) or in the interrupt handler when the entry is dequeued.
+-    if ((ram_address & 7) || ((len & 1) && len >= MIN(127, 0x800 - (ram_address & 0x7ff))))
++    if ((ram_address & 7) || (len & 1))   // NOTAREAL: any odd length takes the CPU-fixup path
+         return pi_enqueue(PI_OP_READ_MISALIGNED, ram_pointer, pi_address, len);
+ 
+     return dma_read_raw_async(ram_pointer, pi_address, len);
+--- /tmp/inthandler.S.orig	2026-11-17 11:57:23.014078103 -0500
++++ src/inthandler.S	2026-11-17 11:57:23.030347090 -0500
+@@ -210,12 +210,17 @@
+ 	nop
+ 
+ interrupt:
+-	# This is an interrupt. 
+-	# First of all, disable FPU coprocessor so that we can avoid saving FPU
+-	# registers altogether.
++	# This is an interrupt.
++	# NOTAREAL: keep the FPU enabled and save its caller-saved registers, instead of
++	# disabling it and relying on a nested "coprocessor unusable" exception when a
++	# handler touches the FPU. The ARM64 recompiler in older ParaLLEl N64 builds
++	# (RG DS Plus, n64wasm family) mishandles that nested exception and leaves the
++	# CPU stuck with EXL set, freezing the game.
+ 	mfc0 t0, C0_SR
+-	and t0, ~SR_CU1
++	or t0, SR_CU1
+ 	mtc0 t0, C0_SR
++	jal save_fpu_regs
++	move a0, sp
+ 
+ 	# If a FPU instruction is executed during the interrupt handler, a nested
+ 	# exception will trigger. The nested handler will enable the FPU and save
+--- /tmp/interrupt.c.orig	2026-11-17 12:06:16.049293496 -0500
++++ src/interrupt.c	2026-11-17 12:06:16.066775423 -0500
+@@ -612,40 +612,40 @@
+ 
+ void set_AI_interrupt(int active)
+ {
+-    *MI_MASK = active ? MI_WMASK_SET_AI : MI_WMASK_CLR_AI;
++    { disable_interrupts(); *MI_MASK = active ? MI_WMASK_SET_AI : MI_WMASK_CLR_AI; enable_interrupts(); } // NOTAREAL: mask CPU interrupts like libultra's osSetIntMask; old cores raise pending interrupts inside this store
+ }
+ 
+ void set_VI_interrupt(int active, unsigned long line)
+ {
+     if( active )
+     {
+-    	*MI_MASK = MI_WMASK_SET_VI;
++    	{ disable_interrupts(); *MI_MASK = MI_WMASK_SET_VI; enable_interrupts(); } // NOTAREAL: mask CPU interrupts like libultra's osSetIntMask; old cores raise pending interrupts inside this store
+ 	    VI_regs->v_int=line;
+     }
+     else
+     {
+-        *MI_MASK = MI_WMASK_CLR_VI;
++        { disable_interrupts(); *MI_MASK = MI_WMASK_CLR_VI; enable_interrupts(); } // NOTAREAL: mask CPU interrupts like libultra's osSetIntMask; old cores raise pending interrupts inside this store
+     }
+ }
+ 
+ void set_PI_interrupt(int active)
+ {
+-    *MI_MASK = active ? MI_WMASK_SET_PI : MI_WMASK_CLR_PI;
++    { disable_interrupts(); *MI_MASK = active ? MI_WMASK_SET_PI : MI_WMASK_CLR_PI; enable_interrupts(); } // NOTAREAL: mask CPU interrupts like libultra's osSetIntMask; old cores raise pending interrupts inside this store
+ }
+ 
+ void set_DP_interrupt(int active)
+ {
+-    *MI_MASK = active ? MI_WMASK_SET_DP : MI_WMASK_CLR_DP;
++    { disable_interrupts(); *MI_MASK = active ? MI_WMASK_SET_DP : MI_WMASK_CLR_DP; enable_interrupts(); } // NOTAREAL: mask CPU interrupts like libultra's osSetIntMask; old cores raise pending interrupts inside this store
+ }
+ 
+ void set_SI_interrupt(int active)
+ {
+-    *MI_MASK = active ? MI_WMASK_SET_SI : MI_WMASK_CLR_SI;
++    { disable_interrupts(); *MI_MASK = active ? MI_WMASK_SET_SI : MI_WMASK_CLR_SI; enable_interrupts(); } // NOTAREAL: mask CPU interrupts like libultra's osSetIntMask; old cores raise pending interrupts inside this store
+ }
+ 
+ void set_SP_interrupt(int active)
+ {
+-    *MI_MASK = active ? MI_WMASK_SET_SP : MI_WMASK_CLR_SP;
++    { disable_interrupts(); *MI_MASK = active ? MI_WMASK_SET_SP : MI_WMASK_CLR_SP; enable_interrupts(); } // NOTAREAL: mask CPU interrupts like libultra's osSetIntMask; old cores raise pending interrupts inside this store
+ }
+ 
+ void set_TI_interrupt(int active)
+--- /tmp/n64sys.c.orig	2026-11-17 10:51:22.519212208 -0500
++++ src/n64sys.c	2026-11-17 12:01:54.903205026 -0500
+@@ -282,7 +282,7 @@
+     // Can't have any interrupts here
+     disable_interrupts();
+     // Halt the RSP
+-    *SP_STATUS = SP_WSTATUS_SET_HALT;
++    __sp_status_write(SP_WSTATUS_SET_HALT);
+     // Flush the RDP
+     *DP_STATUS = DP_WSTATUS_SET_FLUSH | DP_WSTATUS_SET_FREEZE;
+     *DP_STATUS = DP_WSTATUS_RESET_FLUSH | DP_WSTATUS_RESET_FREEZE;
+@@ -386,25 +386,25 @@
+ 
+ void* sys_hw_memset(void *ptr, uint8_t value, size_t len)
+ {
+-    assertf(!hw_memset_broken, "Your emulator is not accurate enough to run this ROM.\nSpecifically, it doesn't support MI repeat mode");
++    if (hw_memset_broken) return memset(ptr, value, len); // NOTAREAL: software fallback
+     return __mi_memset(ptr, value, len);
+ }
+ 
+ void* sys_hw_memset16(void *ptr, uint16_t value, size_t len)
+ {
+-    assertf(!hw_memset_broken, "Your emulator is not accurate enough to run this ROM.\nSpecifically, it doesn't support MI repeat mode");
++    if (hw_memset_broken) { uint8_t *p = ptr; for (size_t i = 0; i < len; i++) p[i] = (uint8_t)(value >> (8 * (2 - 1 - (i % 2)))); return ptr; } // NOTAREAL: software fallback (big-endian pattern)
+     return __mi_memset16(ptr, value, len);
+ }
+ 
+ void* sys_hw_memset32(void *ptr, uint32_t value, size_t len)
+ {
+-    assertf(!hw_memset_broken, "Your emulator is not accurate enough to run this ROM.\nSpecifically, it doesn't support MI repeat mode");
++    if (hw_memset_broken) { uint8_t *p = ptr; for (size_t i = 0; i < len; i++) p[i] = (uint8_t)(value >> (8 * (4 - 1 - (i % 4)))); return ptr; } // NOTAREAL: software fallback (big-endian pattern)
+     return __mi_memset32(ptr, value, len);
+ }
+ 
+ void* sys_hw_memset64(void *ptr, uint64_t value, size_t len)
+ {
+-    assertf(!hw_memset_broken, "Your emulator is not accurate enough to run this ROM.\nSpecifically, it doesn't support MI repeat mode");
++    if (hw_memset_broken) { uint8_t *p = ptr; for (size_t i = 0; i < len; i++) p[i] = (uint8_t)(value >> (8 * (8 - 1 - (i % 8)))); return ptr; } // NOTAREAL: software fallback (big-endian pattern)
+     return __mi_memset64(ptr, value, len);
+ }
+ 
+--- /tmp/rsp.c.orig	2026-11-17 11:59:30.956812764 -0500
++++ src/rsp.c	2026-11-17 12:14:05.690192691 -0500
+@@ -155,7 +155,7 @@
+     // set RSP program counter
+     *SP_PC = cur_ucode ? cur_ucode->start_pc : 0;
+     MEMORY_BARRIER();
+-    *SP_STATUS = SP_WSTATUS_CLEAR_HALT | SP_WSTATUS_CLEAR_BROKE | status_flags;
++    __sp_status_write(SP_WSTATUS_CLEAR_HALT | SP_WSTATUS_CLEAR_BROKE | status_flags);
+ }
+ 
+ void rsp_wait(void)
+@@ -220,6 +220,13 @@
+     // avoid being preempted for any reason.
+     disable_interrupts();
+ 
++    // NOTAREAL: record why we crashed in a fixed RAM buffer the kit's test rig reads.
++    {
++        extern char __notareal_crash_msg[256];
++        int n = snprintf(__notareal_crash_msg, 256, "RSP CRASH %s:%d %s: ", file, line, func ? func : "");
++        if (msg && n > 0 && n < 256) { va_list ap; va_start(ap, msg); vsnprintf(__notareal_crash_msg + n, 256 - n, msg, ap); va_end(ap); }
++    }
++
+     // Read the status registers right away. Its value can mutate at any time
+     // so the earlier the better.
+     uint32_t sp_status = *SP_STATUS;
+@@ -237,7 +244,7 @@
+     MEMORY_BARRIER();
+ 
+     // Forcibly halt the RSP, and wait also for the DMA engine to be idle
+-    *SP_STATUS = SP_WSTATUS_SET_HALT;
++    __sp_status_write(SP_WSTATUS_SET_HALT);
+     while (!(*SP_STATUS & SP_STATUS_HALTED)) {}
+     while (*SP_STATUS & (SP_STATUS_DMA_BUSY | SP_STATUS_DMA_FULL)) {}
+     MEMORY_BARRIER();
+--- /tmp/rspq.c.orig2	2026-11-17 12:01:54.883658706 -0500
++++ src/rspq/rspq.c	2026-11-17 12:47:51.948362690 -0500
+@@ -527,7 +527,7 @@
+     MEMORY_BARRIER();
+ 
+     if (wstatus)
+-        *SP_STATUS = wstatus;
++        __sp_status_write(wstatus);
+ }
+ 
+ /** @brief Extract the current overlay index and name from the RSP queue state */
+@@ -705,14 +705,14 @@
+     MEMORY_BARRIER();
+ 
+     // Set initial value of all signals.
+-    *SP_STATUS = SP_WSTATUS_CLEAR_SIG0 | 
++    __sp_status_write(SP_WSTATUS_CLEAR_SIG0 | 
+                  SP_WSTATUS_CLEAR_SIG1 | 
+                  SP_WSTATUS_CLEAR_SIG_HIGHPRI_RUNNING | 
+                  SP_WSTATUS_CLEAR_SIG_SYNCPOINT |
+                  SP_WSTATUS_SET_SIG_BUFDONE_LOW |
+                  SP_WSTATUS_SET_SIG_BUFDONE_HIGH |
+                  SP_WSTATUS_CLEAR_SIG_HIGHPRI_REQUESTED |
+-                 SP_WSTATUS_CLEAR_SIG_MORE;
++                 SP_WSTATUS_CLEAR_SIG_MORE);
+ 
+     MEMORY_BARRIER();
+ 
+@@ -831,7 +831,7 @@
+ static void rspq_stop(void)
+ {
+     MEMORY_BARRIER();
+-    *SP_STATUS = SP_WSTATUS_SET_HALT;
++    __sp_status_write(SP_WSTATUS_SET_HALT);
+     MEMORY_BARRIER();
+ 
+     rspq_is_running = 0;
+@@ -1148,7 +1148,7 @@
+         }
+     }
+     MEMORY_BARRIER();
+-    *SP_STATUS = rspq_ctx->sp_wstatus_clear_bufdone;
++    __sp_status_write(rspq_ctx->sp_wstatus_clear_bufdone);
+     MEMORY_BARRIER();
+ 
+     // Switch current buffer
+@@ -1184,12 +1184,14 @@
+     rspq_flush_internal();
+ }
+ 
++volatile int __notareal_flushes;   // NOTAREAL test-rig counter
+ __attribute__((noinline))
+ static void rspq_flush_internal(void)
+ {
++    __notareal_flushes++;
+     // Tell the RSP to wake up because there is more data pending.
+     MEMORY_BARRIER();
+-    *SP_STATUS = SP_WSTATUS_SET_SIG_MORE | SP_WSTATUS_CLEAR_HALT | SP_WSTATUS_CLEAR_BROKE;
++    __sp_status_write(SP_WSTATUS_SET_SIG_MORE | SP_WSTATUS_CLEAR_HALT | SP_WSTATUS_CLEAR_BROKE);
+     MEMORY_BARRIER();
+ 
+     // Most of the times, the above is enough. But there is a small and very rare
+@@ -1210,7 +1212,7 @@
+     // boost interleaving for a while after that.
+     __asm("nop; nop; nop; b 1f; 1:nop; nop; nop; nop; nop; nop;");
+     MEMORY_BARRIER();
+-    *SP_STATUS = SP_WSTATUS_SET_SIG_MORE | SP_WSTATUS_CLEAR_HALT | SP_WSTATUS_CLEAR_BROKE;
++    __sp_status_write(SP_WSTATUS_SET_SIG_MORE | SP_WSTATUS_CLEAR_HALT | SP_WSTATUS_CLEAR_BROKE);
+     MEMORY_BARRIER();
+ }
+ 
+@@ -1279,7 +1281,7 @@
+     // rspq_highpri_sync). Setting the signal first closes the race: the RSP
+     // cannot execute the clear before it is written, which is after the set.
+     MEMORY_BARRIER();
+-    *SP_STATUS = SP_WSTATUS_SET_SIG_HIGHPRI_REQUESTED;
++    __sp_status_write(SP_WSTATUS_SET_SIG_HIGHPRI_REQUESTED);
+     MEMORY_BARRIER();
+     rspq_append1(rspq_cur_pointer, RSPQ_CMD_WRITE_STATUS,
+         SP_WSTATUS_CLEAR_SIG_HIGHPRI_REQUESTED | SP_WSTATUS_SET_SIG_HIGHPRI_RUNNING);
+--- /tmp/rdpq.c.orig	2026-11-17 10:52:23.429943928 -0500
++++ src/rdpq/rdpq.c	2026-11-17 12:47:51.947744232 -0500
+@@ -422,8 +422,18 @@
+  * instance has finished, the interrupt routine must call the specified
+  * callback.
+  */
++volatile int __notareal_dp_irq_total, __notareal_dp_irq_serviced;   // NOTAREAL test-rig counters
++volatile uint32_t __notareal_dplog[64][4];
+ static void __rdpq_interrupt(void) {
+-    assertf(*SP_STATUS & SP_STATUS_SIG_RDPSYNCFULL, "Unexpected RDP interrupt");
++    { int k = __notareal_dp_irq_total & 63; __notareal_dplog[k][0] = 0xD0000000 | __notareal_dp_irq_total; __notareal_dplog[k][1] = *SP_STATUS; __notareal_dplog[k][2] = rdpq_state->rspq_syncpoint_id; __notareal_dplog[k][3] = (uint32_t)rdpq_state->sync_full; }
++    __notareal_dp_irq_total++;
++    // NOTAREAL: older mupen64plus-based cores (handheld ParaLLEl N64, n64wasm) raise a
++    // DP interrupt after *every* RDP command list (rdp_core.c: DPC_END write), not only
++    // on SYNC_FULL. Only an interrupt with SIG_RDPSYNCFULL set is a real SYNC_FULL;
++    // ignore the rest instead of asserting.
++    if (!(*SP_STATUS & SP_STATUS_SIG_RDPSYNCFULL))
++        return;
++    __notareal_dp_irq_serviced++;
+ 
+     // Fetch the current RDP buffer for tracing
+     if (rdpq_trace_fetch) rdpq_trace_fetch(false);
+@@ -440,7 +450,7 @@
+     // Notify the RSP that we've serviced this SYNC_FULL interrupt. If others
+     // are pending, they can be scheduled now, even as we execute the callback.
+     MEMORY_BARRIER();
+-    *SP_STATUS = SP_WSTATUS_CLEAR_SIG_RDPSYNCFULL;
++    __sp_status_write(SP_WSTATUS_CLEAR_SIG_RDPSYNCFULL);
+ 
+     // If there was a callback registered, call it.
+     if (w0) {
+--- /tmp/n64.mk.orig	2026-11-17 11:50:48.136486986 -0500
++++ n64.mk	2026-11-17 11:50:53.749607214 -0500
+@@ -84,6 +84,9 @@
+ N64_C_AND_CXX_FLAGS += -DN64 -O2 -Wall -Werror -Wno-error=deprecated-declarations -fdiagnostics-color=always
+ N64_C_AND_CXX_FLAGS += -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=unused-function -Wno-error=unused-parameter -Wno-error=unused-but-set-parameter -Wno-error=unused-label -Wno-error=unused-local-typedefs -Wno-error=unused-const-variable
+ N64_C_AND_CXX_FLAGS += -ftrivial-auto-var-init=pattern
++# NOTAREAL: -mmemcpy makes GCC call memcpy for block moves instead of inlining
++# LDL/LDR/SDL/SDR, which the ARM64 recompiler in older ParaLLEl N64 builds mistranslates.
++N64_C_AND_CXX_FLAGS += -mmemcpy
+ N64_CFLAGS = $(N64_C_AND_CXX_FLAGS) -std=gnu17
+ N64_CXXFLAGS = $(N64_C_AND_CXX_FLAGS) -std=gnu++17
+ N64_ASFLAGS = -mtune=vr4300 -march=vr4300 -mabi=o64 -Wa,--fatal-warnings -I$(N64_INCLUDEDIR)
+--- /tmp/audio.c.orig	2026-11-17 13:16:54.404480835 -0500
++++ src/audio.c	2026-11-17 13:16:54.406513171 -0500
+@@ -167,7 +167,7 @@
+         /* Enqueue next buffer. Don't mark it as empty right now because the
+            DMA will run in background, and we need to avoid audio_write()
+            to reuse it before the DMA is finished. */
+-        AI_regs->address = buffers[next];
++        AI_regs->address = (void *)((uint32_t)buffers[next] & 0x1FFFFFFF);   /* NOTAREAL: AI DMA wants a physical address; older cores index RDRAM with it raw */
+         MEMORY_BARRIER();
+         AI_regs->length = (_buf_size * 2 * 2 ) & ( ~7 );
+         MEMORY_BARRIER();

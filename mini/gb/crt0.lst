@@ -1,0 +1,82 @@
+                                      1 	.module crt0
+                                      2 	.globl _game_main
+                                      3 	.area _HEADER (ABS)
+      000000                          4 	.org 0x00
+      000000 C9                       5 	ret
+      000008                          6 	.org 0x08
+      000008 C9                       7 	ret
+      000010                          8 	.org 0x10
+      000010 C9                       9 	ret
+      000018                         10 	.org 0x18
+      000018 C9                      11 	ret
+      000020                         12 	.org 0x20
+      000020 C9                      13 	ret
+      000028                         14 	.org 0x28
+      000028 C9                      15 	ret
+      000030                         16 	.org 0x30
+      000030 C9                      17 	ret
+      000038                         18 	.org 0x38
+      000038 C9                      19 	ret
+      000040                         20 	.org 0x40
+      000040 D9                      21 	reti
+      000048                         22 	.org 0x48
+      000048 D9                      23 	reti
+      000050                         24 	.org 0x50
+      000050 D9                      25 	reti
+      000058                         26 	.org 0x58
+      000058 D9                      27 	reti
+      000060                         28 	.org 0x60
+      000060 D9                      29 	reti
+      000100                         30 	.org 0x100
+      000100 00                      31 	nop
+      000101 C3r00r00                32 	jp	_start
+      000104                         33 	.org 0x104
+      000104 CE ED 66 66 CC 0D 00    34 	.db 0xCE,0xED,0x66,0x66,0xCC,0x0D,0x00,0x0B,0x03,0x73,0x00,0x83,0x00,0x0C,0x00,0x0D
+             0B 03 73 00 83 00 0C
+             00 0D
+      000114 00 08 11 1F 88 89 00    35 	.db 0x00,0x08,0x11,0x1F,0x88,0x89,0x00,0x0E,0xDC,0xCC,0x6E,0xE6,0xDD,0xDD,0xD9,0x99
+             0E DC CC 6E E6 DD DD
+             D9 99
+      000124 BB BB 67 63 6E 0E EC    36 	.db 0xBB,0xBB,0x67,0x63,0x6E,0x0E,0xEC,0xCC,0xDD,0xDC,0x99,0x9F,0xBB,0xB9,0x33,0x3E
+             CC DD DC 99 9F BB B9
+             33 3E
+      000134                         37 	.org 0x134
+      000134 4E 4F 54 41 52 45 41    38 	.ascii "NOTAREAL"
+             4C
+      00013C 00 00 00 00 00 00 00    39 	.db 0,0,0,0,0,0,0,0
+             00
+      000143                         40 	.org 0x143
+      000143 80                      41 	.db 0x80
+      000144 00 00                   42 	.db 0,0
+      000146 00                      43 	.db 0x00
+      000147 00                      44 	.db 0x00
+      000148 00                      45 	.db 0x00
+      000149 00                      46 	.db 0x00
+      00014A 01                      47 	.db 0x01
+      00014B 33                      48 	.db 0x33
+      00014C 00                      49 	.db 0x00
+      00014D 00                      50 	.db 0x00
+      00014E 00 00                   51 	.dw 0x0000
+                                     52 	.area _CODE
+      000000                         53 _start:
+      000000 F3                      54 	di
+      000001 31 FE FF                55 	ld	sp,#0xFFFE
+      000004 E0 80                   56 	ldh	(0x80),a
+      000006 21 00 C0                57 	ld	hl,#0xC000
+      000009 01 00 20                58 	ld	bc,#0x2000
+      00000C AF                      59 1$:	xor	a
+      00000D 22                      60 	ld	(hl+),a
+      00000E 0B                      61 	dec	bc
+      00000F 78                      62 	ld	a,b
+      000010 B1                      63 	or	c
+      000011 20 F9                   64 	jr	nz,1$
+      000013 CDr00r00                65 	call	_game_main
+      000016 18 FE                   66 2$:	jr	2$
+                                     67 	.area _CODE
+                                     68 	.area _CONST
+                                     69 	.area _INITIALIZER
+                                     70 	.area _GSINIT
+                                     71 	.area _GSFINAL
+                                     72 	.area _DATA
+                                     73 	.area _BSS
+                                     74 	.area _HEAP

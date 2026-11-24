@@ -1,0 +1,265 @@
+__text_start T 80010000 	/home/claude/notareal-kit/mini/psx/../src/softppu.h:131
+sp_billboards t 80010000 2c8	/home/claude/notareal-kit/mini/psx/../src/softppu.h:129
+hal_init T 800102c8 1f4	/home/claude/notareal-kit/mini/psx/../src/softppu.h:27
+hal_show_screen T 800104bc 6c	/home/claude/notareal-kit/mini/psx/../src/softppu.h:35
+hal_text_begin T 80010528 7c	/home/claude/notareal-kit/mini/psx/../src/softppu.h:43
+hal_put_tiles T 800105a4 70	/home/claude/notareal-kit/mini/psx/../src/softppu.h:51
+hal_text_end T 80010614 8	/home/claude/notareal-kit/mini/psx/../src/softppu.h:52
+hal_level_begin T 8001061c 50	/home/claude/notareal-kit/mini/psx/../src/softppu.h:53
+hal_level_end T 8001066c 8	/home/claude/notareal-kit/mini/psx/../src/softppu.h:58
+hal_col_begin T 80010674 c	/home/claude/notareal-kit/mini/psx/../src/softppu.h:60
+hal_col_put T 80010680 34	/home/claude/notareal-kit/mini/psx/../src/softppu.h:61
+hal_col_end T 800106b4 8	/home/claude/notareal-kit/mini/psx/../src/softppu.h:62
+hal_scroll T 800106bc c	/home/claude/notareal-kit/mini/psx/../src/softppu.h:63
+hal_hud_begin T 800106c8 8	/home/claude/notareal-kit/mini/psx/../src/softppu.h:65
+hal_hud_end T 800106d0 60	/home/claude/notareal-kit/mini/psx/../src/softppu.h:66
+hal_spr_begin T 80010730 c	/home/claude/notareal-kit/mini/psx/../src/softppu.h:67
+hal_spr T 8001073c 84	/home/claude/notareal-kit/mini/psx/../src/softppu.h:68
+hal_spr_end T 800107c0 74	/home/claude/notareal-kit/mini/psx/../src/softppu.h:73
+hal_snd_init T 80010834 5c	/home/claude/notareal-kit/mini/psx/hal_psx.c:20
+hal_tone T 80010890 118	/home/claude/notareal-kit/mini/psx/hal_psx.c:26
+hal_pad T 800109a8 c8	/home/claude/notareal-kit/mini/psx/hal_psx.c:36
+hal_frame T 80010a70 c10	/home/claude/notareal-kit/mini/psx/hal_psx.c:44
+main T 80011680 154	/home/claude/notareal-kit/mini/psx/hal_psx.c:51
+sfx t 800117d4 50	/home/claude/notareal-kit/mini/src/game.c:49
+ch t 80011824 7c	/home/claude/notareal-kit/mini/src/game.c:524
+nadd t 800118a0 90	/home/claude/notareal-kit/mini/src/game.c:527
+sp_mhp t 80011930 64	/home/claude/notareal-kit/mini/src/game.c:532
+sp_atk t 80011994 64	/home/claude/notareal-kit/mini/src/game.c:533
+sp_def t 800119f8 64	/home/claude/notareal-kit/mini/src/game.c:534
+objat t 80011a5c c4	/home/claude/notareal-kit/mini/src/game.c:633
+screen t 80011b20 58	/home/claude/notareal-kit/mini/src/game.c:267
+snd_tick t 80011b78 1d0	/home/claude/notareal-kit/mini/src/game.c:50
+wait_a t 80011d48 74	/home/claude/notareal-kit/mini/src/game.c:531
+put_col t 80011dbc 130	/home/claude/notareal-kit/mini/src/game.c:101
+rpg_enter t 80011eec 3f8	/home/claude/notareal-kit/mini/src/game.c:544
+say t 800122e4 154	/home/claude/notareal-kit/mini/src/game.c:536
+draw_obj t 80012438 1b8	/home/claude/notareal-kit/mini/src/game.c:214
+cl t 800125f0 7c	/home/claude/notareal-kit/mini/src/game.c:632
+note_page t 8001266c dc	/home/claude/notareal-kit/mini/src/game.c:642
+sadd t 80012748 ec	/home/claude/notareal-kit/mini/src/game.c:526
+give t 80012834 11c	/home/claude/notareal-kit/mini/src/game.c:637
+bt_draw t 80012950 4a4	/home/claude/notareal-kit/mini/src/game.c:553
+battle t 80012df4 dac	/home/claude/notareal-kit/mini/src/game.c:573
+fight_at t 80013ba0 68	/home/claude/notareal-kit/mini/src/game.c:610
+play_cs T 80013c08 10c	/home/claude/notareal-kit/mini/src/game.c:270
+game_main T 80013d14 1330	/home/claude/notareal-kit/mini/src/game.c:697
+notareal_psx_splash T 80015044 b8	/home/claude/notareal-kit/psx/notareal_psx.c:7
+_vblank_handler t 800150fc 40	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/common.c:40
+_process_drawop t 8001513c bc	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/common.c:47
+_gpu_irq_handler t 800151f8 4c	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/common.c:68
+_gpu_dma_handler t 80015244 40	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/common.c:75
+_default_vsync_halt t 80015284 70	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/common.c:131
+ResetGraph T 800152f4 190	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/common.c:82
+VSync T 80015484 124	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/common.c:143
+SetDrawOpType T 800155a8 10	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/common.c:195
+EnqueueDrawOp T 800155b8 134	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/common.c:199
+DrawSync T 800156ec fc	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/common.c:239
+_build_drawenv_ot t 800157e8 228	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/env.c:37
+SetDefDrawEnv T 80015a10 b8	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/env.c:81
+DrawOTagEnv T 80015ac8 78	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/env.c:107
+PutDrawEnv T 80015b40 5c	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/env.c:129
+SetDefDispEnv T 80015b9c 90	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/env.c:149
+PutDispEnv T 80015c2c 218	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/env.c:169
+SetDispMask T 80015e44 2c	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/env.c:276
+_dma_transfer t 80015e70 210	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/image.c:30
+LoadImage T 80016080 e8	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/image.c:94
+_send_linked_list T 80016168 64	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxgpu/drawing.c:15
+_wait_status t 800161cc 70	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxspu/common.c:29
+_manual_write t 8001623c 128	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxspu/common.c:75
+_dma_transfer t 80016364 1ac	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxspu/common.c:38
+SpuInit T 80016510 170	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxspu/common.c:112
+SpuWrite T 80016680 bc	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxspu/common.c:173
+SpuSetTransferMode T 8001673c 10	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxspu/common.c:197
+SpuSetTransferStartAddr T 8001674c 34	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxspu/common.c:206
+SpuIsTransferCompleted T 80016780 58	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxspu/common.c:218
+_global_dma_handler t 800167d8 e8	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxetc/interrupts.c:79
+_global_isr t 800168c0 ec	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxetc/interrupts.c:57
+InterruptCallback T 800169ac c8	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxetc/interrupts.c:103
+DMACallback T 80016a74 13c	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxetc/interrupts.c:125
+SetDMAPriority T 80016bb0 ac	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxetc/interrupts.c:160
+RestartCallback T 80016c5c c8	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxetc/interrupts.c:203
+ResetCallback T 80016d24 d8	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxetc/interrupts.c:183
+EnterCriticalSection T 80016dfc 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxapi/_syscalls.s:13
+ExitCriticalSection T 80016e0c 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxapi/_syscalls.s:24
+_96_remove T 80016e1c 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxapi/drivers.s:31
+printf T 80016e28 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxapi/stdio.s:119
+InitPAD T 80016e34 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxapi/sys.s:241
+StartPAD T 80016e40 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxapi/sys.s:249
+ReturnFromException T 80016e4c 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxapi/sys.s:265
+HookEntryInt T 80016e58 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxapi/sys.s:281
+ChangeClearPAD T 80016e64 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxapi/sys.s:313
+ChangeClearRCnt T 80016e70 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/psxapi/sys.s:355
+_start W 80016e7c 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/libc/_start.s:16
+_start_inner T 80016e8c 118	/home/claude/tc/psx/PSn00bSDK/libpsn00b/libc/start.c:73
+InitHeap W 80016fa4 2c	/home/claude/tc/psx/PSn00bSDK/libpsn00b/libc/malloc.c:40
+memset T 80016fd0 	/home/claude/tc/psx/PSn00bSDK/libpsn00b/libc/memset.s:13
+SND_SQUARE r 80017120 40
+NOTE_PITCH r 80017160 100
+g3_sn r 80017260 40
+NRD R 800172a0 f000
+__func__.0 r 80026620 e
+__func__.1 r 80026630 b
+__func__.2 r 8002663c e
+__func__.4 r 8002664c b
+__func__.6 r 80026658 c
+__func__.7 r 80026664 e
+__func__.7 r 80026674 a
+__func__.0 r 80026680 9
+_dummy_block r 8002668c 10
+__func__.1 r 8002669c f
+__func__.3 r 800266ac c
+__func__.5 r 800266b8 12
+_isr_jmp_buf r 800266cc 30
+__CTOR_LIST__ D 80026700 8
+__CTOR_END__ D 80026708 
+__DTOR_LIST__ D 80026710 8
+__DTOR_END__ D 80026718 
+nr_splash D 80026718 25800
+nr_splash_end d 8004bf18 
+_vsync_halt_func d 8004bf20 4
+_transfer_addr d 8004bf24 2
+__bss_start B 8004bf28 
+vnote b 8004bf28 2
+sq_addr b 8004bf2c 4
+cur b 8004bf30 4
+fp_a b 8004bf34 4
+fp_y b 8004bf38 4
+fp_x b 8004bf3c 4
+fp_h b 8004bf40 1
+fp_w b 8004bf41 1
+fp_cols b 8004bf44 4
+fp_meta b 8004bf48 4
+fp_map b 8004bf4c 4
+sp3n b 8004bf50 1
+g3_a b 8004bf51 1
+g3_y b 8004bf54 4
+g3_x b 8004bf58 4
+g3_h b 8004bf5c 1
+g3_w b 8004bf5d 1
+g3_meta b 8004bf60 4
+g3_map b 8004bf64 4
+sp_cur b 8004bf68 1
+sp_qcol b 8004bf6a 2
+sp_sprs b 8004bf6c 1
+sp_mode b 8004bf6d 1
+sp_sy b 8004bf6e 2
+sp_sx b 8004bf70 2
+sp_backdrop b 8004bf72 2
+fp_on b 8004bf74 1
+g3_on b 8004bf75 1
+fobj b 8004bf76 1
+fmhp b 8004bf77 1
+fhp b 8004bf78 1
+flvl b 8004bf79 1
+fspc b 8004bf7a 1
+ib b 8004bf7c 2
+mgn b 8004bf7e 1
+tn b 8004bf7f 1
+nball b 8004bf80 1
+npot b 8004bf81 1
+rseed b 8004bf82 2
+gold b 8004bf84 2
+mdy b 8004bf86 1
+mdx b 8004bf87 1
+mvn b 8004bf88 1
+fdir b 8004bf89 1
+gy b 8004bf8a 1
+gx b 8004bf8b 1
+npart b 8004bf8c 1
+php b 8004bf90 6
+plvl b 8004bf98 6
+pspc b 8004bfa0 6
+metab b 8004bfa8 4
+mapb b 8004bfac 4
+cols b 8004bfb0 4
+winhi b 8004bfb4 2
+winlo b 8004bfb6 2
+camy b 8004bfb8 2
+camx b 8004bfba 2
+padold b 8004bfbc 1
+pad b 8004bfbd 1
+frames b 8004bfbe 2
+dead b 8004bfc0 1
+py b 8004bfc2 2
+px b 8004bfc4 2
+rty b 8004bfc6 1
+rtx b 8004bfc7 1
+lvnum b 8004bfc8 1
+nobj b 8004bfc9 1
+lh b 8004bfca 1
+lw b 8004bfcb 1
+sfx_o b 8004bfcc 2
+sfx_fr b 8004bfce 1
+sfx_i b 8004bfcf 1
+sfx_n b 8004bfd0 1
+mus_on b 8004bfd1 1
+mus_two b 8004bfd2 1
+mus_fr b 8004bfd3 1
+mus_t b 8004bfd4 1
+mus_i b 8004bfd5 1
+mus_n b 8004bfd6 1
+sfx_tbl b 8004bfd8 2
+mus_o b 8004bfda 2
+_last_hblank b 8004bfdc 2
+_last_vblank b 8004bfe0 4
+_vblank_counter b 8004bfe4 4
+_drawop_type b 8004bfe8 1
+_queue_length b 8004bfe9 1
+_queue_tail b 8004bfea 1
+_queue_head b 8004bfeb 1
+_drawsync_callback b 8004bfec 4
+_vsync_callback b 8004bff0 4
+_gpu_video_mode B 8004bff4 4
+_next_saved_rect b 8004bff8 4
+_transfer_mode b 8004bffc 4
+_isr_installed b 8004c000 4
+_saved_dma_dicr b 8004c004 4
+_saved_dma_dpcr b 8004c008 4
+_saved_irq_mask b 8004c00c 2
+_num_dma_handlers b 8004c010 4
+__argv B 8004c014 4
+__argc B 8004c018 4
+_alloc_tail b 8004c01c 4
+_alloc_head b 8004c020 4
+_alloc_start b 8004c024 4
+_heap_alloc_max b 8004c028 4
+_heap_alloc b 8004c02c 4
+_heap_limit b 8004c030 4
+_heap_end b 8004c034 4
+_heap_start b 8004c038 4
+zero.0 b 8004c03c 1400
+pad_buff b 8004d43c 44
+draw b 8004d480 80
+disp b 8004d500 28
+fp_z b 8004d528 f0
+sp3 b 8004d618 120
+sp_obj b 8004d738 400
+sp_scr b 8004db38 4b0
+sp_ring b 8004dfe8 1000
+sp_spt b 8004efe8 8000
+_gp d 80053f10 
+sp_bgt b 80056fe8 4000
+sp_pal b 8005afe8 340
+sp_fb b 8005b328 12c00
+mg b 8006df28 22
+tb b 8006df4c 22
+gone b 8006df70 50
+pxp b 8006dfc0 c
+s_cpf b 8006dfcc a
+s_c0 b 8006dfd8 a
+s_pal b 8006dfe4 a
+s_ch b 8006dff0 a
+s_cw b 8006dffc a
+s_nf b 8006e008 a
+rowp b 8006e014 20
+oalive b 8006e034 28
+oy b 8006e05c 50
+ox b 8006e0ac 50
+otype b 8006e0fc 28
+_draw_queue b 8006e124 100
+_saved_rects b 8006e224 80
+_isr_stack b 8006e2a4 1000
+_dma_handlers b 8006f2a4 1c
+_irq_handlers b 8006f2c0 2c
+_end B 8006f2ec 

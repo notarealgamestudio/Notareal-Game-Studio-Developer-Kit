@@ -1,0 +1,81 @@
+--- Starting Build ---
+make[1]: Entering directory '/home/claude/notareal-kit/snes/side2d'
+Debug mode: DISABLED
+Enable it with: export PVSNESLIB_DEBUG=1
+LoROM FastROM compilation is enabled
+Compiling to .ps ... main.c
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/816-tcc -I/home/claude/tc/snes/pvsneslib/pvsneslib/include -I/home/claude/tc/snes/pvsneslib/devkitsnes/include -I/home/claude/notareal-kit/snes/side2d -Wall -c src/main.c -F -o src/main.ps
+Assembling ... main.ps
+/home/claude/tc/snes/pvsneslib/devkitsnes/tools/816-opt  -i src/main.ps -o src/main.asm
+[97m816opt[0m: (2.0.0) version 20261112
+[97m816opt[0m: optimization pass 1: 
+[97m816opt[0m: 2001 optimizations performed
+[97m816opt[0m: optimization pass 2: 
+[97m816opt[0m: 843 optimizations performed
+[97m816opt[0m: optimization pass 3: 
+[97m816opt[0m: 114 optimizations performed
+[97m816opt[0m: optimization pass 4: 
+[97m816opt[0m: 6 optimizations performed
+[97m816opt[0m: optimization pass 5: 
+[97m816opt[0m: 1 optimizations performed
+[97m816opt[0m: optimization pass 6: 
+[97m816opt[0m: 0 optimizations performed
+[97m816opt[0m: 2965 optimizations performed in total
+[97m816opt[0m: flow analysis: 1174 dead instructions removed, 383 array accesses indexed
+[97m816opt[0m: optimization pass 1: 
+[97m816opt[0m: 97 optimizations performed
+[97m816opt[0m: optimization pass 2: 
+[97m816opt[0m: 1 optimizations performed
+[97m816opt[0m: optimization pass 3: 
+[97m816opt[0m: 0 optimizations performed
+[97m816opt[0m: 98 optimizations performed in total
+[97m816opt[0m: processed in 2876ms
+Doing obj files from asm ...
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/wla-65816 -d -s -x -o src/main.obj src/main.asm
+Doing obj files from asm ...
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/wla-65816 -d -s -x -o data.obj data.asm
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+WARNING: There is a SLOT number 0, but there also is a SLOT (with ID 1) with starting address 0 ($0)... Using SLOT 0.
+Doing obj files from asm ...
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/wla-65816 -d -s -x -o hdr.obj hdr.asm
+Doing obj files from asm ...
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/wla-65816 -d -s -x -o src/nrio.obj src/nrio.asm
+Creating linkfile ...
+Linking ... nr_side2d.sfc
+/home/claude/tc/snes/pvsneslib/devkitsnes/bin/wlalink -d -s -A -c -L /home/claude/tc/snes/pvsneslib/pvsneslib/lib/LoROM_FastROM linkfile nr_side2d.sfc
+OBTAIN_ROMBANKS: Using the biggest selected amount of ROM banks (64).
+
+Build finished successfully !
+
+rm src/main.ps src/main.obj src/main.asm src/nrio.obj hdr.obj data.obj
+make[1]: Leaving directory '/home/claude/notareal-kit/snes/side2d'

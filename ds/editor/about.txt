@@ -1,0 +1,14 @@
+Notareal Game Studio is an offline game-making studio. Pick a game type, change the settings, press Play, and export a ROM or a PC game. It comes with built-in testing, presets drawn from a library of measured real-game data, and no code is needed to make platformers, RPGs, fighting and wrestling games, minigames, puzzles, a music maker and more.
+
+If you would like to donate to the further development of the app, these are the addresses:
+
+Bitcoin (BTC): bc1qh3lszz39spuvdkpgwunsf3mqmt3jcj75df2mrt
+
+Ethereum (ETH): 0x9B10aCd2ffD0b3b2176104a8c8F63d9E3ef4999c
+
+Dogecoin (DOGE): DU4G81eVXXstktZ2RQEd7fWNL2RAQWKApi
+
+Thank you for using the software, and thank you for any donation. It means a lot and it keeps this project moving.
+
+Sincerely,
+Development

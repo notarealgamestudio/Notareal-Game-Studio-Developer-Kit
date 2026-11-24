@@ -1,0 +1,139 @@
+--- ipl3.c.orig	2026-11-17 10:21:22.704726357 -0500
++++ ipl3.c	2026-11-17 11:48:38.102799919 -0500
+@@ -170,7 +170,11 @@
+ 
+ static void bzero8(void *mem)
+ {
+-    asm ("sdl $0, 0(%0); sdr $0, 7(%0);" :: "r"(mem));
++    // NOTAREAL: plain byte stores instead of SDL/SDR. The ARM64 recompiler in older
++    // ParaLLEl N64 builds (handhelds such as the RG DS Plus) has no code for unaligned
++    // stores to uncached memory and executes a BRK, killing RetroArch.
++    volatile uint8_t *p = (volatile uint8_t *)mem;
++    for (int i = 0; i < 8; i++) p[i] = 0;
+ }
+ 
+ static void rsp_bzero_init(bool bbplayer)
+@@ -275,7 +279,18 @@
+     int memsize;
+     bool bbplayer = (*MI_VERSION & 0xF0) == 0xB0;
+ 
++    // NOTAREAL: emulators that skip IPL2 (stock RetroArch ParaLLEl N64 on
++    // handhelds) leave RI_SELECT at 0 but do not model the RDRAM registers,
++    // so rdram_init() crashes them. If RDRAM already reads back what we write,
++    // it is up: take the warm-boot sizing path instead.
++    bool ram_up = false;
+     if (!bbplayer && *RI_SELECT == 0) {
++        volatile uint32_t *p0 = (volatile uint32_t*)0xA0000000;
++        p0[0] = 0x4E4F5441; p0[1] = 0x5245414C;
++        ram_up = (p0[0] == 0x4E4F5441 && p0[1] == 0x5245414C);
++        p0[0] = 0; p0[1] = 0;
++    }
++    if (!bbplayer && *RI_SELECT == 0 && !ram_up) {
+         memsize = rdram_init(mem_bank_init);
+     } else {
+         if (bbplayer) {
+@@ -342,14 +357,14 @@
+     debugf("Total memory: ", memsize);
+ 
+     // Copy the IPL3 stage2 (loader.c) from ROM to the end of RDRAM.
+-    extern uint32_t __stage2_start[];
+-    uint32_t stage2_start = (uint32_t)__stage2_start;
++    extern uint32_t __stage2_rom[];   // NOTAREAL: ROM copy of stage2 (linked to run at 0x803F7FF8)
++    uint32_t stage2_start = (uint32_t)__stage2_rom;
+     int stage2_size = io_read(stage2_start);
+     stage2_start += 8;
+     debugf("stage2 ", stage2_start, stage2_size);
+ 
+-    void *rdram_stage2 = LOADER_BASE(memsize, stage2_size);
+-    *PI_DRAM_ADDR = (uint32_t)rdram_stage2;
++    void *rdram_stage2 = (void*)0x803F8000;   // NOTAREAL: fixed address stage2 is linked at
++    *PI_DRAM_ADDR = (uint32_t)rdram_stage2 & 0x1FFFFFFF; // NOTAREAL: physical address; older mupen-based cores (ParaLLEl N64 on handhelds, n64wasm) hang on a KSEG0 address
+     *PI_CART_ADDR = (uint32_t)stage2_start - 0xA0000000;
+     while (*SP_DMA_BUSY) {}         // Make sure RDRAM clearing is finished before reading data
+     *PI_WR_LEN = stage2_size-1;
+@@ -384,6 +399,6 @@
+ 
+     // Jump to stage 2 in RDRAM.
+     MEMORY_BARRIER();
+-    asm("move $sp, %0"::"r"(STACK2_TOP(memsize, stage2_size)));
++    asm("move $sp, %0"::"r"(0x803F8000 - 16));   // NOTAREAL: stack just below fixed stage2
+     goto *rdram_stage2;
+ }
+--- loader.c.orig	2026-11-17 10:44:04.098881881 -0500
++++ loader.c	2026-11-17 11:48:38.103468964 -0500
+@@ -53,7 +53,7 @@
+ static void pi_read_async(void *dram_addr, uint32_t cart_addr, uint32_t len)
+ {
+     while (*PI_STATUS & (PI_STATUS_DMA_BUSY | PI_STATUS_IO_BUSY)) {}
+-    *PI_DRAM_ADDR = (uint32_t)dram_addr;
++    *PI_DRAM_ADDR = (uint32_t)dram_addr & 0x1FFFFFFF; // NOTAREAL: physical address for older emulators
+     *PI_CART_ADDR = cart_addr;
+     *PI_WR_LEN = len-1;
+ }
+--- loader_compat.c.orig	2026-11-17 10:44:04.100316004 -0500
++++ loader_compat.c	2026-11-17 11:48:38.104139188 -0500
+@@ -23,7 +23,7 @@
+ static void pi_read_async(void *dram_addr, uint32_t cart_addr, uint32_t len)
+ {
+     while (*PI_STATUS & (PI_STATUS_DMA_BUSY | PI_STATUS_IO_BUSY)) {}
+-    *PI_DRAM_ADDR = (uint32_t)dram_addr;
++    *PI_DRAM_ADDR = (uint32_t)dram_addr & 0x1FFFFFFF; // NOTAREAL: physical address for older emulators
+     *PI_CART_ADDR = cart_addr;
+     *PI_WR_LEN = len-1;
+ }
+--- cleanup.c.orig	2026-11-17 11:48:48.470576828 -0500
++++ cleanup.c	2026-11-17 11:48:48.484239410 -0500
+@@ -55,11 +55,16 @@
+     // Clear the reserved portion of RDRAM. To create a SP_WR_LEN value that works,
+     // we assume the reserved size is a multiple of 1024. It can be made to work
+     // also with other sizes, but this code will need to be adjusted.
++    // NOTAREAL: stage2+stage3 now run from a fixed RAM area just below 4 MiB
++    // (older ARM64 recompilers cannot execute from ROM). On a 4 MiB console that
++    // area *is* the reserved area, so only clear it when it is not ourselves.
++    if (memsize > 0x400000) {
+     while (*SP_DMA_FULL) {}
+     *SP_RSP_ADDR = 0xA4001000;
+     *SP_DRAM_ADDR = memsize - TOTAL_RESERVED_SIZE;
+     _Static_assert((TOTAL_RESERVED_SIZE % 1024) == 0, "TOTAL_RESERVED_SIZE must be multiple of 1024");
+     *SP_WR_LEN = (((TOTAL_RESERVED_SIZE >> 10) - 1) << 12) | (1024-1);
++    }
+ 
+     // Clear DMEM (leave only the boot flags area intact). Notice that we can't
+     // call debugf anymore after this, because a small piece of debugging code
+--- Makefile.orig	2026-11-17 11:48:38.096904552 -0500
++++ Makefile	2026-11-17 11:48:38.104558620 -0500
+@@ -65,8 +65,8 @@
+ # this simple transformation so we do it ourselves by replacing jal/j with bal/b
+ # on the assembly output of the compiler.
+ 	$(N64_CC) -S -c $(N64_CFLAGS) -o $@.s $<
+-	$(SED) -i 's/\bjal\b/bal/g' $@.s
+-	$(SED) -i 's/\bj\b/b/g' $@.s
++	# NOTAREAL: no jal->bal rewrite. BAL (BGEZAL $zero) crashes the ARM64 new_dynarec in older
++	# ParaLLEl N64 builds; stage2 is linked at a fixed RAM address instead (see ipl3_prod.ld).
+ 	$(N64_AS) $(N64_ASFLAGS) -o $@ $@.s
+ 
+ build/%.o: %.S
+--- ipl3_prod.ld.orig	2026-11-17 11:48:38.098753857 -0500
++++ ipl3_prod.ld	2026-11-17 11:48:48.484643092 -0500
+@@ -35,15 +35,18 @@
+     .text.ique 0xB0001000  : AT ( 0xA4001000 ) {
+         KEEP(*(.text.ique_trampoline))
+     }
+-    .text.stage23 0xB0001040  : AT ( 0xA4001040 ) {
++    /* NOTAREAL: stage2 runs at a fixed RAM address (the spot a 4 MiB console uses),
++       so it can use absolute JAL. __stage2_rom is where stage1 finds it in ROM. */
++    __stage2_rom = 0xB0001040;
++    .text.stage23 0x803F7FF8 : AT ( 0xA4001040 ) {
+         __stage2_start = .;
+         LONG(__stage2_end - __stage2_start);
+         LONG(0);
+         KEEP(build/loader.o(.text.stage2))
+         KEEP(build/loader.o(.text .text.* .rodata .rodata.*))
+         KEEP(build/loader.o(.data .data.*))
++        KEEP(build/cleanup.o(.text .text.* .data .rodata .rodata.*))   /* NOTAREAL: stage3 runs from RAM too */
+         . = ALIGN(8);
+         __stage2_end = .;
+-        KEEP(build/cleanup.o(.text .text.* .data .rodata .rodata.*))
+-    } > rom
++    }
+ }

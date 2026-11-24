@@ -1,0 +1,70 @@
+NOTAREAL GAME STUDIO v1.0 - desktop program
+
+1. Unzip this folder anywhere (keep all the files together).
+2. Double-click NotarealStudio.exe. The studio opens in its own window. No browser, no internet.
+3. Your ROM library and reports are saved in the Notareal_Data folder next to NotarealStudio.exe.
+
+Windows may show a "SmartScreen" warning because the program isn't code-signed: click More info > Run anyway.
+To quit, close the window.
+
+--- NEW in 1.1: scanning Windows and Xbox games ---
+Research Lab > "Scan ROMs, Windows games and Xbox discs": paste a game folder, a .iso (PC, PlayStation, Xbox, Xbox 360),
+a .zip, or an .exe / .xbe / .xex. Big files are read in pieces, so multi-gigabyte games are fine.
+Only MEASUREMENTS are saved to your data folder (file counts, sizes, picture and sound formats, engine and graphics API
+hints, program type). Pictures, sounds, models, text and code are never copied. Use the findings to design your own
+original art, sound and levels. Re-using or lightly editing someone else's assets is still using their work.
+Xbox 360 discs: the scanner lists files but cannot read inside compressed .xex programs.
+
+--- NEW in 1.2: Templates, Arcade games, Make me a game ---
+📦 Templates: one working starter for each of the 39 game types. Pick one and the right editor opens with a game that already plays.
+  Plays on: DS ROM / SNES ROM / PC page, depending on the type (the card says which).
+🕹 Arcade: nine more game engines (shoot-em-up, breakout, racing, first-person shooter, beat-em-up, falling blocks, memory,
+  town builder, hoops, colouring book). Change numbers and colours, press Play, "Export PC game page" gives one .html file
+  that plays offline with keyboard or Xbox controller. (ROM versions of these engines are not built yet.)
+✨ Make me a game: type a sentence ("a haunted castle platformer with 4 levels called Boo Hall"). Works with NO AI (keywords).
+  Every platformer level it makes is checked by the level checker and can be finished. Music is re-keyed from the library songs.
+Optional local AI (all on this computer, nothing goes online):
+  1. Install Ollama (ollama.com) and run:  ollama pull qwen2.5:7b      OR run llama.cpp's llama-server with a GGUF model on port 8080.
+  2. In "Make me a game" open "Local AI", pick Ollama or llama.cpp, press Test, then Build it.
+  The AI only picks words and numbers (title, type, theme, story lines); the kit does the building and checking.
+Scanning games now also opens game archives (Quake PAK, DOOM WAD, EA BIG, zip-based packs) to list names and sizes, and reads Xbox 360 .xex headers.
+
+=== v1.3: Fit & Balance ===
+New tab "Fit & Balance":
+ - Shows which of the 39 game types export where. Real ROM export today: Nintendo DS 20 types, SNES 7 types. Every type also exports as a PC game page. GBA, GBC, GB, NES, PSX and N64 have no exporter yet.
+ - "Does my game fit this console?" checks your project against that console's limits.
+ - Platformer playtest report: length, time, enemies, hazards, danger and finishable for every level.
+ - Auto-Balance: a robot plays your Shoot-em-up, Racing or Falling-blocks game and tunes Easy/Normal/Hard.
+Template cards now show how many real games each genre was measured from (173 games in the database).
+
+=== v1.4: Game Boy, Game Boy Color, NES and GBA platformer ROMs ===
+In the Game tab pick the console (Game Boy, Game Boy Color, NES or GBA) and press Export ROM. Every platformer template (7 of the 39 types) now exports for these consoles, in addition to DS and SNES.
+What plays: title screen with the NOTAREAL logo, your levels, your physics preset, walkers, hoppers, flyers, coins, hearts, springs, checkpoints, the goal flag, lives, game over and win screens.
+Known limits (also shown as warnings in the export box):
+ - No sound yet on these four consoles.
+ - Game Boy: 16 KB of game data, 4 shades (Game Boy Color: 4 colours per palette, plays in colour on a Color and in grey on a Game Boy). NES: 20 KB, one 4-colour background palette, 3-colour sprites, top row of each level is cut (15 rows). GBA: 60 KB, 16 colours.
+ - Level objects: 40 per level (coins are dropped first).
+ - Tested in real emulators (pyboy, nes-py, mGBA) by playing from the title to the win screen; not yet tested on real hardware.
+
+=== NEW IN v1.5 : EVERY GAME TYPE ON THE NINTENDO DS ===
+* All 39 game types now export as real DS ROMs. The new DS Arcade engine plays shoot-em-up, breakout, racing, first-person shooter (Call of Duty style:
+  maze levels, enemies that shoot back, ammo and reload, health pickups, minimap), beat-em-up, falling blocks, memory, town builder, colouring book and hoops.
+  The top screen is the game, the bottom screen is a touch panel (score, minimap, controls, pause). FPS: D-pad moves/turns, L/R strafe, A fires, B reloads,
+  drag the bottom screen to look.
+* Music maker on DS: tap a 16-step note grid on the bottom screen, START plays, L/R changes tempo.
+* Arcade tab -> "Export Nintendo DS ROM (.nds)". Copy to roms/NDS on the RG DS Plus.
+* MOONLIGHT HOLLER PRESET (World tab -> "Moonlight Holler DS preset"): the bottom screen becomes a panel with four tabs: MAP (live minimap, you blink, chests/doors/shops
+  marked), WORLD (places found so far), ITEMS (tap an item, then USE or DROP), CHESTS (opened/closed in this area and what was inside). Tap the tabs or press L/R.
+  Any World game can turn this on with the "Bottom-screen panel" checkbox.
+
+=== v1.5 (batch 2): KNOWLEDGE + DS ARCADE MUSIC ===
+* Fix it tab -> "Console help and known fixes": pick a console, see its CPU/screen/memory/sound facts and a searchable list of 30 known problems
+  (symptom, cause, fix). "+ Add a problem I solved" saves your own fix into the project so the next search finds it. The AI repair prompt now includes
+  the console facts and matching fixes automatically.
+* DS arcade games play your songs: Arcade tab -> "Music while playing" and "Title music" (songs from the Music tab). Tracks play as chip voices
+  (3 square + noise); sampled instruments are simplified.
+
+=== v1.5 (batch 3): STORY, CUTSCENES, BANNER ===
+* New tab "Story & Banner". Cutscenes: Intro (after the title screen), Before any level, Ending (after the last level). A / START / touch moves on.
+  They play in the Nintendo DS platformer ROM (tested in DeSmuME). SNES, GB/NES/GBA and the PC page do not play cutscenes yet.
+* Banner designer: the icon (32x32, 15 colours) and up to 3 title lines the DS menu shows. Applied to every DS ROM you export. Please check it in DraStic.

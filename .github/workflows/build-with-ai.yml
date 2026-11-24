@@ -1,5 +1,5 @@
 name: Build the Windows program with the AI inside
-# Run it from the Actions tab (Run workflow) or push a tag like ai-1. It joins the app zip in downloads/, adds the llama.cpp engine and a Qwen model,
+# (engine lookup fixed) Run it from the Actions tab (Run workflow) or push a tag like ai-1. It joins the app zip in downloads/, adds the llama.cpp engine and a Qwen model,
 # and publishes ONE zip (or a few parts if it is over 2 GB) on the Releases page. Nothing to install afterwards: unzip, run NotarealStudio.exe.
 on:
   workflow_dispatch:
@@ -28,8 +28,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir eng && cd eng
-          gh release download --repo ggml-org/llama.cpp --pattern '*bin-win-cpu-x64.zip' || gh release download --repo ggml-org/llama.cpp --pattern '*bin-win-avx2-x64.zip'
-          unzip -q *.zip
+          # look through the 15 newest llama.cpp releases for a Windows CPU zip (names change between releases)
+          URL=$(gh api "repos/ggml-org/llama.cpp/releases?per_page=15" --jq '[.[].assets[] | select(.name | test("win.*(cpu|avx2).*x64.*\\.zip$")) | select(.name | test("cuda|cudart|vulkan|hip|sycl|opencl|arm|openvino"; "i") | not)][0].browser_download_url')
+          echo "engine: $URL"; test -n "$URL" && test "$URL" != "null"
+          curl -L --fail --retry 3 -o engine.zip "$URL"
+          unzip -q engine.zip
           SRV=$(find . -name llama-server.exe | head -1); test -n "$SRV"
           mkdir -p ../NotarealStudio_Desktop_Windows/ai/bin ../NotarealStudio_Desktop_Windows/ai/models
           cp -r "$(dirname "$SRV")"/. ../NotarealStudio_Desktop_Windows/ai/bin/

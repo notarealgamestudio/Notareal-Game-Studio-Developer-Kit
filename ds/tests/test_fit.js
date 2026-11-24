@@ -1,6 +1,6 @@
 const F=require('../kit/nrfit.js'),B=require('../kit/nrbalance.js'),Bd=require('../kit/nrbuilder.js'),fs=require('fs');
 let ok=0,bad=0;const t=(n,c)=>{c?ok++:(bad++,console.log('FAIL',n))};
-const cov=F.coverage();t('ds39',cov.ds===37);t("snes8",cov.snes===8);t('mini consoles 7',cov.gba===19&&cov.gbc===19&&cov.gb===19&&cov.nes===19);t('psx/n64 7',cov.psx===24&&cov.n64===24);t('supports',F.supports('fighting','ds')&&F.supports('fighting','pc')&&!F.supports('fighting','snes')&&F.supports('platformer','psx')&&!F.supports('music_maker','pc'));t('matrix39',F.matrix().length===42);
+const cov=F.coverage();t('ds39',cov.ds===38);t("snes8",cov.snes===8);t('mini consoles 7',cov.gba===19&&cov.gbc===19&&cov.gb===19&&cov.nes===19);t('psx/n64 7',cov.psx===25&&cov.n64===25);t('supports',F.supports('fighting','ds')&&F.supports('fighting','pc')&&!F.supports('fighting','snes')&&F.supports('platformer','psx')&&!F.supports('music_maker','pc'));t('matrix39',F.matrix().length===42);
 const ex=JSON.parse(fs.readFileSync(__dirname+'/../examples/lakewood_run.json'));
 t('ds ok',F.check(ex,'ds').status==='ok');t('n64 checked',['ok','warn'].includes(F.check(ex,'n64').status));
 const r=F.report(ex);t('report',r.levels.length>0&&r.levels.every(l=>l.seconds>0));

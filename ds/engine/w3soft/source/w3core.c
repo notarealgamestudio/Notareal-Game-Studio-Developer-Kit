@@ -352,6 +352,24 @@ static void itoa_(char *b, int v);
 #include "w3store.h"
 #include "w3front.h"
 static int FR_ok(void) { return FR != 0; }
+// ---- shared asset library (ASET): skyline wrapped around the horizon, land texture mapped onto the ground plane. Per-row float, per-pixel integer.
+#include "aset.h"
+static const u8 *a_sky, *a_land; static int a_init; static float a_atan[RW];
+static void aset_boot(void) { a_init = 1; a_sky = aset_tex(nr_gamedata, ASET_SKY); a_land = aset_tex(nr_gamedata, ASET_LAND); for (int x = 0; x < RW; x++) { float q = (x - CXS + 0.5f) / (float)FOC; a_atan[x] = q / (1.0f + 0.28f * q * q); } }
+static void backdrop(float ex, float ey, float ez, float fx, float fy, float fz, float cy, float sy, float cp, float sp, u16 sk, u16 gc)
+{
+    int skyu[RW]; if (a_sky) for (int x = 0; x < RW; x++) { float a = (yaw + a_atan[x]) * (512.0f / 6.2831853f); int u = (int)(a + 4096.0f); skyu[x] = u & 127; }
+    int hor = -1; for (int y = 0; y < RH; y++) { float b = (CYS - y + 0.5f) / FOC; if (fy + cp * b < -0.002f) { hor = y; break; } } if (hor < 0) hor = RH;
+    for (int y = 0; y < RH; y++) { u16 *row = fb3 + y * RW;
+        if (y < hor) { int v = 63 - (hor - 1 - y); if (v < 0) v = 0; if (!a_sky) { for (int x = 0; x < RW; x++) row[x] = sk; continue; }
+            const u8 *px = a_sky + 4 + 512 + v * 128; for (int x = 0; x < RW; x++) { int i = px[skyu[x]]; row[x] = a_sky[4 + i * 2] | (a_sky[5 + i * 2] << 8) | BIT(15); } continue; }
+        float b = (CYS - y + 0.5f) / FOC, dy = fy + cp * b, t = ey / -dy;
+        if (!a_land || t > 70.0f) { for (int x = 0; x < RW; x++) row[x] = gc; continue; }
+        float a0 = (0 - CXS + 0.5f) / FOC, wx = ex + t * (fx - sy * sp * b + cy * a0), wz = ez + t * (fz + cy * sp * b + sy * a0), sx = t * cy / FOC, sz = t * sy / FOC;
+        int iu = (int)(wx * 16 * 65536.0f), iv = (int)(wz * 16 * 65536.0f), du = (int)(sx * 16 * 65536.0f), dv = (int)(sz * 16 * 65536.0f);
+        for (int x = 0; x < RW; x++) { int u = (iu >> 16) & 63, v = (iv >> 16) & 63, k = v * 64 + u, i = (a_land[4 + 32 + (k >> 1)] >> ((k & 1) * 4)) & 15; row[x] = a_land[4 + i * 2] | (a_land[5 + i * 2] << 8) | BIT(15); iu += du; iv += dv; }
+    }
+}
 static void render3d(void)
 {
     float cy = cosf(yaw), sy = sinf(yaw), cp = cosf(pit), sp = sinf(pit); float ex = px, ey = py + EYE, ez = pz;
@@ -362,7 +380,9 @@ static void render3d(void)
     // sky above the horizon (two-tone), ground below
     int hor = CYS + (int)(sp / (cp > 0.2f ? cp : 0.2f) * FOC); if (hor < 0) hor = 0; if (hor > RH) hor = RH;
     u16 sk0 = sky0, sk1 = sky1, gc = groundc; if (mode == M_STORE) { sk0 = shade(sky0, s_night); sk1 = shade(sky1, s_night); gc = shade(groundc, s_night * 3 / 4 + 8); }
-    for (int y = 0; y < RH; y++) { u16 c = y < hor ? (y < hor / 2 ? sk0 : sk1) : gc; u16 *row = fb3 + y * RW; for (int x = 0; x < RW; x++) row[x] = c; }
+    if (!a_init) aset_boot();
+    if (a_sky || a_land) backdrop(ex, ey, ez, fx, fy, fz, cy, sy, cp, sp, sk1, gc);
+    else for (int y = 0; y < RH; y++) { u16 c = y < hor ? (y < hor / 2 ? sk0 : sk1) : gc; u16 *row = fb3 + y * RW; for (int x = 0; x < RW; x++) row[x] = c; }
     nitems = 0;
     for (int i = 0; i < nb; i++)
     {   const Bx *b = &B[i]; if (b->kind == 3) continue; int cxm = (b->x0 + b->x1) / 2 - camx, czm = (b->z0 + b->z1) / 2 - camz, rr = ((b->x1 - b->x0) + (b->z1 - b->z0)) / 2; int dd = cxm * cxm + czm * czm;

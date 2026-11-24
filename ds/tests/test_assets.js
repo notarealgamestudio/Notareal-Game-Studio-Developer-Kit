@@ -1,0 +1,12 @@
+const A=require('../kit/nrassets.js'),fs=require('fs');let ok=0,bad=0;const t=(n,c)=>{if(c){ok++}else{bad++;console.log('FAIL',n)}};
+const img={w:32,h:32,data:new Uint8Array(32*32*4).map((_,i)=>i%4==3?255:(i*7)%255)};
+const man=JSON.parse(fs.readFileSync(__dirname+'/../library/assetpack/manifest.json'));
+t('manifest cats',['sky','land','building','prop'].every(k=>man[k].length>=10));
+t('pack files exist',Object.values(man).flat().every(e=>fs.existsSync(__dirname+'/../library/'+e.png)));
+const p=A.payload({sky:img,land:img,wall:img});t('payload size',p.length===4+8708+2084+2084);t('flags',p[0]===7);
+t('PT header',p[4]===80&&p[5]===84&&p[6]===8);
+const p2=A.payload({sky:null,land:img,wall:null});t('land only',p2[0]===2&&p2.length===4+2084);
+const blk=new Uint8Array(64);blk.set([...'NRGDATA1'].map(c=>c.charCodeAt(0)),0);const b=A.attach(blk,p);
+const dv=new DataView(b.buffer);t('section count',dv.getUint32(16,true)===1);t('id',String.fromCharCode(...b.subarray(20,24))==='ASET');
+t('replace not duplicate',new DataView(A.attach(b,p2).buffer).getUint32(16,true)===1);
+console.log(ok+' passed, '+bad+' failed');process.exit(bad?1:0);

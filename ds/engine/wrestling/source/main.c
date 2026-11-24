@@ -6,6 +6,7 @@
 #include "tex_apron_bin.h"
 #include "tex_crowd_bin.h"
 #include "tex_floor_bin.h"
+#include "aset.h"
 #include "tex_tron_bin.h"
 #include "splash_bin.h"
 #include "icw.h"
@@ -134,8 +135,8 @@ int main(void)
     caw_init();
     tMat = load_tex(tex_mat_bin, 128, 128, 0);
     tApron = load_tex(tex_apron_bin, 256, 32, 0);
-    tCrowd = load_tex(tex_crowd_bin, 128, 64, 1);
-    tFloor = load_tex(tex_floor_bin, 64, 64, 1);
+    { const unsigned char *as = aset_tex(nr_gamedata, ASET_SKY); tCrowd = load_tex(as ? (const void *)as : (const void *)tex_crowd_bin, 128, 64, 1); }
+    { const unsigned char *as = aset_tex(nr_gamedata, ASET_LAND); tFloor = load_tex(as ? (const void *)as : (const void *)tex_floor_bin, 64, 64, 1); }
     tTron = load_tex(tex_tron_bin, 128, 64, 0);
 
     glMatrixMode(GL_PROJECTION);

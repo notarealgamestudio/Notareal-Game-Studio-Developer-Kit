@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "font_bin.h"
 #include "splash_bin.h"
+#include "aset.h"
 void snd_psg_ch(int ch, int duty, int hz, int vol, int pan);
 void snd_noise_ch(int ch, int hz, int vol, int pan);
 void snd_stop(int ch);
@@ -31,7 +32,7 @@ typedef struct { u8 mode, res; u16 nbox, nent; u8 nweap, nety; s16 sx, sz, yaw, 
 #define MAXB 300
 #define MAXE 64
 static const Hd *H; static const Bx *B; static const Ent *E0; static const Wp *W; static const Et *ET; static int nb, ne0, nw, nety;
-typedef struct { v16 X[2], Y[2], Z[2]; u16 c[6]; float x0, y0, z0, x1, y1, z1, h0, h1; u8 ramp, axis; } Cb;
+typedef struct { v16 X[2], Y[2], Z[2]; u16 c[6]; float x0, y0, z0, x1, y1, z1, h0, h1; u8 ramp, axis, tall; } Cb;
 static Cb cb[MAXB];
 typedef struct { float x, y, z, yaw, anim, hurt; int type, hp, sh, st, cd, burst, losc, los, alive; } En;
 static En en[MAXE]; static int nen;
@@ -42,15 +43,23 @@ static const int LV[6] = { 32, 27, 22, 29, 24, 14 };
 static void make_box(Cb *o, const Bx *b)
 {
     o->x0 = b->x0 / 8.0f; o->y0 = b->y0 / 8.0f; o->z0 = b->z0 / 8.0f; o->x1 = b->x1 / 8.0f; o->y1 = b->y1 / 8.0f; o->z1 = b->z1 / 8.0f;
-    o->ramp = b->kind == 2; o->axis = b->axis; o->h0 = b->h0 / 8.0f; o->h1 = b->h1 / 8.0f;
+    o->ramp = b->kind == 2; o->tall = (b->kind != 2) && (o->y1 - o->y0) >= 4.0f; o->axis = b->axis; o->h0 = b->h0 / 8.0f; o->h1 = b->h1 / 8.0f;
     o->X[0] = floattov16(o->x0 * SC); o->X[1] = floattov16(o->x1 * SC); o->Y[0] = floattov16(o->y0 * SC); o->Y[1] = floattov16(o->y1 * SC); o->Z[0] = floattov16(o->z0 * SC); o->Z[1] = floattov16(o->z1 * SC);
     u16 c = b->col, t = b->top ? b->top : b->col; for (int f = 0; f < 6; f++) o->c[f] = shade(f == 0 ? t : c, LV[f]);
 }
 static const u8 FC[6][4][3] = { { { 0, 1, 0 }, { 0, 1, 1 }, { 1, 1, 1 }, { 1, 1, 0 } }, { { 0, 0, 1 }, { 1, 0, 1 }, { 1, 1, 1 }, { 0, 1, 1 } }, { { 1, 0, 0 }, { 0, 0, 0 }, { 0, 1, 0 }, { 1, 1, 0 } },
     { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 1, 0 }, { 1, 1, 1 } }, { { 0, 0, 0 }, { 0, 0, 1 }, { 0, 1, 1 }, { 0, 1, 0 } }, { { 0, 0, 0 }, { 1, 0, 0 }, { 1, 0, 1 }, { 0, 0, 1 } } };
+// ---- shared asset library (ASET): skyline ring, tiled ground, building facades. Textures are uploaded once; no ASET = the flat-colour look.
+static int tSky, tLand, tWall, useTex;
+static int up_tex(const u8 *b, int w, int h)
+{
+    int id; glGenTextures(1, &id); glBindTexture(0, id); int bpp = b[2], n = bpp == 8 ? 256 : 16;
+    glTexImage2D(0, 0, bpp == 8 ? GL_RGB256 : GL_RGB16, w, h, 0, TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T, b + 4 + n * 2);
+    glColorTableEXT(0, 0, n, 0, 0, (const u16 *)(b + 4)); return id;
+}
 static void draw_cb(const Cb *o, int faces)
 {
-    for (int f = 0; f < 6; f++) { if (f == 5 && !(faces & 1)) continue; glColor(o->c[f]); for (int k = 0; k < 4; k++) glVertex3v16(o->X[FC[f][k][0]], o->Y[FC[f][k][1]], o->Z[FC[f][k][2]]); }
+    for (int f = 0; f < 6; f++) { if (o->tall && tWall && f >= 1 && f <= 4) continue; if (f == 5 && !(faces & 1)) continue; glColor(o->c[f]); for (int k = 0; k < 4; k++) glVertex3v16(o->X[FC[f][k][0]], o->Y[FC[f][k][1]], o->Z[FC[f][k][2]]); }
 }
 // a rotated box in world metres (people, pickups): 5 faces, colour shaded per face
 static void qbox(float cx, float y0, float cz, float hx, float h, float hz, float yaw, u16 col)
@@ -302,9 +311,35 @@ static void render(void)
     glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_ID(1));
     glBegin(GL_QUADS);                                           // ground and horizon
     float G = (H->half / 8.0f + 200) * SC; v16 g = floattov16(G > 7.9f ? 7.9f : G);
-    glColor(groundc); glVertex3v16(-g, 0, -g); glVertex3v16(-g, 0, g); glVertex3v16(g, 0, g); glVertex3v16(g, 0, -g);
+    v16 gy = tLand ? floattov16(-0.012f) : 0; glColor(groundc); glVertex3v16(-g, gy, -g); glVertex3v16(-g, gy, g); glVertex3v16(g, gy, g); glVertex3v16(g, gy, -g);
     for (int i = 0; i < nb; i++) { const Cb *c = &cb[i]; float dx = (c->x0 + c->x1) * .5f - px, dz = (c->z0 + c->z1) * .5f - pz; float rr = (c->x1 - c->x0 + c->z1 - c->z0) * .5f; float dd = dx * dx + dz * dz; if (dd > 95 * 95) continue; if (dd > rr * rr && dx * fx + dz * fz < -rr * 0.7f) continue; draw_cb(c, 0); }
     glEnd();
+    if (useTex) {                                                // shared asset library: tiled land type, skyline ring, building facades
+        const u16 W15 = RGB15(31, 31, 31) | BIT(15); glPolyFmt(POLY_ALPHA(31) | POLY_CULL_NONE | POLY_ID(1));
+        if (tLand) {
+            glBindTexture(0, tLand); glBegin(GL_QUADS); glColor(W15); const float TL = 12; int ix = (int)floorf(px / TL), iz = (int)floorf(pz / TL);
+            for (int j = -4; j <= 4; j++) for (int i = -4; i <= 4; i++) { float x0 = (ix + i) * TL, z0 = (iz + j) * TL, x1 = x0 + TL, z1 = z0 + TL;
+                glTexCoord2t16(inttot16(0), inttot16(0)); glVertex3v16(floattov16(x0 * SC), 0, floattov16(z0 * SC)); glTexCoord2t16(inttot16(0), inttot16(128)); glVertex3v16(floattov16(x0 * SC), 0, floattov16(z1 * SC));
+                glTexCoord2t16(inttot16(128), inttot16(128)); glVertex3v16(floattov16(x1 * SC), 0, floattov16(z1 * SC)); glTexCoord2t16(inttot16(128), inttot16(0)); glVertex3v16(floattov16(x1 * SC), 0, floattov16(z0 * SC)); }
+            glEnd();
+        }
+        if (tSky) {
+            glBindTexture(0, tSky); glBegin(GL_QUADS); glColor(W15); const float RR = 110;
+            for (int k = 0; k < 8; k++) { float a0 = k * 0.785398f, a1 = (k + 1) * 0.785398f; int ua = (k & 1) ? 64 : 0, ub = ua + 64;
+                float x0 = ex + RR * sinf(a0), z0 = ez - RR * cosf(a0), x1 = ex + RR * sinf(a1), z1 = ez - RR * cosf(a1);
+                glTexCoord2t16(inttot16(ua), inttot16(64)); glVertex3v16(floattov16(x0 * SC), floattov16(-2 * SC), floattov16(z0 * SC)); glTexCoord2t16(inttot16(ub), inttot16(64)); glVertex3v16(floattov16(x1 * SC), floattov16(-2 * SC), floattov16(z1 * SC));
+                glTexCoord2t16(inttot16(ub), inttot16(0)); glVertex3v16(floattov16(x1 * SC), floattov16(50 * SC), floattov16(z1 * SC)); glTexCoord2t16(inttot16(ua), inttot16(0)); glVertex3v16(floattov16(x0 * SC), floattov16(50 * SC), floattov16(z0 * SC)); }
+            glEnd();
+        }
+        if (tWall) {
+            glBindTexture(0, tWall); glBegin(GL_QUADS);
+            for (int i = 0; i < nb; i++) { const Cb *c = &cb[i]; if (!c->tall) continue; float dx = (c->x0 + c->x1) * .5f - px, dz = (c->z0 + c->z1) * .5f - pz; if (dx * dx + dz * dz > 95 * 95) continue;
+                for (int f = 1; f <= 4; f++) { float wd = (f <= 2) ? c->x1 - c->x0 : c->z1 - c->z0, ht = c->y1 - c->y0; int sw = (int)(wd * 16), sv = (int)(ht * 16); if (sw > 2000) sw = 2000; if (sv > 2000) sv = 2000;
+                    glColor(shade(W15, LV[f])); for (int k = 0; k < 4; k++) { glTexCoord2t16(inttot16(FC[f][k][f <= 2 ? 0 : 2] * sw), inttot16((1 - FC[f][k][1]) * sv)); glVertex3v16(c->X[FC[f][k][0]], c->Y[FC[f][k][1]], c->Z[FC[f][k][2]]); } } }
+            glEnd();
+        }
+        glBindTexture(0, 0); glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_ID(1));
+    }
     glBegin(GL_QUADS);
     for (int i = 0; i < nen; i++) { const En *n = &en[i]; if (!n->alive) continue; const Et *t = &ET[n->type]; float dx = n->x - px, dz = n->z - pz; if (dx * dx + dz * dz > 80 * 80) continue; if (dx * fx + dz * fz < -3) continue; u16 col = n->hurt > 0 ? RGB15(31, 28, 20) | BIT(15) : t->col | BIT(15); person(n->x, n->y, n->z, n->yaw, t->scale / 100.0f, col, RGB15(24, 18, 14) | BIT(15), n->anim, n->burst > 0 ? 1.4f : 0); }
     for (int i = 0; i < npk; i++) { const Pk *k = &pk[i]; if (k->taken) continue; float a = frames * 0.07f + i; u16 c = k->type == 4 ? RGB15(31, 27, 6) | BIT(15) : k->type == 5 ? RGB15(8, 28, 8) | BIT(15) : k->type == 6 ? RGB15(8, 16, 28) | BIT(15) : RGB15(28, 20, 8) | BIT(15); float bo = sinf(frames * 0.05f + i) * 0.15f; qbox(k->x, k->y + bo, k->z, 0.38f, 0.76f, 0.38f, a, c); qbox(k->x, k->y + bo + 0.19f, k->z, 0.38f, 0.38f, 0.38f, a + 0.78f, shade(c, 28)); }
@@ -325,8 +360,11 @@ static void render(void)
 
 int main(void)
 {
-    defaultExceptionHandler(); powerOn(POWER_ALL_2D | POWER_3D_CORE); lcdMainOnTop(); videoSetMode(MODE_0_3D); videoSetModeSub(MODE_5_2D); vramSetBankA(VRAM_A_TEXTURE); vramSetBankC(VRAM_C_SUB_BG);
-    int bg = bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0); botv = bgGetGfxPtr(bg); glInit(); glEnable(GL_ANTIALIAS); glDisable(GL_TEXTURE_2D); glEnable(GL_BLEND); glViewport(0, 0, 255, 191);
+    defaultExceptionHandler(); powerOn(POWER_ALL_2D | POWER_3D_CORE); lcdMainOnTop(); videoSetMode(MODE_0_3D); videoSetModeSub(MODE_5_2D); vramSetBankA(VRAM_A_TEXTURE); vramSetBankF(VRAM_F_TEX_PALETTE); vramSetBankC(VRAM_C_SUB_BG);
+    int bg = bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0); botv = bgGetGfxPtr(bg); glInit(); glEnable(GL_ANTIALIAS); glDisable(GL_TEXTURE_2D);
+    { const u8 *aS = aset_tex(nr_gamedata, ASET_SKY), *aL = aset_tex(nr_gamedata, ASET_LAND), *aW = aset_tex(nr_gamedata, ASET_WALL);   // shared asset library
+      if (aS || aL || aW) { glEnable(GL_TEXTURE_2D); if (aS) tSky = up_tex(aS, 128, 64); if (aL) tLand = up_tex(aL, 64, 64); if (aW) tWall = up_tex(aW, 64, 64); glBindTexture(0, 0); useTex = 1; } }
+    glEnable(GL_BLEND); glViewport(0, 0, 255, 191);
     glMatrixMode(GL_PROJECTION); glLoadIdentity(); gluPerspective(70, 256.0f / 192.0f, 0.01f, 12.0f);
     dmaCopy(splash_bin, botv, 256 * 192 * 2); for (int i = 0; i < 150; i++) { swiWaitForVBlank(); snd_input(); }
     load_world(); new_game(); snd_master(110);

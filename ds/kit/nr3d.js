@@ -24,7 +24,23 @@
             if (sky.fog) R.fog = sky.fog; if (sky.fogNear != null) R.fogNear = sky.fogNear; if (sky.fogFar != null) R.fogFar = sky.fogFar; if (sky.ambient != null) R.ambient = sky.ambient;
             const top = sky.top || [90, 140, 230], bot = sky.bottom || R.fog, hz = h / 2 - Math.tan(cam.pitch) * F; // horizon row
             for (let y = 0; y < h; y++) { const t = clamp((y - (hz - h * 0.55)) / (h * 0.55), 0, 1), r = top[0] + (bot[0] - top[0]) * t, g = top[1] + (bot[1] - top[1]) * t, b = top[2] + (bot[2] - top[2]) * t; for (let x = 0; x < w; x++) { const i = (y * w + x) * 4; buf[i] = r; buf[i + 1] = g; buf[i + 2] = b; buf[i + 3] = 255; } }
+            if (N3.assets && (N3.assets.sky || N3.assets.land)) paintAssets(hz);   // shared asset library: skyline + land type
             zb.fill(1e9); R.tris = 0; R.drawn = 0; alphaQ = [];
+        };
+        const paintAssets = hz => {
+            const A = N3.assets, S = A.sky, L = A.land, fr = R.fog, TAU = 6.283185307; const col = new Float32Array(w);
+            if (S) for (let x = 0; x < w; x++) col[x] = (cam.yaw + Math.atan((x + .5 - w / 2) / F)) / TAU;
+            const horY = Math.max(0, Math.min(h, Math.round(hz))); const skyH = h * .28;
+            for (let y = 0; y < h; y++) {
+                const yc = (h / 2 - (y + .5)) / F, dyw = sp + yc * cp, ground = dyw < -1e-4;
+                if (!ground) { if (!S) continue; const v = Math.max(0, Math.min(S.h - 1, Math.floor(S.h - 1 - (horY - 1 - y) * S.h / skyH))), vr = v * S.w;
+                    for (let x = 0; x < w; x++) { const u = (((col[x] * 4 * S.w) % S.w) + S.w) % S.w | 0, si = (vr + u) * 4, i = (y * w + x) * 4; buf[i] = S.data[si]; buf[i + 1] = S.data[si + 1]; buf[i + 2] = S.data[si + 2]; } continue; }
+                if (true) continue; const t = -cam.y / dyw; if (t > 140) continue; const f = t <= R.fogNear ? 0 : Math.min(1, (t - R.fogNear) / Math.max(1, R.fogFar - R.fogNear));
+                const wy = cam.y; void wy; const ux = -sy * sp, uz = -cy * sp;   // up vector (world x, z); forward = (sy*cp, sp, cy*cp); right = (cy, 0, -sy)
+                const bx = cam.x + t * (sy * cp + yc * ux), bz = cam.z + t * (cy * cp + yc * uz), stx = t * cy / F, stz = -t * sy / F;
+                for (let x = 0; x < w; x++) { const a = x + .5 - w / 2, wx = bx + a * stx, wz = bz + a * stz, u = ((Math.floor(wx * 8) % L.w) + L.w) % L.w, v = ((Math.floor(wz * 8) % L.h) + L.h) % L.h, si = (v * L.w + u) * 4, i = (y * w + x) * 4;
+                    buf[i] = L.data[si] + (fr[0] - L.data[si]) * f; buf[i + 1] = L.data[si + 1] + (fr[1] - L.data[si + 1]) * f; buf[i + 2] = L.data[si + 2] + (fr[2] - L.data[si + 2]) * f; }
+            }
         };
         const toCam = (x, y, z) => { const dx = x - cam.x, dy = y - cam.y, dz = z - cam.z, x1 = dx * cy - dz * sy, z1 = dx * sy + dz * cy; return [x1, dy * cp - z1 * sp, dy * sp + z1 * cp]; };
         R.project = (x, y, z) => { const c = toCam(x, y, z); if (c[2] < NEAR) return null; return [w / 2 + c[0] / c[2] * F, h / 2 - c[1] / c[2] * F, c[2]]; };
@@ -95,7 +111,18 @@
             if (cap !== false) for (let i = 1; i < sides - 1; i++) { R.tri(B[0], B[i], B[i + 1], col); R.tri(A[0], A[i + 1], A[i], col); }
         };
         // checkered ground / floor
+        const texFloor = (x0, z0, x1, z1, y, L) => {
+            const fr = R.fog; const ux = -sy * sp, uz = -cy * sp;
+            for (let py = 0; py < h; py++) {
+                const yc = (h / 2 - (py + .5)) / F, dyw = sp + yc * cp; if (dyw > -1e-4) continue; const t = (y - cam.y) / dyw; if (t <= 0 || t > 160) continue;
+                const f = t <= R.fogNear ? 0 : Math.min(1, (t - R.fogNear) / Math.max(1, R.fogFar - R.fogNear)), bx = cam.x + t * (sy * cp + yc * ux), bz = cam.z + t * (cy * cp + yc * uz), stx = t * cy / F, stz = -t * sy / F;
+                for (let px = 0; px < w; px++) { const a = px + .5 - w / 2, wx = bx + a * stx, wz = bz + a * stz; if (wx < x0 || wx > x1 || wz < z0 || wz > z1) continue; const zi = py * w + px; if (t >= zb[zi]) continue;
+                    const u = ((Math.floor(wx * 8) % L.w) + L.w) % L.w, v = ((Math.floor(wz * 8) % L.h) + L.h) % L.h, si = (v * L.w + u) * 4, i = zi * 4; zb[zi] = t;
+                    buf[i] = L.data[si] + (fr[0] - L.data[si]) * f; buf[i + 1] = L.data[si + 1] + (fr[1] - L.data[si + 1]) * f; buf[i + 2] = L.data[si + 2] + (fr[2] - L.data[si + 2]) * f; buf[i + 3] = 255; }
+            }
+        };
         R.floor = (x0, z0, x1, z1, y, c1, c2, tile) => {
+            if (N3.assets && N3.assets.land && y > -0.01 && y < 0.01) return texFloor(x0, z0, x1, z1, y, N3.assets.land);   // the shared land texture, depth-tested like real geometry
             tile = tile || 4; const nx = Math.max(1, Math.round((x1 - x0) / tile)), nz = Math.max(1, Math.round((z1 - z0) / tile)), sx = (x1 - x0) / nx, sz = (z1 - z0) / nz;
             for (let i = 0; i < nx; i++) for (let j = 0; j < nz; j++) { const xa = x0 + i * sx, za = z0 + j * sz; if (xa + sx < cam.x - R.fogFar - tile || xa > cam.x + R.fogFar + tile || za + sz < cam.z - R.fogFar - tile || za > cam.z + R.fogFar + tile) continue; R.quad([xa, y, za], [xa, y, za + sz], [xa + sx, y, za + sz], [xa + sx, y, za], (i + j) & 1 ? c2 : c1); }
         };

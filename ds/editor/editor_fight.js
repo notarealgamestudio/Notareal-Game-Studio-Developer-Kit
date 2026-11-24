@@ -20,7 +20,7 @@ function wrestlePanel(box) {
         el('p', { class: 'hint' }, 'The ring, crowd and move list are built into the engine for now. There is no in-editor preview of the 3D match: export the ROM to play it.')));
 }
 async function exportWrestleRom() {
-    try { const W = wrestleCfg(), res = NRKit.buildDSWrestling(P), out = NRKit.patchROM(await gunzipB64(ROMS.ds_wrestling), res.block), nm = (W.title || 'wrestling').replace(/\W+/g, '_');
+    try { const W = wrestleCfg(), res = NRKit.buildDSWrestling(P); res.block = await withAssets(res.block); const out = NRKit.patchROM(await gunzipB64(ROMS.ds_wrestling), res.block), nm = (W.title || 'wrestling').replace(/\W+/g, '_');
         await download(nm + '.nds', await withBanner(out.rom), 'application/octet-stream'); notify('Saved ' + nm + '.nds: copy to RG DS Plus roms/NDS, open in DraStic. Pick a match type, your wrestler and your rival. A strike, B grapple, Y pin, X taunt.'); }
     catch (e) { notify('Could not build the wrestling ROM: ' + e.message); }
 }

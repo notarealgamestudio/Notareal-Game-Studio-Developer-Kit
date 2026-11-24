@@ -226,13 +226,15 @@ ${CLOSE}</body></html>`;
 };
 X.arcadeHTML = (P, ctx = {}) => {
     const src = ctx.sources || X.sources(), C = P.arcade, title = (C.cfg && C.cfg.title) || 'Arcade game';
-    const OPEN = '<' + 'script>', CLOSE = '<' + '/script>', esc = t => String(t).replace(/<\/script/gi, '<\\/script'), data = JSON.stringify({ mode: C.mode, cfg: C.cfg }).replace(/<\//g, '<\\/');
+    const OPEN = '<' + 'script>', CLOSE = '<' + '/script>', esc = t => String(t).replace(/<\/script/gi, '<\\/script'), data = JSON.stringify({ mode: C.mode, cfg: C.cfg, assets: ctx.assets || null }).replace(/<\//g, '<\\/');
     return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title.replace(/[<>&]/g, '')}</title><style>html,body{margin:0;background:#000;height:100%;display:flex;align-items:center;justify-content:center}canvas{image-rendering:pixelated;width:min(100vw,133.3vh);height:min(75vw,100vh)}</style></head><body><canvas id="c"></canvas>
 ${OPEN}${esc(src.nrarcade)}${CLOSE}${OPEN}
 const D=${data};const k={};
 addEventListener('keydown',e=>{k[e.key]=true;if(e.key.startsWith('Arrow')||e.key===' ')e.preventDefault()});addEventListener('keyup',e=>{k[e.key]=false});
 setInterval(()=>{const p=[...(navigator.getGamepads?navigator.getGamepads():[])].find(x=>x&&x.connected);if(!p)return;const b=i=>!!(p.buttons[i]&&p.buttons[i].pressed);k.ArrowLeft=p.axes[0]<-0.45||b(14);k.ArrowRight=p.axes[0]>0.45||b(15);k.ArrowUp=p.axes[1]<-0.45||b(12);k.ArrowDown=p.axes[1]>0.45||b(13);k.z=b(0);k.x=b(1);k.c=b(3)},16);
-window.__game=NRArcade.play(document.getElementById('c'),D.mode,D.cfg,{keys:k,seed:Date.now()&0xffff});
+(async()=>{const dec=async u=>{const im=new Image();im.src=u;await im.decode();const c=document.createElement('canvas');c.width=im.width;c.height=im.height;const g=c.getContext('2d');g.drawImage(im,0,0);return{w:c.width,h:c.height,data:g.getImageData(0,0,c.width,c.height).data}};
+if(D.assets&&window.NR3D){NR3D.assets={};for(const q in D.assets)if(D.assets[q])NR3D.assets[q]=await dec(D.assets[q])}
+window.__game=NRArcade.play(document.getElementById('c'),D.mode,D.cfg,{keys:k,seed:Date.now()&0xffff})})();
 ${CLOSE}</body></html>`;
 };
 X.guide = (P, check) => `# ${((P.meta && P.meta.title) || 'Game')}: PC and Xbox guide

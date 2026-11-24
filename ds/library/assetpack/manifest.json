@@ -1,0 +1,305 @@
+{
+ "sky": [
+  {
+   "id": "sky_city_day",
+   "name": "City - day",
+   "png": "assetpack/sky/city_day.png"
+  },
+  {
+   "id": "sky_city_night",
+   "name": "City - night",
+   "png": "assetpack/sky/city_night.png"
+  },
+  {
+   "id": "sky_suburb",
+   "name": "Suburbs",
+   "png": "assetpack/sky/suburb.png"
+  },
+  {
+   "id": "sky_desert",
+   "name": "Desert",
+   "png": "assetpack/sky/desert.png"
+  },
+  {
+   "id": "sky_mountains",
+   "name": "Mountains",
+   "png": "assetpack/sky/mountains.png"
+  },
+  {
+   "id": "sky_forest",
+   "name": "Forest",
+   "png": "assetpack/sky/forest.png"
+  },
+  {
+   "id": "sky_beach",
+   "name": "Beach",
+   "png": "assetpack/sky/beach.png"
+  },
+  {
+   "id": "sky_sunset",
+   "name": "Sunset skyline",
+   "png": "assetpack/sky/sunset.png"
+  },
+  {
+   "id": "sky_space",
+   "name": "Space",
+   "png": "assetpack/sky/space.png"
+  },
+  {
+   "id": "sky_arena",
+   "name": "Arena crowd",
+   "png": "assetpack/sky/arena.png"
+  },
+  {
+   "id": "sky_castle_dusk",
+   "name": "Castle at dusk",
+   "png": "assetpack/sky/castle_dusk.png"
+  },
+  {
+   "id": "sky_farm",
+   "name": "Farm",
+   "png": "assetpack/sky/farm.png"
+  }
+ ],
+ "land": [
+  {
+   "id": "land_grass",
+   "name": "Grass",
+   "png": "assetpack/land/grass.png"
+  },
+  {
+   "id": "land_dirt",
+   "name": "Dirt",
+   "png": "assetpack/land/dirt.png"
+  },
+  {
+   "id": "land_sand",
+   "name": "Sand",
+   "png": "assetpack/land/sand.png"
+  },
+  {
+   "id": "land_snow",
+   "name": "Snow",
+   "png": "assetpack/land/snow.png"
+  },
+  {
+   "id": "land_asphalt",
+   "name": "Asphalt",
+   "png": "assetpack/land/asphalt.png"
+  },
+  {
+   "id": "land_road_lines",
+   "name": "Road with line",
+   "png": "assetpack/land/road_lines.png"
+  },
+  {
+   "id": "land_concrete",
+   "name": "Concrete",
+   "png": "assetpack/land/concrete.png"
+  },
+  {
+   "id": "land_wood",
+   "name": "Wood planks",
+   "png": "assetpack/land/wood.png"
+  },
+  {
+   "id": "land_brick",
+   "name": "Brick",
+   "png": "assetpack/land/brick.png"
+  },
+  {
+   "id": "land_water",
+   "name": "Water",
+   "png": "assetpack/land/water.png"
+  },
+  {
+   "id": "land_lava",
+   "name": "Lava",
+   "png": "assetpack/land/lava.png"
+  },
+  {
+   "id": "land_ice",
+   "name": "Ice",
+   "png": "assetpack/land/ice.png"
+  },
+  {
+   "id": "land_metal",
+   "name": "Metal",
+   "png": "assetpack/land/metal.png"
+  },
+  {
+   "id": "land_gym_mat",
+   "name": "Gym mat",
+   "png": "assetpack/land/gym_mat.png"
+  },
+  {
+   "id": "land_carpet",
+   "name": "Carpet",
+   "png": "assetpack/land/carpet.png"
+  },
+  {
+   "id": "land_tile",
+   "name": "Tile",
+   "png": "assetpack/land/tile.png"
+  }
+ ],
+ "building": [
+  {
+   "id": "building_house",
+   "name": "House",
+   "png": "assetpack/building/house.png"
+  },
+  {
+   "id": "building_shop",
+   "name": "Shop",
+   "png": "assetpack/building/shop.png"
+  },
+  {
+   "id": "building_skyscraper",
+   "name": "Skyscraper",
+   "png": "assetpack/building/skyscraper.png"
+  },
+  {
+   "id": "building_office",
+   "name": "Office",
+   "png": "assetpack/building/office.png"
+  },
+  {
+   "id": "building_warehouse",
+   "name": "Warehouse",
+   "png": "assetpack/building/warehouse.png"
+  },
+  {
+   "id": "building_barn",
+   "name": "Barn",
+   "png": "assetpack/building/barn.png"
+  },
+  {
+   "id": "building_castle_tower",
+   "name": "Castle tower",
+   "png": "assetpack/building/castle_tower.png"
+  },
+  {
+   "id": "building_gym",
+   "name": "Gym",
+   "png": "assetpack/building/gym.png"
+  },
+  {
+   "id": "building_store",
+   "name": "Store",
+   "png": "assetpack/building/store.png"
+  },
+  {
+   "id": "building_factory",
+   "name": "Factory",
+   "png": "assetpack/building/factory.png"
+  }
+ ],
+ "prop": [
+  {
+   "id": "prop_tree",
+   "name": "Tree",
+   "png": "assetpack/prop/tree.png"
+  },
+  {
+   "id": "prop_pine",
+   "name": "Pine",
+   "png": "assetpack/prop/pine.png"
+  },
+  {
+   "id": "prop_bush",
+   "name": "Bush",
+   "png": "assetpack/prop/bush.png"
+  },
+  {
+   "id": "prop_rock",
+   "name": "Rock",
+   "png": "assetpack/prop/rock.png"
+  },
+  {
+   "id": "prop_crate",
+   "name": "Crate",
+   "png": "assetpack/prop/crate.png"
+  },
+  {
+   "id": "prop_barrel",
+   "name": "Barrel",
+   "png": "assetpack/prop/barrel.png"
+  },
+  {
+   "id": "prop_bench",
+   "name": "Bench",
+   "png": "assetpack/prop/bench.png"
+  },
+  {
+   "id": "prop_lamp",
+   "name": "Street lamp",
+   "png": "assetpack/prop/lamp.png"
+  },
+  {
+   "id": "prop_sign",
+   "name": "Sign",
+   "png": "assetpack/prop/sign.png"
+  },
+  {
+   "id": "prop_car",
+   "name": "Car",
+   "png": "assetpack/prop/car.png"
+  },
+  {
+   "id": "prop_fence",
+   "name": "Fence",
+   "png": "assetpack/prop/fence.png"
+  },
+  {
+   "id": "prop_cone",
+   "name": "Cone",
+   "png": "assetpack/prop/cone.png"
+  },
+  {
+   "id": "prop_hydrant",
+   "name": "Hydrant",
+   "png": "assetpack/prop/hydrant.png"
+  },
+  {
+   "id": "prop_trash_can",
+   "name": "Trash can",
+   "png": "assetpack/prop/trash_can.png"
+  },
+  {
+   "id": "prop_ramp",
+   "name": "Ramp",
+   "png": "assetpack/prop/ramp.png"
+  },
+  {
+   "id": "prop_rail",
+   "name": "Grind rail",
+   "png": "assetpack/prop/rail.png"
+  },
+  {
+   "id": "prop_ball",
+   "name": "Ball",
+   "png": "assetpack/prop/ball.png"
+  },
+  {
+   "id": "prop_coin",
+   "name": "Coin",
+   "png": "assetpack/prop/coin.png"
+  },
+  {
+   "id": "prop_chest",
+   "name": "Chest",
+   "png": "assetpack/prop/chest.png"
+  },
+  {
+   "id": "prop_torch",
+   "name": "Torch",
+   "png": "assetpack/prop/torch.png"
+  },
+  {
+   "id": "prop_turnbuckle_post",
+   "name": "Ring post",
+   "png": "assetpack/prop/turnbuckle_post.png"
+  }
+ ]
+}

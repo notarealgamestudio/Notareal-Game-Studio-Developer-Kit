@@ -2,6 +2,7 @@
 // Built from the Jabroni Hawk engine in ICW and generalised: the park, skater, goals and physics come from the game data block (SKCF section).
 #include "icw.h"
 #include "motion.h"
+#include "aset.h"
 typedef struct { char id[4]; unsigned off, size; } NrgSection;
 typedef struct { char magic[8]; unsigned capacity, used, count; NrgSection sec[]; } NrgHeader;
 #include <string.h>
@@ -125,21 +126,40 @@ static void bail(void)
     bx_w = sx; by_w = sy + 0.1f; bz_w = sz; bvx = sinf(yaw / DEG) * spd * 1.3f; bvz = cosf(yaw / DEG) * spd * 1.3f; bvy = 0.12f; bspin = 14;
     vy = 0; special = special * 2 / 3; say("BAIL!"); sk_m.init = 0;
 }
+static int tSkyL = -1, tLandL = -1;
 static void build_park(void)
 {
     const Park *K = PK; float qh = K->qh;
+    if (tSkyL < 0) {   // the shared asset library: skyline backdrop + land type (loaded once, before the display list starts)
+        const unsigned char *aS = aset_tex(nr_gamedata, ASET_SKY), *aL = aset_tex(nr_gamedata, ASET_LAND);
+        tSkyL = aS ? load_tex(aS, 128, 64, 1) : 0; tLandL = aL ? load_tex(aL, 64, 64, 1) : 0;
+    }
+    int tS = tSkyL, tL = tLandL;
     rec_begin();
     poly(31, 0);
     BIND(0);
+    if (tS) {
+        BIND(tS); BEGIN(GL_QUADS);
+        for (int k = 0; k < 4; k++) {
+            float e = 60, ax = k == 0 ? -e : k == 1 ? e : k == 2 ? e : -e, az = k == 0 ? -e : k == 1 ? -e : k == 2 ? e : e, bx = k == 0 ? e : k == 1 ? e : k == 2 ? -e : -e, bz = k == 0 ? -e : k == 1 ? e : k == 2 ? e : -e;
+            C(255, 255, 255); T(0, 64); V(ax, -1, az); T(256, 64); V(bx, -1, bz); T(256, 0); V(bx, 30, bz); T(0, 0); V(ax, 30, az);
+        }
+        END(); BIND(0);
+    }
+    if (tL) {
+        BIND(tL); BEGIN(GL_QUADS); C(255, 255, 255);
+        for (int j = -5; j < 5; j++) for (int i = -6; i < 6; i++) { float x0 = i * 3.0f, z0 = j * 2.8f; T(0, 0); V(x0, 0, z0); T(64, 0); V(x0 + 3.0f, 0, z0); T(64, 64); V(x0 + 3.0f, 0, z0 + 2.8f); T(0, 64); V(x0, 0, z0 + 2.8f); }
+        END(); BIND(0);
+    }
     BEGIN(GL_QUADS);
     // sky backdrop: gradient walls far outside the plaza
-    for (int k = 0; k < 4; k++) {
+    for (int k = 0; k < (tS ? 0 : 4); k++) {
         float e = 60;
         float ax = k == 0 ? -e : k == 1 ? e : k == 2 ? e : -e, az = k == 0 ? -e : k == 1 ? -e : k == 2 ? e : e;
         float bx = k == 0 ? e : k == 1 ? e : k == 2 ? -e : -e, bz = k == 0 ? -e : k == 1 ? e : k == 2 ? e : -e;
         C(K->sky0[0], K->sky0[1], K->sky0[2]); V(ax, -1, az); V(bx, -1, bz); C(K->sky1[0], K->sky1[1], K->sky1[2]); V(bx, 30, bz); V(ax, 30, az);
     }
-    for (int i = 0; i < 14; i++) {                                              // far skyline
+    for (int i = 0; i < (tS ? 0 : 14); i++) {                                              // far skyline
         float x0 = -56 + i * 8.0f, h = 8 + ((i * 37) % 11) * 1.6f;
         int g = 70 + (i * 23) % 40;
         C(g, g + 8, g + 30); V(x0, 0, -58); V(x0 + 7, 0, -58); V(x0 + 7, h, -58); V(x0, h, -58);
@@ -147,7 +167,7 @@ static void build_park(void)
     }
     C(96, 110, 80); V(-60, -0.02f, -60); V(60, -0.02f, -60); V(60, -0.02f, 60); V(-60, -0.02f, 60);   // grass beyond the walls
     // smooth concrete slab: 1.5 m tiles with per-corner tone variation
-    for (int j = -5; j < 5; j++) for (int i = -6; i < 6; i++) {
+    for (int j = -5; j < (tL ? -5 : 5); j++) for (int i = -6; i < 6; i++) {
         float x0 = i * 3.0f, z0 = j * 2.8f;
         int h0 = (i * 7 + j * 13) & 7, h1 = (i * 11 + j * 5) & 7;
         C(K->slab[0] + h0 * 2, K->slab[1] + h0 * 2, K->slab[2] + h0 * 2); V(x0, 0, z0);

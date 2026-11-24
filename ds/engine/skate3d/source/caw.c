@@ -77,6 +77,25 @@ static void rect(float x0, float y0, float x1, float y1, C3 c)
 static C3 mul(C3 c, int k) { C3 o = { (u8)(c.r * k / 100 > 255 ? 255 : c.r * k / 100), (u8)(c.g * k / 100 > 255 ? 255 : c.g * k / 100),
                                      (u8)(c.b * k / 100 > 255 ? 255 : c.b * k / 100) }; return o; }
 
+
+// Lighting pass over the supersampled face: soft highlights and shadows (precomputed table), skin grain and hair strands, so the face reads as a lit 3D head instead of flat colour blocks.
+#include "face_light.h"
+static unsigned hsh(int x, int y) { unsigned h = x * 374761393u + y * 668265263u; h = (h ^ (h >> 13)) * 1274126177u; return h ^ (h >> 16); }
+static void shade_face(C3 hair, int hairless)
+{
+    for (int y = 0; y < 128; y++)
+        for (int x = 0; x < 128; x++) {
+            u8 *p = &face_hi[(y * 128 + x) * 3]; int ti = (y >> 1) * 64 + (x >> 1);
+            int is_hair = !hairless && p[0] == hair.r && p[1] == hair.g && p[2] == hair.b;
+            int nz = (int)(hsh(x, y) & 255) - 128, L;
+            if (is_hair) { int st = hsh(x >> 1, y / 6) & 255; L = 230 + st * 51 / 255 + nz / 20; }
+            else L = FACE_L[ti] + 128 + nz / 6;
+            int r = p[0] * L / 255, g = p[1] * L / 255, b = p[2] * L / 255;
+            if (!is_hair) { int ch = FACE_C[ti]; r += 9 * ch / 255; g -= 3 * ch / 255; b -= 3 * ch / 255; }
+            p[0] = r < 0 ? 0 : r > 255 ? 255 : r; p[1] = g < 0 ? 0 : g > 255 ? 255 : g; p[2] = b < 0 ? 0 : b > 255 ? 255 : b;
+        }
+}
+
 static void paint_face(void)
 {
     C3 sk = SKIN[opt[O_SKIN]], hair = HAIRC[opt[O_HAIRC]], iris = EYES[opt[O_EYES]];
@@ -137,6 +156,7 @@ static void paint_face(void)
     default:
         ell(26, 3, 38, 12, light); break;
     }
+    shade_face(hair, opt[O_HAIR] == HAIR_BALD);
     for (int y = 0; y < 64; y++)
         for (int x = 0; x < 64; x++) {
             int r = 0, g = 0, b = 0;
@@ -184,13 +204,14 @@ static void apply(void)
 
 static void do_load(void);
 // Build a complete Look for an NPC from palette indices (used by the open world for fans and townsfolk).
-void npc_look(Look *lk, int sex, int skin, int hair, int hairc, int eyes, int beard, int top, int pants, int boots,
-              float height, float build)
+void npc_look_p(Look *lk, int sex, int skin, int hair, int hairc, int eyes, int beard, int top, int pants, int boots,
+              float height, float build, u16 *portrait)
 {
     int save[O_N]; memcpy(save, opt, sizeof opt);
     opt[O_SEX] = sex; opt[O_SKIN] = skin; opt[O_HAIR] = hair; opt[O_HAIRC] = hairc; opt[O_EYES] = eyes; opt[O_BEARD] = beard;
     paint_face();
     DC_FlushRange(face_tex, sizeof face_tex);
+    if (portrait) face_to_portrait(face_tex, portrait);
     C3 sk = SKIN[skin], hr = HAIRC[hairc], tp = GEAR[top], pn = GEAR[pants], bt = GEAR[boots];
     memset(lk, 0, sizeof *lk);
     lk->skin = CC8(sk.r, sk.g, sk.b); lk->hair = lk->hair2 = CC8(hr.r, hr.g, hr.b);
@@ -202,6 +223,8 @@ void npc_look(Look *lk, int sex, int skin, int hair, int hairc, int eyes, int be
     memcpy(opt, save, sizeof opt);
 }
 
+void npc_look(Look *lk, int sex, int skin, int hair, int hairc, int eyes, int beard, int top, int pants, int boots, float height, float build)
+{ npc_look_p(lk, sex, skin, hair, hairc, eyes, beard, top, pants, boots, height, build, 0); }
 void caw_init(void) { do_load(); apply(); }
 void game_save(void) { do_save(); }
 

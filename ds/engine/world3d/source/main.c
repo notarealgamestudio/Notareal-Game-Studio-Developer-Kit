@@ -74,6 +74,7 @@ static void person(float x, float y, float z, float yaw, float sc, u16 body, u16
 // ---------------------------------------------------------------- state
 enum { M_SAND, M_WAR, M_WASTE };
 static int mode, goal, score, frames, state, stars, kills, killsNeeded, tleft, msgt, hitm, flashd, tp, runi;
+static float spd, jt; static int plat, jchain, lj, hitwall;   // 3D platformer movement (header res bit 1): momentum, jump chain, long jump
 static float px, py, pz, vy, yaw, pit, bob; static int onground, hp, sh, maxhp, maxsh, wsel, cdw, reload, hurtf, rundown;
 static int mag[4], res[4]; static char msg[40];
 static float RUN, JUMP, GRAV; static u16 sky0, sky1, groundc;
@@ -147,7 +148,7 @@ static void load_world(void)
     if (h->used) for (unsigned i = 0; i < h->count; i++) if (!memcmp(h->sec[i].id, "W3DW", 4)) { const u8 *p = nr_gamedata + h->sec[i].off; H = (const Hd *)p; p += sizeof(Hd); B = (const Bx *)p; nb = H->nbox; p += nb * sizeof(Bx); E0 = (const Ent *)p; ne0 = H->nent; p += ne0 * sizeof(Ent); W = (const Wp *)p; nw = H->nweap; p += nw * sizeof(Wp); ET = (const Et *)p; nety = H->nety; }
     if (!H) default_world(); if (nb > MAXB) nb = MAXB; if (ne0 > MAXE) ne0 = MAXE;
     for (int i = 0; i < nb; i++) make_box(&cb[i], &B[i]);
-    mode = H->mode > 2 ? 0 : H->mode; tp = H->res & 1; sky0 = H->sky0 | BIT(15); sky1 = H->sky1 | BIT(15); groundc = H->ground | BIT(15); RUN = H->run / 10.0f; JUMP = H->jump / 10.0f; GRAV = H->grav / 10.0f; if (RUN < 2) RUN = 7; if (JUMP < 2) JUMP = 9; if (GRAV < 5) GRAV = 24;
+    mode = H->mode > 2 ? 0 : H->mode; tp = H->res & 1; plat = (H->res & 2) != 0 && mode == 0; sky0 = H->sky0 | BIT(15); sky1 = H->sky1 | BIT(15); groundc = H->ground | BIT(15); RUN = H->run / 10.0f; JUMP = H->jump / 10.0f; GRAV = H->grav / 10.0f; if (RUN < 2) RUN = 7; if (JUMP < 2) JUMP = 9; if (GRAV < 5) GRAV = 24;
 }
 static void new_game(void)
 {
@@ -188,7 +189,7 @@ static void hud_bottom(void)
     int ppx = mx + (int)((px + half) * k), ppz = my + (int)((pz + half) * k); rect(ppx - 1, ppz - 1, 3, 3, wh); for (int i = 1; i < 6; i++) px2(ppx + (int)(sinf(yaw) * i), ppz - (int)(cosf(yaw) * i), wh);
     if (mode != M_SAND) { int ex = mx + (int)((H->ex / 8.0f + half) * k), ez = my + (int)((H->ez / 8.0f + half) * k); if (H->ex || H->ez) rect(ex - 2, ez - 2, 5, 5, RGB15(10, 26, 10) | BIT(15)); }
     if (msgt) text(6, 120, msg, gold);
-    text(4, 142, "D-PAD MOVE  L/R TURN  A JUMP", gr); text(4, 152, mode == M_SAND ? "STYLUS: LOOK" : "B FIRE  X RELOAD  SEL WEAPON", gr); text(4, 162, "Y 3RD PERSON  STYLUS LOOKS", gr);
+    text(4, 142, plat ? "A JUMP (CHAIN 3X)  X+A LONG JUMP" : "D-PAD MOVE  L/R TURN  A JUMP", gr); text(4, 152, plat ? "B GROUND POUND  A AT WALL: KICK" : mode == M_SAND ? "STYLUS: LOOK" : "B FIRE  X RELOAD  SEL WEAPON", gr); text(4, 162, "Y 3RD PERSON  STYLUS LOOKS", gr);
     if (state == 1) { text(60, 176, "MISSION COMPLETE  A=AGAIN", gold); } else if (state == 2) text(70, 176, "DOWN  A=RETRY", RGB15(28, 6, 6) | BIT(15));
 }
 
@@ -225,18 +226,33 @@ static void step_player(void)
     float f = 0, r = 0; if (kh & KEY_UP) f += 1; if (kh & KEY_DOWN) f -= 1; (void)r;
     float sp = RUN * (mode == M_SAND ? 1.0f : 0.8f), dt = 1.0f / 60.0f; float mx = sinf(yaw) * f * sp * dt, mz = -cosf(yaw) * f * sp * dt;
     if (kh & KEY_UP && kh & KEY_DOWN) mx = mz = 0;
-    float ny = py; if (!blocked(px + mx, pz, ny, 1.7f, RAD)) px += mx; if (!blocked(px, pz + mz, ny, 1.7f, RAD)) pz += mz;
+    if (plat) {   // Mario-64 style: speed builds up and bleeds off, less control in the air, back-pedalling is slow
+        float target = f > 0 ? sp : f < 0 ? -sp * 0.5f : 0, acc = (f ? sp * 0.06f : sp * 0.10f) * (onground ? 1.0f : 0.35f);
+        if (!onground && lj) acc = 0;
+        float dv = target - spd; spd += dv > acc ? acc : dv < -acc ? -acc : dv;
+        mx = sinf(yaw) * spd * dt; mz = -cosf(yaw) * spd * dt;
+    }
+    float ny = py; hitwall = 0; if (!blocked(px + mx, pz, ny, 1.7f, RAD)) px += mx; else hitwall = 1; if (!blocked(px, pz + mz, ny, 1.7f, RAD)) pz += mz; else hitwall = 1;
     float half = H->half / 8.0f; if (half > 8) { if (px > half - 1) px = half - 1; if (px < -half + 1) px = -half + 1; if (pz > half - 1) pz = half - 1; if (pz < -half + 1) pz = -half + 1; }
     float fl = floor_at(px, pz, py, RAD); if (!onground || vy > 0) { /* airborne */ } else { if (fl > py) py = fl; }
-    if ((kd & KEY_A) && onground) { vy = JUMP; onground = 0; sfx_blip(900, 1); }
+    if (plat && onground) jt += 1;
+    if ((kd & KEY_A) && onground) {
+        if (plat) {
+            if (jt < 12 && spd > sp * 0.4f) jchain = jchain < 2 ? jchain + 1 : 0; else jchain = 0;
+            float k = jchain == 2 ? 1.64f : jchain == 1 ? 1.24f : 1.0f;   // single / double / triple jump heights (Mario 64: 42 / 52 / 69)
+            if ((kh & KEY_X) && spd > sp * 0.4f) { vy = JUMP * 0.72f; lj = 1; spd = sp * 1.6f; jchain = 0; say("LONG JUMP"); } else vy = JUMP * k;
+            sfx_blip(jchain == 2 ? 1400 : jchain == 1 ? 1100 : 900, 1);
+        } else vy = JUMP;
+        onground = 0; if (!plat) sfx_blip(900, 1);
+    } else if (plat && !onground && hitwall && (kd & KEY_A)) { vy = JUMP * 1.05f; spd = sp; yaw += 3.14159f; lj = 0; jchain = 0; say("WALL KICK"); sfx_blip(1300, 1); }
     vy -= GRAV * dt; py += vy * dt; fl = floor_at(px, pz, py - vy * dt, RAD);
-    if (py <= fl) { py = fl; vy = 0; onground = 1; } else if (py > fl + 0.05f) onground = 0; else onground = 1;
+    if (py <= fl) { if (!onground) { jt = 0; lj = 0; } py = fl; vy = 0; onground = 1; } else if (py > fl + 0.05f) onground = 0; else onground = 1;
     for (int i = 0; i < nb; i++) { const Cb *c = &cb[i]; if (c->ramp) continue; if (vy > 0 && px > c->x0 - RAD && px < c->x1 + RAD && pz > c->z0 - RAD && pz < c->z1 + RAD && py + 1.75f > c->y0 && py + 1.6f < c->y0 + 0.4f) vy = 0; }
     if (py < -30) { damage_player(40); px = H->sx / 8.0f; pz = H->sz / 8.0f; py = floor_at(px, pz, 50, RAD); vy = 0; }
     if (f && onground) bob += 0.2f;
     if (cdw > 0) cdw--; if (reload > 0 && --reload == 0) { int n = W[wsel].mag - mag[wsel]; if (n > res[wsel]) n = res[wsel]; mag[wsel] += n; res[wsel] -= n; sfx_blip(500, 0); }
     if (mode != M_SAND) { if (W && nw && ((kh & KEY_B) && (W[wsel].autof || (kd & KEY_B)))) fire(); if (nw && !(W[wsel].autof) && (kh & KEY_B) == 0) { } }
-    else if (kd & KEY_B) { /* sandbox: ground pound feel */ if (!onground) vy = -14; }
+    else if (kd & KEY_B) { /* sandbox: ground pound feel */ if (!onground) vy = plat ? -24 : -14; }
     for (int i = 0; i < npk; i++) { Pk *k = &pk[i]; if (k->taken) continue; float dx = k->x - px, dz = k->z - pz, dy = k->y - (py + 0.9f); if (dx * dx + dz * dz + dy * dy < 1.6f * 1.6f)
         { k->taken = 1; if (k->type == 4) { stars++; score += 500; say("STAR!"); sfx_blip(1500, 0); } else if (k->type == 5) { hp += 25; if (hp > maxhp) hp = maxhp; say("HEALTH"); sfx_blip(1100, 1); } else if (k->type == 6) { for (int q = 0; q < nw; q++) res[q] += W[q].mag; say("AMMO"); sfx_blip(1200, 1); } else if (k->type == 7) { score += 100; if (frand() < .5f) hp = hp + 10 > maxhp ? maxhp : hp + 10; say("LOOT"); sfx_blip(1300, 0); } } }
     if (mode == M_SAND ? stars >= goal : killsNeeded > 0 ? kills >= killsNeeded && (!(H->ex || H->ez) || ((px - H->ex / 8.0f) * (px - H->ex / 8.0f) + (pz - H->ez / 8.0f) * (pz - H->ez / 8.0f) < 25)) : 0) { state = 1; say("COMPLETE"); sfx_blip(2000, 0); }

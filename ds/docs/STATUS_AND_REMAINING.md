@@ -2,6 +2,9 @@
 - engine/wrestling = the ICW match engine (3D ring, referee, pins, ropes, finishers, move hints, 5 match types) without ICW's story/world. The Fight tab edits 2-8 wrestlers (generated face and body, finisher, heel/face, entrance theme) + match type; the data goes in a WRCF section (kit/nrkit.js buildDSWrestling). Export ROM on a DS wrestling project builds this ROM. Test: tests/test_wrestle_ds.js; emulator-checked with the default and a 3-wrestler custom roster.
 - Ring/apron/titantron art is neutral (NOTAREAL / PRO), not ICW's.
 - Still open: moves and stats are not editable yet (engine move list is fixed); faces are the generated blocky ones; HUD footer still says THROWDOWN; a stray sign texture on the apron; no in-editor preview of the 3D match; wrestling is DS-only.
+- Face painter: lit faces (key light, eye sockets, nose, jaw, skin grain, hair strands, cheek colour via a precomputed table) in the wrestling and skate engines and in ICW. Hair outlines are still blocky.
+- Wrestler stats (power, toughness, speed, momentum gain) change the match; proven in the emulator.
+- 3D platformer is now its own game (world3d header flag): Mario-64 style momentum, single/double/triple jump chain, long jump (X+A), ground pound (B), wall kick. Measured chained heights 2.15 / 3.34 / 7.51.
 - Skate preset now edits the 3D skate game (see skate panel); the side-view skater is PC-only.
 
 

@@ -357,6 +357,30 @@ NR.buildDSPuzzle = P => {
 };
 /* Arcade ROM: one ARCF section = mode, 8 settings (i16), two RGB15 colours, title. Engine: engine/arcade/source/main.c */
 NR.ARCADE_KEYS = { shmup: ['lives', 'speed', 'fireRate', 'waves', 'enemyHp', 'boss'], breakout: ['lives', 'rows', 'cols', 'ballSpeed', 'paddle'], race: ['laps', 'laneCars', 'maxSpeed', 'timeLimit', 'curves'], fps: ['size', 'enemies', 'health', 'ammo', 'damage'], brawler: ['lives', 'waves', 'enemyHp', 'boss'], falling: ['w', 'h', 'startSpeed', 'goalLines'], memory: ['pairs', 'cols', 'tries'], sim: ['w', 'h', 'cash', 'goalPop'], paint: ['picture'], hoops: ['seconds', 'goal', 'meterSpeed'], music: ['tempo'], coloring: ['page'], combat: [] };
+/* Skate park data ('SKPK'): the shared level builder's skate park. Presets mirror the engine's three built-in parks. */
+NR.SKATE_PARKS = [
+  { name: 'Plaza', qh: 2.2, c: { sky0: [150,196,240], sky1: [60,110,210], slab: [150,150,154], walls: [150,150,160], deck: [110,90,60] }, spawn: { x: 3.5, z: 3 }, yaw: 180,
+    rails: [[-12,-6,-2,-6,.7,0],[4,6,14,6,.7,0],[-15,2,-15,10,.9,0],[-7,7.85,-5,7.85,.5,1],[5,7.85,7,7.85,.5,1]].map(r => ({ x0: r[0], z0: r[1], x1: r[2], z1: r[3], h: r[4], kind: r[5] })), ramps: [{ x: 0, z: 0, hw: 2, hd: 1.4, h: .7, kind: 0 }], obs: [{ x0: 7, z0: -5.6, x1: 9, z1: -4.4, h: 1.2 }],
+    letters: [[-7,1.6,-6],[0,2.6,0],[9,1.6,6],[-15,2,6],[8,2.4,-5],[0,4.5,13],[0,4.5,-13]].map(l => ({ x: l[0], y: l[1], z: l[2] })) },
+  { name: 'Bowl', qh: 3.2, c: { sky0: [250,170,120], sky1: [90,70,150], slab: [176,166,150], walls: [190,150,120], deck: [90,80,70] }, spawn: { x: -3.5, z: 8 }, yaw: 180,
+    rails: [[-10,-5,-2,-5,.8,0],[3,5,11,5,.8,0],[14,-4,14,4,1,0]].map(r => ({ x0: r[0], z0: r[1], x1: r[2], z1: r[3], h: r[4], kind: r[5] })), ramps: [{ x: 0, z: 0, hw: 3, hd: 2.6, h: 1, kind: 1 }, { x: -9, z: 5, hw: 2, hd: 1.4, h: .7, kind: 0 }, { x: 9, z: -5, hw: 2, hd: 1.4, h: .7, kind: 0 }], obs: [{ x0: -8, z0: -9.4, x1: -6, z1: -8.2, h: 1 }],
+    letters: [[-9,1.6,5],[0,2.2,0],[9,1.6,-5],[-14,2.4,0],[14,2.4,0],[0,5,13],[0,5,-13]].map(l => ({ x: l[0], y: l[1], z: l[2] })) },
+  { name: 'Street', qh: 0, c: { sky0: [170,180,200], sky1: [80,96,140], slab: [128,128,132], walls: [120,112,108], deck: [70,70,76] }, spawn: { x: 0, z: -4 }, yaw: 0,
+    rails: [[-14,-8,-4,-8,.7,0],[2,-8,12,-8,.5,1],[-12,6,-2,6,.9,0],[4,6,14,6,.5,1],[15,-4,15,6,.7,0],[-6,0,6,0,.5,1]].map(r => ({ x0: r[0], z0: r[1], x1: r[2], z1: r[3], h: r[4], kind: r[5] })), ramps: [{ x: 0, z: 10, hw: 3, hd: 2, h: .9, kind: 1 }, { x: -8, z: -2, hw: 2, hd: 1.4, h: .7, kind: 0 }], obs: [{ x0: -3, z0: -12.4, x1: 3, z1: -11.2, h: 1.5 }, { x0: 8, z0: 1.8, x1: 10, z1: 3.2, h: 1.1 }],
+    letters: [[-12,1.6,-8],[-9,1.6,6],[0,2,0],[14,1.6,-6],[0,2.6,10],[-14,1.8,12],[10,2.6,-2]].map(l => ({ x: l[0], y: l[1], z: l[2] })) }];
+NR.SKATE_NEW = base => JSON.parse(JSON.stringify(NR.SKATE_PARKS[base || 0]));
+NR.skatePark = sp => {
+    const b = new Uint8Array(224), dv = new DataView(b.buffer), s16 = (o, v) => dv.setInt16(o, Math.max(-32000, Math.min(32000, Math.round(v * 10))), true), u8 = (o, v) => { b[o] = Math.max(0, Math.min(255, Math.round(v))); };
+    const rl = (sp.rails || []).slice(0, 8), rm = (sp.ramps || []).slice(0, 4), ob = (sp.obs || []).slice(0, 2), c = sp.c;
+    b[0] = 1; b[1] = Math.round(Math.max(-12, Math.min(12, sp.qh || 0)) * 10) & 255; b[2] = rl.length; b[3] = rm.length; b[4] = ob.length;
+    ['sky0', 'sky1', 'slab', 'walls', 'deck'].forEach((k, i) => { for (let j = 0; j < 3; j++) u8(5 + i * 3 + j, c[k][j]); });
+    b[20] = Math.round(Math.max(-60, Math.min(60, (sp.spawn || { x: 0 }).x * 2))) & 255; b[21] = Math.round(Math.max(-60, Math.min(60, (sp.spawn || { z: 0 }).z * 2))) & 255; dv.setUint16(22, ((sp.yaw || 0) % 360 + 360) % 360, true);
+    rl.forEach((r, k) => { const o = 24 + k * 12; s16(o, r.x0); s16(o + 2, r.z0); s16(o + 4, r.x1); s16(o + 6, r.z1); u8(o + 8, r.h * 10); u8(o + 9, r.kind); });
+    rm.forEach((r, k) => { const o = 120 + k * 10; s16(o, r.x); s16(o + 2, r.z); u8(o + 4, r.hw * 10); u8(o + 5, r.hd * 10); u8(o + 6, r.h * 10); u8(o + 7, r.kind); });
+    ob.forEach((r, k) => { const o = 160 + k * 10; s16(o, r.x0); s16(o + 2, r.z0); s16(o + 4, r.x1); s16(o + 6, r.z1); u8(o + 8, r.h * 10); });
+    for (let k = 0; k < 7; k++) { const l = (sp.letters || [])[k] || { x: 0, y: 2, z: 0 }, o = 180 + k * 6; s16(o, l.x); s16(o + 2, l.y); s16(o + 4, l.z); }
+    return b;
+};
 /* DS 3D skate ROM (engine/skate3d, built from the Jabroni Hawk engine): one SKCF section = park, run length, goal, physics, skater look (the CAW face generator), title */
 NR.buildDSSkate = P => {
     const A = P.arcade; if (!A || A.mode !== 'skate') throw new Error('No skate game set up yet');
@@ -368,7 +392,8 @@ NR.buildDSSkate = P => {
     const hdr = 20 + 12, off = (hdr + 15) & ~15, blk = new Uint8Array((off + b.length + 15) & ~15), v = new DataView(blk.buffer);
     blk.set([...'NRGDATA1'].map(ch => ch.charCodeAt(0)), 0); v.setUint32(12, blk.length, true); v.setUint32(16, 1, true);
     blk.set([...'SKCF'].map(ch => ch.charCodeAt(0)), 20); v.setUint32(24, off, true); v.setUint32(28, b.length, true); blk.set(b, off);
-    return { block: blk, warnings: [] };
+    let out = blk; if (P.skatepark && P.skatepark.on) { const A2 = typeof NRAssets !== 'undefined' ? NRAssets : require('./nrassets.js'); out = A2.attach(blk, NR.skatePark(P.skatepark), 'SKPK'); }
+    return { block: out, warnings: [] };
 };
 /* DS 3D wrestling ROM (engine/wrestling, the ICW match engine): WRCF section = up to 8 wrestlers (40-byte records, see engine/wrestling/source/main.c) + the match type */
 NR.WRESTLE_DEFAULT = () => ({ title: 'Pro Wrestling', matchType: 5, roster: [
@@ -382,7 +407,8 @@ NR.buildDSWrestling = P => {
     const pl = new Uint8Array(4 + 40 * R.length); pl[0] = R.length; pl[1] = W.matchType == null ? 5 : Math.max(0, Math.min(5, W.matchType | 0));
     R.forEach((w, i) => { const o = 4 + i * 40, nm = String(w.name || 'WRESTLER').slice(0, 15).toUpperCase(); for (let k = 0; k < nm.length; k++) pl[o + k] = nm.charCodeAt(k) & 127;
         [w.sex, w.skin, w.hair, w.hairc, w.eyes, w.beard, w.top, w.pants, w.boots].forEach((v, k) => { pl[o + 16 + k] = (+v || 0) & 255; });
-        pl[o + 25] = Math.round((w.height || 1) * 100); pl[o + 26] = Math.round((w.build || 1) * 100); pl[o + 27] = (w.fin || 0) & 3; pl[o + 28] = w.heel ? 1 : 0; pl[o + 29] = (w.preset || 0) % 3; pl[o + 30] = (w.key || 0) % 12; pl[o + 31] = Math.max(60, Math.min(200, +w.tempo || 120)); [w.power, w.tough, w.speed, w.gain].forEach((v, k) => { pl[o + 32 + k] = Math.max(40, Math.min(200, Math.round(+v || 100))); }); });
+        pl[o + 25] = Math.round((w.height || 1) * 100); pl[o + 26] = Math.round((w.build || 1) * 100); pl[o + 27] = (w.fin || 0) & 3; pl[o + 28] = w.heel ? 1 : 0; pl[o + 29] = (w.preset || 0) % 3; pl[o + 30] = (w.key || 0) % 12; pl[o + 31] = Math.max(60, Math.min(200, +w.tempo || 120)); [w.power, w.tough, w.speed, w.gain].forEach((v, k) => { pl[o + 32 + k] = Math.max(40, Math.min(200, Math.round(+v || 100))); });
+        (w.moves || []).slice(0, 4).forEach((v, k) => { pl[o + 36 + k] = (Math.max(0, Math.min(4, v | 0)) + 1); }); });   // bytes 36-39: grapple used for UP / DOWN / LEFT / RIGHT + B (value + 1, 0 = engine default)
     const hdr = 20 + 12, off = (hdr + 15) & ~15, blk = new Uint8Array((off + pl.length + 15) & ~15), v = new DataView(blk.buffer);
     blk.set([...'NRGDATA1'].map(ch => ch.charCodeAt(0)), 0); v.setUint32(12, blk.length, true); v.setUint32(16, 1, true);
     blk.set([...'WRCF'].map(ch => ch.charCodeAt(0)), 20); v.setUint32(24, off, true); v.setUint32(28, pl.length, true); blk.set(pl, off);

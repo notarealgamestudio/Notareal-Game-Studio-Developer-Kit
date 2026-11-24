@@ -80,6 +80,8 @@ static void defs(void)
 
 // Roster slot override from the dev kit's data block (WRCF record, 40 bytes): name[16], sex, skin, hair, hairc, eyes, beard, top, pants, boots, height x100, build x100, fin, heel, theme preset, key, tempo
 static unsigned char ov_stat[C_COUNT][4]; static int ov_stat_ready;
+static unsigned char ov_mv[C_COUNT][5]; static int ov_mv_ready;
+const unsigned char *cast_moves(int id) { if (!ov_mv_ready) { ov_mv_ready = 1; for (int i = 0; i < C_COUNT; i++) for (int k = 0; k < 5; k++) ov_mv[i][k] = k; } return ov_mv[id]; }   // grapple used for: none, UP, DOWN, LEFT, RIGHT + B
 const unsigned char *cast_stat(int id) { if (!ov_stat_ready) { ov_stat_ready = 1; for (int i = 0; i < C_COUNT; i++) for (int k = 0; k < 4; k++) ov_stat[i][k] = 100; } return ov_stat[id]; }
 static char ov_name[C_COUNT][17]; static u16 ov_por[C_COUNT][46 * 46];
 void cast_define(int id, const unsigned char *r)
@@ -90,7 +92,7 @@ void cast_define(int id, const unsigned char *r)
     if (!ov_name[id][0]) strcpy(ov_name[id], "WRESTLER");
     D[id].name = ov_name[id]; D[id].por = ov_por[id]; D[id].fin = r[27] & 3; D[id].heel = r[28] & 1;
     npc_look_p(&L[id], r[16] & 1, r[17] & 7, r[18] & 7, r[19] & 7, r[20] & 3, r[21] & 3, r[22] % 10, r[23] % 10, r[24] % 10, (r[25] ? r[25] : 100) / 100.0f, (r[26] ? r[26] : 100) / 100.0f, ov_por[id]);
-    built[id] = 1; cast_stat(id); for (int k = 0; k < 4; k++) ov_stat[id][k] = r[32 + k] ? (r[32 + k] < 40 ? 40 : r[32 + k] > 200 ? 200 : r[32 + k]) : 100;
+    built[id] = 1; cast_stat(id); cast_moves(id); for (int k = 0; k < 4; k++) ov_mv[id][k + 1] = r[36 + k] ? (r[36 + k] - 1) % 5 : k + 1; for (int k = 0; k < 4; k++) ov_stat[id][k] = r[32 + k] ? (r[32 + k] < 40 ? 40 : r[32 + k] > 200 ? 200 : r[32 + k]) : 100;
     theme_preset(&TH[id], r[29] % 3); TH[id].key = r[30] % 12; TH[id].tempo = r[31] ? r[31] : 120; TH[id].used = 1;
 }
 

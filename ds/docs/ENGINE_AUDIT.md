@@ -35,3 +35,9 @@ Plain categories. "Verified" means I ran it in this session (emulator, browser o
 
 ## Data not yet used
 - TNA animation inventory, SvR joint ranges and measured motion JSON: not read by any engine. WM2000 and THPS2 data not decoded.
+
+
+## Skate park builder (added)
+- REAL: the 3D skate engine reads an 'SKPK' section (rails, ledges, coping, kickers, funboxes, blocks, 7 letters, spawn, colours). Edited in the 3D level builder tab when the project is a skate game. Checked: node test (8), Playwright click-through, DS emulator screenshot of a custom park.
+- STARTER: goals/challenges still come from the chosen base park; limits are 8 rails, 4 ramps, 2 blocks.
+- NOT DONE: other skate engines (PC/other consoles) do not read it.

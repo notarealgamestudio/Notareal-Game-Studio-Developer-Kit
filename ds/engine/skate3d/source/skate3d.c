@@ -36,6 +36,26 @@ static const Park PARKS[3] = {
       { { -12, 1.6f, -8 }, { -9, 1.6f, 6 }, { 0, 2.0f, 0 }, { 14, 1.6f, -6 }, { 0, 2.6f, 10 }, { -14, 1.8f, 12 }, { 10, 2.6f, -2 } }, 0, -4, 0,
       { { 0, 12000, "SCORE 12,000" }, { 4, 140, "GRIND 2+ SECONDS" }, { 5, 180, "MANUAL 3 SECONDS" } } } };
 static const Park *PK = &PARKS[0];
+// ---- custom park from the shared level builder ('SKPK' section, written by kit/nrkit.js buildDSSkate): rails, ramps, obstacles, letters, colours, spawn
+static Park CUSTOM; static int have_custom;
+static void load_custom_park(int base)
+{
+    const NrgHeader *H = (const NrgHeader *)nr_gamedata; have_custom = 0; if (!H->used) return;
+    for (unsigned i = 0; i < H->count; i++) if (!memcmp(H->sec[i].id, "SKPK", 4)) {
+        const unsigned char *p = nr_gamedata + H->sec[i].off; if (H->sec[i].size < 222 || !p[0]) return;
+        #define S16(o) ((short)(p[o] | (p[(o) + 1] << 8)))
+        CUSTOM = PARKS[base]; CUSTOM.name = "YOUR PARK"; CUSTOM.qh = (signed char)p[1] / 10.0f;
+        int nr = p[2] > 8 ? 8 : p[2], nm = p[3] > 4 ? 4 : p[3], no = p[4] > 2 ? 2 : p[4];
+        for (int k = 0; k < 3; k++) { CUSTOM.sky0[k] = p[5 + k]; CUSTOM.sky1[k] = p[8 + k]; CUSTOM.slab[k] = p[11 + k]; CUSTOM.walls[k] = p[14 + k]; CUSTOM.deck[k] = p[17 + k]; }
+        CUSTOM.sx = (signed char)p[20] / 2.0f; CUSTOM.sz = (signed char)p[21] / 2.0f; CUSTOM.yaw = (float)(p[22] | (p[23] << 8));
+        CUSTOM.nrail = nr; for (int k = 0; k < nr; k++) { int o = 24 + k * 12; CUSTOM.rail[k] = (Rail){ S16(o) / 10.0f, S16(o + 2) / 10.0f, S16(o + 4) / 10.0f, S16(o + 6) / 10.0f, p[o + 8] / 10.0f, p[o + 9] }; }
+        CUSTOM.nramp = nm; for (int k = 0; k < nm; k++) { int o = 120 + k * 10; CUSTOM.ramp[k] = (Ramp){ S16(o) / 10.0f, S16(o + 2) / 10.0f, p[o + 4] / 10.0f, p[o + 5] / 10.0f, p[o + 6] / 10.0f, p[o + 7] }; }
+        CUSTOM.nobs = no; for (int k = 0; k < no; k++) { int o = 160 + k * 10; CUSTOM.obs[k] = (Obst){ S16(o) / 10.0f, S16(o + 2) / 10.0f, S16(o + 4) / 10.0f, S16(o + 6) / 10.0f, p[o + 8] / 10.0f }; }
+        for (int k = 0; k < 7; k++) { int o = 180 + k * 6; CUSTOM.let[k][0] = S16(o) / 10.0f; CUSTOM.let[k][1] = S16(o + 2) / 10.0f; CUSTOM.let[k][2] = S16(o + 4) / 10.0f; }
+        #undef S16
+        have_custom = 1;
+    }
+}
 static Rail rl[10]; static int nrl;
 #define RAILS rl
 #define NRAIL nrl
@@ -528,7 +548,7 @@ static void land(void)
 static Look sk_look;
 static void skate_game(void)
 {
-    PK = &PARKS[CF.park]; nrl = 0; for (int i = 0; i < PK->nrail && nrl < 10; i++) rl[nrl++] = PK->rail[i];
+    load_custom_park(CF.park); PK = have_custom ? &CUSTOM : &PARKS[CF.park]; nrl = 0; for (int i = 0; i < PK->nrail && nrl < 10; i++) rl[nrl++] = PK->rail[i];
     if (PK->qh > 0) { rl[nrl++] = (Rail){ -18, -14, 18, -14, PK->qh + 0.05f, 2 }; rl[nrl++] = (Rail){ -18, 14, 18, 14, PK->qh + 0.05f, 2 }; }
     if (!dl_park) build_park();
     npc_look(&sk_look, CF.sex, CF.skin, CF.hair, CF.hairc, CF.eyes, CF.beard, CF.top, CF.pants, CF.boots, CF.height, CF.build);

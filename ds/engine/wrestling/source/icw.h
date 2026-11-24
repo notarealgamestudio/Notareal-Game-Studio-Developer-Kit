@@ -171,6 +171,7 @@ extern const char *FIN_NAME[4];
 int load_face(const void *bin);
 void npc_look_p(Look *lk, int sex, int skin, int hair, int hairc, int eyes, int beard, int top, int pants, int boots, float height, float build, u16 *portrait);
 void cast_define(int id, const unsigned char *rec);
+const unsigned char *cast_moves(int id);   // which grapple each direction + B throws (index 0 none, 1 up, 2 down, 3 left, 4 right; values 0-4)
 const unsigned char *cast_stat(int id);   // power, toughness, speed, momentum gain (percent)
 void build_look2(Look *lk, int lodonly);
 extern int wr_lod;

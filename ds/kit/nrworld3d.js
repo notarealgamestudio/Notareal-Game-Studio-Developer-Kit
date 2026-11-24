@@ -61,10 +61,29 @@
         return b;
     };
     const require_ = n => node ? require('./' + n) : root.NRArcade;
+    /* shared 3D level builder (editor tab "3D level builder"): objs = [{ t, x, z, w, d, h, col, id, axis }] in metres. Replaces the built-in map's boxes, pickups and spawn;
+       enemy / weapon tables of the chosen game type stay. Props are blocky on purpose: this engine draws boxes. */
+    const PROP = { tree: [[.5, 1.6, [110, 74, 40]], [2.2, 1.8, [50, 130, 60], 1.6]], pine: [[.4, 1.2, [100, 70, 40]], [2, 3, [36, 100, 60], 1.2]], bush: [[1.4, .9, [60, 140, 70]]], rock: [[1.3, 1.1, [130, 130, 138]]], crate: [[1, 1, [170, 120, 60]]], barrel: [[.8, 1, [150, 90, 50]]],
+        bench: [[1.6, .5, [160, 110, 60]]], lamp: [[.2, 3.4, [70, 70, 76]]], sign: [[.2, 2.2, [90, 70, 50]]], car: [[2.2, 1.2, [200, 50, 50]]], fence: [[3, 1, [190, 170, 130]]], cone: [[.5, .7, [250, 120, 30]]], hydrant: [[.4, .8, [210, 40, 40]]], trash_can: [[.6, .9, [100, 106, 116]]], rail: [[3, .9, [180, 184, 196]]], chest: [[.9, .7, [150, 100, 50]]], torch: [[.2, 1.8, [110, 74, 40]]] };
+    W3.levelOver = (L, g, mode) => {
+        const boxes = [], ents = [], half = Math.max(20, Math.min(120, L.half || 45)), clampH = v => Math.max(-half, Math.min(half, v));
+        for (const o of L.objs) {
+            const x = +o.x || 0, z = +o.z || 0, col = o.col || [150, 120, 90];
+            if (o.t === 'building') { const w = Math.max(2, o.w || 8), d = Math.max(2, o.d || 8), h = Math.max(2, o.h || 10); boxes.push({ x0: x - w / 2, y0: 0, z0: z - d / 2, x1: x + w / 2, y1: h, z1: z + d / 2, col, top: col.map(v => Math.max(0, v - 40)) }); }
+            else if (o.t === 'ramp') { const w = Math.max(2, o.w || 6), d = Math.max(2, o.d || 8), h = Math.max(.5, o.h || 2.5), ax = o.axis === 'x' ? 'x' : 'z'; boxes.push({ x0: x - w / 2, y0: 0, z0: z - d / 2, x1: x + w / 2, y1: h, z1: z + d / 2, col: col, ramp: { axis: ax, h0: 0, h1: h } }); }
+            else if (o.t === 'prop') { const parts = PROP[o.id] || [[1, 1, col]]; for (const p of parts) { const s = p[0], h = p[1], y0 = p[3] || 0; boxes.push({ x0: x - s / 2, y0, z0: z - s / 2, x1: x + s / 2, y1: y0 + h, z1: z + s / 2, col: p[2] }); } }
+            else if (o.t === 'star') ents.push({ type: 4, x, z, y: .5 }); else if (o.t === 'health') ents.push({ type: 5, x, z, y: .3 }); else if (o.t === 'ammo') ents.push({ type: 6, x, z, y: .3 });
+            else if (o.t === 'enemy') ents.push({ type: Math.max(0, Math.min(3, o.kind | 0)), x, z, y: 0 }); else if (o.t === 'npc') ents.push({ type: 8, x, z, y: 0 });
+        }
+        const sp = L.spawn || { x: 0, z: -half + 6 };
+        const nStars = ents.filter(e => e.type === 4).length;
+        return Object.assign({}, g, mode === 'sandbox3d' ? { goal: Math.max(1, nStars) } : {}, { boxes, ents, half, spawn: { x: clampH(sp.x), z: clampH(sp.z), yaw: L.yaw != null ? L.yaw : 180 } });
+    };
     W3.build = P => {
         const A = P.arcade; if (!A || W3.idx(A.mode) === undefined) throw new Error('No 3D game (sandbox3d / warfare3d / rpg3d / store3d / frontier3d) set up yet'); const cfg = A.cfg || {}, warn = [];
         if (A.mode === 'combat') { const b = W3.combatBlock(cfg), hdr = 32, blk = new Uint8Array(hdr + b.length + 16), v = new DataView(blk.buffer); blk.set([...'NRGDATA1'].map(c => c.charCodeAt(0)), 0); v.setUint32(12, blk.length, true); v.setUint32(16, 1, true); blk.set([...'W3DW'].map(c => c.charCodeAt(0)), 20); v.setUint32(24, hdr, true); v.setUint32(28, b.length, true); blk.set(b, hdr); return { block: blk, warnings: warn, stats: { mode: 'combat', boxes: 0, entities: 0, weapons: 3, enemyTypes: 1, bytes: b.length } }; }
-        const g = A.mode === 'frontier3d' ? frontier(cfg) : A.mode === 'store3d' ? store(cfg) : A.mode === 'sandbox3d' ? sandbox(cfg) : A.mode === 'warfare3d' ? warfare(cfg) : rpg(cfg);
+        let g = A.mode === 'frontier3d' ? frontier(cfg) : A.mode === 'store3d' ? store(cfg) : A.mode === 'sandbox3d' ? sandbox(cfg) : A.mode === 'warfare3d' ? warfare(cfg) : rpg(cfg);
+        if (P.level3d && P.level3d.objs && P.level3d.objs.length && (A.mode === 'sandbox3d' || A.mode === 'warfare3d' || A.mode === 'rpg3d')) g = W3.levelOver(P.level3d, g, A.mode);   // the shared level builder replaces the built-in map
         let boxes = g.boxes.filter(b => b.x1 > b.x0 && b.z1 > b.z0 && b.y1 > b.y0); if (boxes.length > 290) { const big = boxes.slice().sort((a, b) => (b.x1 - b.x0) * (b.z1 - b.z0) * (b.y1 - b.y0) - (a.x1 - a.x0) * (a.z1 - a.z0) * (a.y1 - a.y0)).slice(0, 290); warn.push(`${boxes.length - 290} small objects left out to fit the DS (290 solid boxes max).`); boxes = boxes.filter(b => big.includes(b)); }
         let ents = g.ents.slice(0, 60); if (g.ents.length > 60) warn.push(`${g.ents.length - 60} extra enemies / pickups left out (60 max).`);
         const wps = g.weapons.slice(0, 4), ets = g.etypes.slice(0, 4), nb = boxes.length, ne = ents.length, nw = wps.length, nt = ets.length, size = 80 + nb * 24 + ne * 8 + nw * 24 + nt * 16, b = new Uint8Array(size), dv = new DataView(b.buffer);

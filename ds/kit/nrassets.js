@@ -45,10 +45,11 @@
         const n = 4 + parts.reduce((s, p) => s + p.length, 0), out = new Uint8Array(n); out[0] = flags; let o = 4; for (const p of parts) { out.set(p, o); o += p.length; } return out;
     };
     /* append (or replace) the ASET section of an NRGDATA1 block */
-    A.attach = (block, payload) => {
+    A.attach = (block, payload, sid) => {
+        sid = sid || 'ASET';
         const v = new DataView(block.buffer, block.byteOffset, block.length), cnt = v.getUint32(16, true), secs = [];
-        for (let i = 0; i < cnt; i++) { const o = 20 + i * 12, id = String.fromCharCode(...block.subarray(o, o + 4)); if (id === 'ASET') continue; secs.push({ id, data: block.subarray(v.getUint32(o + 4, true), v.getUint32(o + 4, true) + v.getUint32(o + 8, true)) }); }
-        secs.push({ id: 'ASET', data: payload });
+        for (let i = 0; i < cnt; i++) { const o = 20 + i * 12, id = String.fromCharCode(...block.subarray(o, o + 4)); if (id === sid) continue; secs.push({ id, data: block.subarray(v.getUint32(o + 4, true), v.getUint32(o + 4, true) + v.getUint32(o + 8, true)) }); }
+        secs.push({ id: sid, data: payload });
         let off = (20 + secs.length * 12 + 15) & ~15; const pos = secs.map(s => { const p = off; off = (off + s.data.length + 15) & ~15; return p; });
         const out = new Uint8Array(off), dv = new DataView(out.buffer); out.set([...'NRGDATA1'].map(c => c.charCodeAt(0)), 0); dv.setUint32(8, v.getUint32(8, true), true); dv.setUint32(12, off, true); dv.setUint32(16, secs.length, true);
         secs.forEach((s, i) => { out.set([...s.id].map(c => c.charCodeAt(0)), 20 + i * 12); dv.setUint32(24 + i * 12, pos[i], true); dv.setUint32(28 + i * 12, s.data.length, true); out.set(s.data, pos[i]); });

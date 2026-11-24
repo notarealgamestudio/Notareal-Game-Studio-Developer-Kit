@@ -120,6 +120,7 @@ typedef struct {
     float walk, speed;
     int state, t, dur;
     int health, spirit;
+    const unsigned char *mvm;   // grapple per direction (from the roster)
     int pw, tg, sp, gn;   // wrestler stats in percent: power (damage dealt), toughness (damage taken is divided by it), speed, momentum gain
     int cool;          // AI / move cooldown
     Pose pose;
@@ -315,7 +316,7 @@ static void try_grapple(W *a, W *d)
     if (pull_down(a, d)) return;
     if (a->run) { set_state(a, S_DROP, 40); a->run = 0; a->cool = 24; return; }   // running + grapple: dropkick
     if (dist(a, d) < 1.35f && standing(d) && d->state != S_HIT) {
-        a->mv = in_dir; d->mv = rand() % 5;
+        a->mv = a->mvm ? a->mvm[in_dir] : in_dir; d->mv = rand() % 5;
         set_state(a, S_LOCK_A, 24);
         set_state(d, S_LOCK_D, 24);
         a->yaw = face_to(a, d); d->yaw = wrap180(a->yaw + 180);
@@ -1082,8 +1083,8 @@ int match_run(u16 *subfb, int player, int opp)
     init_poses();
     memset(w, 0, sizeof w);
     memset(&ref, 0, sizeof ref);
-    w[0] = (W){ .pw = cast_stat(player)[0], .tg = cast_stat(player)[1], .sp = cast_stat(player)[2], .gn = cast_stat(player)[3], .look = cast_look(player), .x = 0, .z = 1.4f, .yaw = 180, .health = 100, .spirit = SPIRIT0 + (spirit_bonus > 70 ? 70 : spirit_bonus), .pose = P_STANCE };
-    w[1] = (W){ .pw = cast_stat(opp)[0], .tg = cast_stat(opp)[1], .sp = cast_stat(opp)[2], .gn = cast_stat(opp)[3], .look = cast_look(opp), .x = 0, .z = -7.0f, .yaw = 0, .health = 100, .spirit = 30, .pose = P_STAND, .base = -MAT_Y };
+    w[0] = (W){ .mvm = cast_moves(player), .pw = cast_stat(player)[0], .tg = cast_stat(player)[1], .sp = cast_stat(player)[2], .gn = cast_stat(player)[3], .look = cast_look(player), .x = 0, .z = 1.4f, .yaw = 180, .health = 100, .spirit = SPIRIT0 + (spirit_bonus > 70 ? 70 : spirit_bonus), .pose = P_STANCE };
+    w[1] = (W){ .mvm = cast_moves(opp), .pw = cast_stat(opp)[0], .tg = cast_stat(opp)[1], .sp = cast_stat(opp)[2], .gn = cast_stat(opp)[3], .look = cast_look(opp), .x = 0, .z = -7.0f, .yaw = 0, .health = 100, .spirit = 30, .pose = P_STAND, .base = -MAT_Y };
     ref = (W){ .look = cast_look(C_REF), .x = 1.8f, .z = 0.2f, .yaw = -90, .pose = P_STAND };
     set_state(&w[1], S_ENTER, 0);
     int caw_entrance = cast_theme(player) != NULL && !skip_player_entrance;

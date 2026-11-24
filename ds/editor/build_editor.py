@@ -61,6 +61,13 @@ data += 'const KITSRC=' + json.dumps({'nrworld': open(f'{K}/kit/nrworld.js').rea
 data += '\nconst ABOUT_TEXT=' + json.dumps(open(f'{K}/editor/about.txt').read()) + ';'
 data += '\nconst TES_REF=' + open(f'{K}/presets/tes_reference.json').read() + ';'
 data += '\nconst MEASURED=' + open(f'{K}/presets/measured.json').read() + ';'
+_ld=lambda f: json.load(open(f'{K}/{f}'))
+_rows=lambda q: [dict(r) for r in db.execute(q)]
+REFS={'design_refs':_ld('presets/design_refs.json'),'progression':_ld('presets/progression.json'),'gta':_ld('presets/gta_tables.json'),'motion':_ld('library/measured_motion.json'),'body':_ld('library/body_proportions.json'),
+ 'systems':_rows('select system,category,game,platform,routine,what,numbers,feel,use from systems'),
+ 'tech':_rows('select game,platform,area,item,value from tech_fingerprints'),
+ 'story_api':_rows('select game,command,scripts from story_api order by scripts desc limit 80')}
+data += '\nconst REFS=' + json.dumps(REFS) + ';'
 data += f'\nconst GENRES={json.dumps(genres)};\nconst CATALOG={json.dumps(catalog)};'
 if os.path.exists(f'{K}/library/code_db.json'): data += f'\nconst CODEDB={open(f"{K}/library/code_db.json").read()};'
 else: data += '\nconst CODEDB=[];'

@@ -17,7 +17,7 @@ module.exports = function (HOME, log) {
             if (proc) return { ok: true, msg: 'already running' }; if (!fs.existsSync(exe)) return { ok: false, msg: 'llama-server is not installed yet (ai/bin). Press "Download the AI" or copy it there.' };
             const m = model || models()[0]; if (!m) return { ok: false, msg: 'No model file in ai/models. Press "Download the AI" or copy a .gguf file there.' };
             const threads = Math.max(2, Math.min(8, (require('os').cpus().length || 4) - 1));
-            proc = cp.spawn(exe, ['-m', path.join(mdir, m), '--host', '127.0.0.1', '--port', String(PORT), '-c', '4096', '-t', String(threads)], { stdio: 'ignore', windowsHide: true, cwd: path.dirname(exe) });
+            proc = cp.spawn(exe, ['-m', path.join(mdir, m), '--host', '127.0.0.1', '--port', String(PORT), '-c', '8192', '-t', String(threads)], { stdio: 'ignore', windowsHide: true, cwd: path.dirname(exe) });
             proc.on('exit', c => { log('llama-server exited ' + c); proc = null; state = { phase: 'idle', msg: 'AI stopped', pct: 0 }; }); proc.on('error', e => { log('llama-server error ' + e.message); proc = null; state = { phase: 'error', msg: String(e.message), pct: 0 }; });
             state = { phase: 'loading', msg: 'Loading the model (30-90 seconds the first time)...', pct: 0 };
             for (let i = 0; i < 240 && proc; i++) { if (await ping()) { state = { phase: 'ready', msg: 'AI ready', pct: 100 }; return { ok: true, msg: 'ready' }; } await new Promise(r => setTimeout(r, 1000)); }

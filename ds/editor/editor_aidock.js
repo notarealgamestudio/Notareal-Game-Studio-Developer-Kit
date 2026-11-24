@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------ The AI dock: one box at the bottom of EVERY screen. Tell the studio what you want; the built-in offline AI plans it and
    runs the studio's own tools one step at a time (the same tools the buttons use), checks each result and fixes mistakes. No AI installed = the keyword assistant answers instead. */
 const AID = { open: false, log: [], busy: false, st: '' };
-function aiCtx() { return { P: () => P, tesRef: () => (typeof bereaRef === 'function' ? bereaRef() : null), codedb: () => CODEDB.concat(labLoad()), measured: () => MEASURED, hooks: { markDirty: () => { dirty = true; }, useTemplate: (id, o) => useTemplate(id, o), exportRom: () => exportRom(), openTab: t => { if (!window.NR_TABS_OK(t)) return false; tab = t; renderAll(); return true; } } }; }
+function aiCtx() { return { P: () => P, tesRef: () => (typeof bereaRef === 'function' ? bereaRef() : null), codedb: () => CODEDB.concat(labLoad()), measured: () => MEASURED, refs: () => REFS, catalog: () => CATALOG, hooks: { markDirty: () => { dirty = true; }, useTemplate: (id, o) => useTemplate(id, o), exportRom: () => exportRom(), openTab: t => { if (!window.NR_TABS_OK(t)) return false; tab = t; renderAll(); return true; } } }; }
 async function aiDockStatus() {
     const chip = document.getElementById('aidChip'); if (!chip) return;
     if (!DESK.ok) { chip.textContent = TPL.ai.kind === 'none' ? '⚠ keyword mode (the built-in AI is in the desktop program)' : '🧠 local AI'; chip.className = 'aidchip warn'; return; }
@@ -18,7 +18,7 @@ async function aiDockRun(text) {
         const llm = typeof aiClient === 'function' ? aiClient() : null; if (!llm && TPL.ai.kind === 'bundled') AID.log.push({ k: 'dim', t: 'The AI is not installed yet, so the keyword assistant is answering. Press "Install the AI" once.' });
         const r = await NRTools.agent(text, aiCtx(), llm, st => { AID.log.push({ k: st.ok ? 'ok' : 'bad', t: (st.ok ? '✔ ' : '✘ ') + st.msg }); aiDockDraw(); });
         if (r.source !== 'ai') r.steps.forEach(s => AID.log.push({ k: s.ok ? 'ok' : 'bad', t: (s.ok ? '✔ ' : '✘ ') + s.msg }));
-        AID.log.push({ k: 'dim', t: r.understood ? (r.say || 'Done.') + '  (' + (r.source === 'ai' ? 'offline AI' : 'keywords') + ')' : 'I did not understand that. Try: "make a kart racing game with 3 rivals and 5 laps", "make the scouts tougher", "check my game".' });
+        const nbad = r.steps.filter(s => !s.ok).length; AID.log.push({ k: nbad ? 'bad' : 'dim', t: r.understood ? (nbad ? 'NOT finished: ' + nbad + ' of ' + r.steps.length + ' steps failed (the red lines above). Nothing was fixed for those. ' + (r.say ? 'The AI said: ' + r.say : '') : (r.say || 'Done.')) + '  (' + (r.source === 'ai' ? 'offline AI' : 'keywords') + ')' : 'I did not understand that. Try: "make a kart racing game with 3 rivals and 5 laps", "make the scouts tougher", "check my game".' });
         if (P) { dirty = true; renderAll(); }
     } catch (e) { AID.log.push({ k: 'bad', t: 'Something went wrong: ' + (e && e.message || e) }); }
     AID.busy = false; aiDockDraw(); aiDockStatus();

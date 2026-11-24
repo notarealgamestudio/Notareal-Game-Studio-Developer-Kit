@@ -491,7 +491,7 @@ function fixTab(main) {
         res.append(el('div', { class: 'checkres ' + (r.issues.length ? 'bad' : 'good') }, r.issues.length ? `Found ${r.issues.length} problem(s) in ${L.name}:` : `✅ ${L.name} is playable: the goal can be reached without the run button, with room for error.`, ...r.issues.map(i => el('div', {}, `• ${i.msg}  [${i.code}]`))));
     }
     if (aiState.fixed) res.append(el('div', { class: 'checkres good' }, 'Changes made:', ...aiState.fixed.map(l => el('div', {}, '• ' + l))));
-    const aiAvail = sampleFn ? 'AI is available through your Claude account (it will ask permission the first time).' : (apiKey ? 'AI uses your Anthropic API key.' : 'AI needs the online page on claude.ai, or an Anthropic API key below.');
+    const localOn = typeof TPL !== 'undefined' && TPL.ai.kind !== 'none' && typeof aiClient === 'function' && aiClient(), aiAvail = localOn ? 'The offline AI on this computer answers this (nothing leaves your computer).' : sampleFn ? 'AI is available through your Claude account (it will ask permission the first time).' : (apiKey ? 'AI uses your Anthropic API key.' : 'No AI yet: set up the Built-in offline AI in Make me a game (one-time download). An Anthropic API key below is optional.');
     res.append(el('p', { class: 'hint' }, aiAvail));
     if (!sampleFn) res.append(el('div', { class: 'row' }, el('label', {}, 'API key ', el('input', { type: 'password', value: apiKey, placeholder: 'sk-ant-…', onchange: e => { apiKey = e.target.value.trim(); try { localStorage.setItem('nr_api_key', apiKey); } catch (err) {} } }))));
     if (aiState.busy) res.append(el('p', {}, 'Thinking…'));
@@ -547,13 +547,15 @@ Make the smallest set of changes that fixes what the player described. Keep the 
     aiState.busy = true; aiState.out = ''; aiState.proposal = null; renderAll();
     try {
         let obj;
-        if (sampleFn) obj = await sampleFn.json(prompt, { modelTier: 'default' });
+        const local = (typeof aiClient === 'function' && typeof TPL !== 'undefined') ? aiClient() : null;
+        if (local) { const raw = await local(prompt, { maxTokens: 900 }); obj = NRAI.safeJson(raw); if (!obj) throw { message: 'the offline AI did not return a usable answer. Try again or describe the problem more simply.' }; }
+        else if (sampleFn) obj = await sampleFn.json(prompt, { modelTier: 'default' });
         else if (apiKey) {
             const resp = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
                 body: JSON.stringify({ model: 'claude-sonnet-5-5', max_tokens: 2000, messages: [{ role: 'user', content: prompt }] }) });
             const j = await resp.json(); if (!resp.ok) throw { code: 'api', message: (j.error && j.error.message) || resp.status };
             const t = j.content.map(c => c.text || '').join(''); obj = JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1));
-        } else { aiState.out = 'AI isn\'t available here: open the studio on claude.ai or paste an Anthropic API key. The offline checks and repairs still work.'; return; }
+        } else { aiState.out = 'The offline AI isn\'t set up. Open Make me a game, then Built-in offline AI, and press Download the AI (one time). The offline checks and repairs (buttons 1 and the auto-fix) work without it.'; return; }
         const pr = NRKit.applyOps(P, obj.ops || []); pr.after = NRKit.checkLevel(pr.project, fixLevel);
         aiState.out = obj.explanation || ''; aiState.proposal = pr;
     } catch (e) { aiState.out = e && e.code === 'not_granted' ? 'AI was not allowed for this page.' : 'AI could not answer: ' + ((e && e.message) || e); }

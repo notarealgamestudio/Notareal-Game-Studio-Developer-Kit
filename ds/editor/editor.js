@@ -579,6 +579,7 @@ async function exportRom() {
     if (P.sigil && String(P.genre) === 'music_maker') return P.console === 'pc' ? download((P.sigil.name || 'song').replace(/\W+/g, '_') + '.wav', NRSigil.renderWav(P.sigil, { bars: P.sigil.songmode ? P.sigil.chainlen : 4 }).wav, 'audio/wav') : exportSigilRom();
     if (P.bracelet && P.console === 'ds') return exportBraceletRom();
     if (P.godsim && P.console === 'ds') return exportGodsimRom();
+    if (P.fight && P.console === 'ds' && String(P.genre) === 'wrestling') return exportWrestleRom();
     if (P.console === 'pc') { if (P.arcade) return exportArcade(); return exportPC(); }
     if (P.console === 'ds' && P.arcade && NRWorld3D.MODES[P.arcade.mode] !== undefined) return exportArcadeDS();
     if ((P.console === 'n64' || P.console === 'psx') && P.arcade && NRWorld3D.idx(P.arcade.mode) !== undefined) return exportArcadeSoft();

@@ -1,3 +1,9 @@
+## v1.33 - 3D wrestling engine for the DS (replaces the rectangle fighter for wrestling)
+- engine/wrestling = the ICW match engine (3D ring, referee, pins, ropes, finishers, move hints, 5 match types) without ICW's story/world. The Fight tab edits 2-8 wrestlers (generated face and body, finisher, heel/face, entrance theme) + match type; the data goes in a WRCF section (kit/nrkit.js buildDSWrestling). Export ROM on a DS wrestling project builds this ROM. Test: tests/test_wrestle_ds.js; emulator-checked with the default and a 3-wrestler custom roster.
+- Ring/apron/titantron art is neutral (NOTAREAL / PRO), not ICW's.
+- Still open: moves and stats are not editable yet (engine move list is fixed); faces are the generated blocky ones; HUD footer still says THROWDOWN; a stray sign texture on the apron; no in-editor preview of the 3D match; wrestling is DS-only.
+- Skate preset now edits the 3D skate game (see skate panel); the side-view skater is PC-only.
+
 
 ## v1.21 - Timeline v2, arcade room, reorganized menus (from the DeepSeek spec, "Devkit Updates")
 Done:

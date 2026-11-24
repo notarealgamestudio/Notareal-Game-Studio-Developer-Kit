@@ -30,7 +30,7 @@ function aiDockInit() {
     const inp = el('input', { id: 'aidIn', placeholder: '🧠 Tell the AI what to build or change: "make a haunted castle platformer", "make the kart game 5 laps and 3 rivals", "make the boss tougher", "check my game"...', onkeydown: e => { if (e.key === 'Enter') { const v = e.target.value; e.target.value = ''; aiDockRun(v); } } });
     const dock = el('div', { id: 'aidock' }, el('div', { id: 'aidLog', style: 'display:none' }), el('div', { class: 'aidrow' }, el('span', { id: 'aidChip', class: 'aidchip warn' }, '...'), inp,
         el('button', { class: 'go', onclick: () => { const v = inp.value; inp.value = ''; aiDockRun(v); } }, 'Do it'),
-        el('button', { id: 'aidInstall', class: 'alt', style: 'display:none', onclick: async () => { const r = await deskCall('/api/ai/download', {}); AID.log.push({ k: 'dim', t: 'AI download: ' + r.msg + ' (about 4.7 GB, one time). The chip shows progress.' }); AID.open = true; aiDockDraw(); } }, 'Install the AI'),
+        el('button', { id: 'aidInstall', class: 'alt', style: 'display:none', onclick: async () => { const r = await deskCall('/api/ai/download', {}); AID.log.push({ k: 'dim', t: 'AI download: ' + r.msg + ' (about 2 GB, one time). The chip shows progress.' }); AID.open = true; aiDockDraw(); } }, 'Install the AI'),
         el('button', { class: 'alt', onclick: () => { AID.open = !AID.open; aiDockDraw(); } }, '▾▴')));
     document.body.append(dock); aiDockStatus(); setInterval(aiDockStatus, 3000);
 }

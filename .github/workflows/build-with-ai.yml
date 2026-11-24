@@ -1,0 +1,56 @@
+name: Build the Windows program with the AI inside
+# Run it from the Actions tab (Run workflow) or push a tag like ai-1. It joins the app zip in downloads/, adds the llama.cpp engine and a Qwen model,
+# and publishes ONE zip (or a few parts if it is over 2 GB) on the Releases page. Nothing to install afterwards: unzip, run NotarealStudio.exe.
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "1.5b (about 1 GB, one download) or 3b (better, about 2.1 GB, may be split in parts)"
+        default: "1.5b"
+  push:
+    tags: ["ai-*"]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Join the program zip
+        run: |
+          cat downloads/NotarealStudio_Desktop_Windows.zip.part* > app.zip
+          unzip -q app.zip
+          ls NotarealStudio_Desktop_Windows | head
+      - name: Add the AI engine (llama.cpp for Windows)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir eng && cd eng
+          gh release download --repo ggml-org/llama.cpp --pattern '*bin-win-cpu-x64.zip' || gh release download --repo ggml-org/llama.cpp --pattern '*bin-win-avx2-x64.zip'
+          unzip -q *.zip
+          SRV=$(find . -name llama-server.exe | head -1); test -n "$SRV"
+          mkdir -p ../NotarealStudio_Desktop_Windows/ai/bin ../NotarealStudio_Desktop_Windows/ai/models
+          cp -r "$(dirname "$SRV")"/. ../NotarealStudio_Desktop_Windows/ai/bin/
+          rm -f ../NotarealStudio_Desktop_Windows/ai/bin/*.zip
+          ls ../NotarealStudio_Desktop_Windows/ai/bin | head
+      - name: Add the model
+        run: |
+          M="${{ github.event.inputs.model }}"; [ -z "$M" ] && M=1.5b
+          if [ "$M" = "3b" ]; then F=qwen2.5-3b-instruct-q4_k_m.gguf; U=https://huggingface.co/Qwen/Qwen2.5-3B-Instruct-GGUF/resolve/main/$F; else F=qwen2.5-1.5b-instruct-q4_k_m.gguf; U=https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/$F; fi
+          curl -L --fail --retry 3 -o NotarealStudio_Desktop_Windows/ai/models/$F "$U"
+          ls -la NotarealStudio_Desktop_Windows/ai/models
+      - name: Zip it
+        run: |
+          zip -q -r -0 NotarealStudio_Windows_WITH_AI.zip NotarealStudio_Desktop_Windows
+          SZ=$(stat -c %s NotarealStudio_Windows_WITH_AI.zip)
+          if [ "$SZ" -gt 1990000000 ]; then split -b 1900m -d -a 1 NotarealStudio_Windows_WITH_AI.zip NotarealStudio_Windows_WITH_AI.zip.part; rm NotarealStudio_Windows_WITH_AI.zip; echo "Join the parts: copy /b *.part0+*.part1 (Windows) or cat *.part* > file.zip" > JOIN_THE_PARTS.txt; fi
+          ls -la
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: windows-with-ai-${{ github.run_number }}
+          name: Windows program with the AI inside (run ${{ github.run_number }})
+          body: "Unzip and run NotarealStudio.exe. The AI is already inside (ai folder). Nothing to download."
+          files: |
+            NotarealStudio_Windows_WITH_AI.zip*
+            JOIN_THE_PARTS.txt

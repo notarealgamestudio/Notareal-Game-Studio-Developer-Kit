@@ -88,11 +88,37 @@ static int hp, ammo, mag, reload; static char msg[40];
 static void say(const char *s) { strncpy(msg, s, 39); msg[39] = 0; }
 
 /* ======================= shoot-em-up ======================= */
-typedef struct { int x, y, vx, vy, hp, t, on; } Mob;
+typedef struct { int x, y, vx, vy, hp, t, on, ty; } Mob;
 static Mob en[24], pb[16], eb[32]; static int sx, sy, wave, spawned, boss, fire_t, sh_t, inv;
-static void shmup_init(void) { memset(en, 0, sizeof en); memset(pb, 0, sizeof pb); memset(eb, 0, sizeof eb); sx = 120; sy = 170; wave = 0; spawned = 0; boss = 0; lives = P[0]; score = 0; inv = 0; }
+static const u8 *SHM; static int sh_q, sh_bhp;   /* SHMP design section: enemy types + scheduled waves (kit/nrkit.js NR.shmupDesign) */
+static void shmup_init(void) { u32 zz; SHM = sec("SHMP", &zz); if (SHM && (zz < 152 || !SHM[0])) SHM = 0; sh_q = 0; sh_bhp = SHM ? SHM[3] : 40; memset(en, 0, sizeof en); memset(pb, 0, sizeof pb); memset(eb, 0, sizeof eb); sx = 120; sy = 170; wave = 0; spawned = 0; boss = 0; lives = P[0]; score = 0; inv = 0; }
 static void add_mob(Mob *a, int n, int x, int y, int vx, int vy, int hp) { for (int i = 0; i < n; i++) if (!a[i].on) { a[i] = (Mob){ x, y, vx, vy, hp, 0, 1 }; return; } }
+static u16 shm_col(int k) { static u16 t[5]; if (!t[1]) { t[1] = RGB(255, 210, 74); t[2] = RGB(91, 224, 138); t[3] = RGB(192, 122, 255); t[4] = RGB(255, 255, 255); } return k ? t[k > 4 ? 4 : k] : c2; }
+static void shmup_step_d(void) {
+    int spd = P[1] < 1 ? 3 : P[1]; t++;
+    if (kh & KEY_LEFT) sx -= spd; if (kh & KEY_RIGHT) sx += spd; if (kh & KEY_UP) sy -= spd; if (kh & KEY_DOWN) sy += spd; if (sx < 8) sx = 8; if (sx > 240) sx = 240; if (sy < 90) sy = 90; if (sy > 184) sy = 184;
+    if (fire_t) fire_t--; if ((kh & KEY_A) && !fire_t) { add_mob(pb, 16, sx, sy - 8, 0, -7, 1); fire_t = P[2] < 3 ? 8 : P[2]; beep(900, 3); }
+    int nt = SHM[1], nw = SHM[2]; int alive = 0; for (int i = 0; i < 24; i++) if (en[i].on) alive++;
+    while (sh_q < nw && !boss) { const u8 *w = SHM + 56 + sh_q * 6; int at = w[0] | (w[1] << 8); if (at > t) break; int ty = w[2] < nt ? w[2] : 0, n = w[3], f = w[4], x0 = w[5]; const u8 *T = SHM + 8 + ty * 8;
+        for (int i = 0; i < n; i++) { int x, y = -10 - i * 14, k = i - (n - 1) / 2; if (f == 0) x = x0 + k * 34 + ((n & 1) ? 0 : 17); else if (f == 1) { x = x0 + k * 30 + ((n & 1) ? 0 : 15); y = -10 - (k < 0 ? -k : k) * 16; } else if (f == 2) { x = x0; y = -10 - i * 24; } else x = (i & 1) ? 240 : 16; if (x < 12) x = 12; if (x > 244) x = 244;
+            add_mob(en, 24, x, y, 0, 0, T[0]); for (int j = 0; j < 24; j++) if (en[j].on && en[j].t == 0 && en[j].ty == 0 && en[j].hp == T[0] && en[j].x == x && en[j].y == y) { en[j].ty = ty; break; } }
+        sh_q++; }
+    if (!alive && sh_q >= nw && !boss) { if (P[5] && sh_bhp > 0) { boss = 1; add_mob(en, 24, 120, -30, 1, 1, sh_bhp); } else status = 1; }
+    if (boss && !alive) status = 1;
+    for (int i = 0; i < 24; i++) if (en[i].on) { Mob *e = &en[i]; e->t++;
+        if (boss && i == 0) { int bp = SHM[4], fr = SHM[5] ? SHM[5] : 40; if (bp == 2) { if (e->x < sx - 2) e->x++; else if (e->x > sx + 2) e->x--; } else { e->x += e->vx * (bp == 1 ? 2 : 1); if (e->x < 40 || e->x > 216) e->vx = -e->vx; } if (e->y < 30) e->y += 1; if (e->t % fr == 0) for (int k = -1; k <= 1; k++) add_mob(eb, 32, e->x, e->y + 12, k, 3, 1); }
+        else { const u8 *T = SHM + 8 + e->ty * 8; int sp = T[1], pat = T[2], fire = T[3] * 4;
+            if (pat == 3) e->y += (e->t > 40 ? sp * 2 : sp) / 4 + ((e->t * (e->t > 40 ? sp * 2 : sp)) % 4 < ((e->t > 40 ? sp * 2 : sp) % 4) ? 1 : 0); else e->y += sp / 4 + ((e->t * sp) % 4 < (sp % 4) ? 1 : 0);
+            if (pat == 1) e->x += (((e->t / 6) % 12) < 6 ? 1 : -1) * 2; else if (pat == 2) { if (e->x < sx - 1) e->x++; else if (e->x > sx + 1) e->x--; }
+            if (fire && e->t % fire == (i * 7) % fire) add_mob(eb, 32, e->x, e->y + 8, (sx - e->x) / 60, 3, 1); if (e->y > 196) e->on = 0; }
+        for (int k = 0; k < 16; k++) if (pb[k].on && abs(pb[k].x - e->x) < (boss ? 18 : (SHM[8 + e->ty * 8 + 6] ? 14 : 10)) && abs(pb[k].y - e->y) < (boss ? 14 : 8)) { pb[k].on = 0; e->hp--; thud(2); if (e->hp <= 0) { e->on = 0; score += boss ? 500 : SHM[8 + e->ty * 8 + 4] * 10; beep(300, 6); } } }
+    for (int k = 0; k < 16; k++) if (pb[k].on) { pb[k].y += pb[k].vy; if (pb[k].y < -8) pb[k].on = 0; }
+    if (inv) inv--;
+    for (int k = 0; k < 32; k++) if (eb[k].on) { eb[k].x += eb[k].vx; eb[k].y += eb[k].vy; if (eb[k].y > 200 || eb[k].x < -8 || eb[k].x > 264) eb[k].on = 0; else if (!inv && abs(eb[k].x - sx) < 6 && abs(eb[k].y - sy) < 8) { eb[k].on = 0; lives--; inv = 90; thud(10); if (lives <= 0) status = 2; } }
+    for (int i = 0; i < 24; i++) if (en[i].on && !inv && abs(en[i].x - sx) < 10 && abs(en[i].y - sy) < 10) { lives--; inv = 90; en[i].on = boss ? 1 : 0; if (lives <= 0) status = 2; }
+}
 static void shmup_step(void) {
+    if (SHM) { shmup_step_d(); return; }
     int spd = P[1] < 1 ? 3 : P[1]; t++;
     if (kh & KEY_LEFT) sx -= spd; if (kh & KEY_RIGHT) sx += spd; if (kh & KEY_UP) sy -= spd; if (kh & KEY_DOWN) sy += spd; if (sx < 8) sx = 8; if (sx > 240) sx = 240; if (sy < 90) sy = 90; if (sy > 184) sy = 184;
     if (fire_t) fire_t--; if ((kh & KEY_A) && !fire_t) { add_mob(pb, 16, sx, sy - 8, 0, -7, 1); fire_t = P[2] < 3 ? 8 : P[2]; beep(900, 3); }
@@ -110,33 +136,36 @@ static void shmup_step(void) {
 }
 static void shmup_draw(void) {
     clear(RGB(4, 5, 16)); for (int i = 0; i < 40; i++) px((i * 53) % 256, (i * 37 + t * (1 + i % 3)) % 192, RGB(120 + i * 3, 120 + i * 3, 160));
-    for (int i = 0; i < 24; i++) if (en[i].on) { if (boss && i == 0) { rect(en[i].x - 18, en[i].y - 10, 36, 20, c2); rect(en[i].x - 6, en[i].y + 6, 12, 8, RGB(255, 220, 80)); } else { rect(en[i].x - 8, en[i].y - 6, 16, 10, c2); rect(en[i].x - 3, en[i].y + 4, 6, 4, RGB(255, 255, 255)); } }
+    for (int i = 0; i < 24; i++) if (en[i].on) { if (boss && i == 0) { rect(en[i].x - 18, en[i].y - 10, 36, 20, c2); rect(en[i].x - 6, en[i].y + 6, 12, 8, RGB(255, 220, 80)); } else { u16 cc = SHM ? shm_col(SHM[8 + en[i].ty * 8 + 5]) : c2; int zs = SHM ? SHM[8 + en[i].ty * 8 + 6] : 0, hw = zs == 2 ? 14 : zs == 1 ? 11 : 8; rect(en[i].x - hw, en[i].y - hw * 3 / 4, hw * 2, hw * 5 / 4, cc); rect(en[i].x - 3, en[i].y + hw / 2, 6, 4, RGB(255, 255, 255)); } }
     for (int k = 0; k < 16; k++) if (pb[k].on) rect(pb[k].x - 1, pb[k].y - 4, 3, 8, RGB(255, 255, 120));
     for (int k = 0; k < 32; k++) if (eb[k].on) disc(eb[k].x, eb[k].y, 3, RGB(255, 120, 60));
     if (!(inv & 4)) { rect(sx - 8, sy - 4, 16, 10, c1); rect(sx - 2, sy - 12, 4, 10, c1); rect(sx - 12, sy + 2, 24, 4, RGB(255, 255, 255)); }
 }
 /* ======================= breakout ======================= */
 static int bx, by, bvx, bvy, pad, br[8][16], launched, bricks;
-static void bo_init(void) { lives = P[0]; score = 0; memset(br, 0, sizeof br); int rows = P[1] > 8 ? 8 : P[1] < 1 ? 5 : P[1], cols = P[2] > 16 ? 16 : P[2] < 2 ? 10 : P[2]; bricks = 0; for (int r = 0; r < rows; r++) for (int c = 0; c < cols; c++) { br[r][c] = 1 + r % 4; bricks++; } P[1] = rows; P[2] = cols; pad = 128; launched = 0; }
+static const u8 *BRK;   /* BRKL design section: grid of brick hit points (kit NR.breakoutDesign) */
+static void bo_init(void) { u32 zz; BRK = sec("BRKL", &zz); if (BRK && (zz < 4 || !BRK[0])) BRK = 0; lives = P[0]; score = 0; memset(br, 0, sizeof br); int rows = P[1] > 8 ? 8 : P[1] < 1 ? 5 : P[1], cols = P[2] > 16 ? 16 : P[2] < 2 ? 10 : P[2]; bricks = 0; if (BRK) { rows = BRK[1] > 8 ? 8 : BRK[1]; cols = BRK[2] > 16 ? 16 : BRK[2]; bricks = 0; for (int r = 0; r < rows; r++) for (int c = 0; c < cols; c++) { int v = BRK[4 + r * BRK[2] + c]; br[r][c] = v; if (v) bricks++; } } else for (int r = 0; r < rows; r++) for (int c = 0; c < cols; c++) { br[r][c] = 1; bricks++; } P[1] = rows; P[2] = cols; pad = 128; launched = 0; }
 static void bo_step(void) {
     int w = P[4] < 16 ? 48 : P[4], sp = P[3] < 1 ? 3 : P[3];
     if (kh & KEY_LEFT) pad -= 4; if (kh & KEY_RIGHT) pad += 4; if (touched) pad = tx; if (pad < w / 2) pad = w / 2; if (pad > 256 - w / 2) pad = 256 - w / 2;
     if (!launched) { bx = pad; by = 170; if (kd & (KEY_A | KEY_UP)) { launched = 1; bvx = sp; bvy = -sp; beep(500, 4); } return; }
     bx += bvx; by += bvy; if (bx < 3 || bx > 253) { bvx = -bvx; bx += bvx; } if (by < 3) { bvy = -bvy; by = 3; }
-    int cw = 256 / P[2]; if (by < 24 + P[1] * 10 && by > 20) { int c = bx / cw, r = (by - 24) / 10; if (r >= 0 && r < P[1] && c >= 0 && c < P[2] && br[r][c]) { br[r][c] = 0; bvy = -bvy; score += 10; bricks--; beep(700 + r * 80, 3); if (!bricks) status = 1; } }
+    int cw = 256 / P[2]; if (by < 24 + P[1] * 10 && by > 20) { int c = bx / cw, r = (by - 24) / 10; if (r >= 0 && r < P[1] && c >= 0 && c < P[2] && br[r][c]) { br[r][c]--; bvy = -bvy; beep(700 + r * 80, 3); if (!br[r][c]) { score += 10; bricks--; if (!bricks) status = 1; } } }
     if (by > 176 && by < 186 && abs(bx - pad) < w / 2 + 3 && bvy > 0) { bvy = -bvy; bvx = (bx - pad) * sp / (w / 4); if (!bvx) bvx = 1; if (bvx > sp + 1) bvx = sp + 1; if (bvx < -sp - 1) bvx = -sp - 1; beep(400, 3); }
     if (by > 196) { lives--; launched = 0; thud(12); if (lives <= 0) status = 2; }
 }
 static void bo_draw(void) {
     clear(RGB(6, 8, 20)); int cw = 256 / P[2]; u16 cols[4] = { c2, RGB(245, 197, 66), c1, RGB(122, 232, 122) };
-    for (int r = 0; r < P[1]; r++) for (int c = 0; c < P[2]; c++) if (br[r][c]) rect(c * cw + 1, 24 + r * 10, cw - 2, 8, cols[(br[r][c] - 1) & 3]);
+    for (int r = 0; r < P[1]; r++) for (int c = 0; c < P[2]; c++) if (br[r][c]) rect(c * cw + 1, 24 + r * 10, cw - 2, 8, cols[(BRK ? br[r][c] - 1 : r) & 3]);
     int w = P[4] < 16 ? 48 : P[4]; rect(pad - w / 2, 178, w, 6, c1); disc(bx, by, 3, RGB(255, 255, 255));
 }
 /* ======================= racing (pseudo-3D) ======================= */
 static int rz, rx, rspd, rlap, rtime, rcars[16][2], rcrash;
 #define TRACK 3000
-static int curve_at(int z) { int a = (z / 150) % 12; static const int cv[12] = { 0, 0, 2, 4, 2, 0, 0, -2, -4, -2, 0, 3 }; return P[4] > 0 ? cv[a] * P[4] / 6 : 0; }
-static void race_init(void) { rz = 0; rx = 0; rspd = 0; rlap = 0; rtime = (P[3] < 10 ? 90 : P[3]) * 60; rcrash = 0; score = 0; int n = P[1] < 1 ? 8 : P[1] > 16 ? 16 : P[1]; P[1] = n; for (int i = 0; i < 16; i++) { rcars[i][0] = 300 + i * (TRACK * 2 / 16) % TRACK; rcars[i][1] = (rnd(3) - 1) * 70; } }
+static const u8 *RCD;   /* RACE design section (kit NR.raceDesign) */
+static int curve_at0(int z); static int curve_at(int z) { if (RCD) { int n = RCD[1], tot = 0; for (int i = 0; i < n; i++) tot += RCD[8 + i * 2] * 50; if (tot <= 0) return 0; z %= tot; for (int i = 0; i < n; i++) { z -= RCD[8 + i * 2] * 50; if (z < 0) return (signed char)RCD[9 + i * 2]; } return 0; } return curve_at0(z); }
+static int curve_at0(int z) { int a = (z / 150) % 12; static const int cv[12] = { 0, 0, 2, 4, 2, 0, 0, -2, -4, -2, 0, 3 }; return P[4] > 0 ? cv[a] * P[4] / 6 : 0; }
+static void race_init(void) { u32 zz; RCD = sec("RACE", &zz); if (RCD && (zz < 10 || !RCD[0] || !RCD[1])) RCD = 0; rz = 0; rx = 0; rspd = 0; rlap = 0; rtime = (P[3] < 10 ? 90 : P[3]) * 60; rcrash = 0; score = 0; int n = P[1] < 1 ? 8 : P[1] > 16 ? 16 : P[1]; P[1] = n; for (int i = 0; i < 16; i++) { rcars[i][0] = 300 + i * (TRACK * 2 / 16) % TRACK; rcars[i][1] = (rnd(3) - 1) * 70; } }
 static void race_step(void) {
     int mx = (P[2] < 40 ? 200 : P[2]); t++; rtime--; if (kh & KEY_UP) rspd += 2; else rspd -= 1; if (kh & KEY_DOWN) rspd -= 5; if (rspd < 0) rspd = 0; if (rspd > mx) rspd = mx;
     int c = curve_at(rz); if (kh & KEY_LEFT) rx -= 3 + rspd / 60; if (kh & KEY_RIGHT) rx += 3 + rspd / 60; rx -= c * rspd / 60; 
@@ -149,7 +178,7 @@ static void race_draw(void) {
     for (int y = 0; y < 96; y++) { rect(0, y, 256, 1, RGB(60 + y, 120 + y / 2, 220)); }
     int curv = 0, off = 0;
     for (int y = 191; y >= 96; y--) { int d = y - 95; int z = rz + 4000 / d; off = rx * 3 / 2 * d / 96; curv += curve_at(z) * 3 / (d + 4);
-        int rw = d * 2 + 12, cx = 128 - off / 2 + curv * (96 - d) / 8, band = (z / 40) & 1; rect(0, y, 256, 1, band ? RGB(30, 150, 50) : RGB(40, 170, 60));
+        int rw = d * 2 + 12, cx = 128 - off / 2 + curv * (96 - d) / 8, band = (z / 40) & 1; rect(0, y, 256, 1, RCD ? (band ? RGB(RCD[4] * 3 / 4, RCD[5] * 3 / 4, RCD[6] * 3 / 4) : RGB(RCD[4], RCD[5], RCD[6])) : (band ? RGB(30, 150, 50) : RGB(40, 170, 60)));
         rect(cx - rw / 2 - 4, y, rw + 8, 1, band ? RGB(230, 40, 40) : RGB(240, 240, 240)); rect(cx - rw / 2, y, rw, 1, RGB(70, 70, 76));
         if (((z / 30) & 1) && d > 4) rect(cx - 1 - d / 40, y, 2 + d / 40, 1, RGB(230, 230, 230)); }
     for (int i = 0; i < P[1]; i++) { int dz = (rcars[i][0] - rz + TRACK) % TRACK; if (dz > 4 && dz < 400) { int d = 4000 / dz; int y = 95 + d; if (d > 96 || d < 2) continue; int s = d / 3 + 3, cx = 128 + (rcars[i][1] - rx) * d / 96; rect(cx - s, y - s, s * 2, s, i % 2 ? c2 : RGB(240, 200, 60)); rect(cx - s + 1, y - s - s / 2, s * 2 - 2, s / 2 + 1, RGB(40, 40, 50)); } }
@@ -218,24 +247,25 @@ static void fps_draw(void) {
     rect(6, 180, 70, 6, RGB(60, 20, 20)); rect(6, 180, hp > 0 ? (hp > 100 ? 70 : hp * 70 / 100) : 0, 6, RGB(80, 220, 90)); sprintf(b, "%d", kills); text(6, 6, b, RGB(255, 255, 255));
 }
 /* ======================= brawler ======================= */
-typedef struct { int x, y, hp, on, t, dir, hit; } Bro; static Bro bro[8], boss_b; static int bpx, bpy, bpd, bphp, batk, batk_t, bwave, bspawn, bboss, binv;
-static void br_init(void) { lives = P[0] < 1 ? 3 : P[0]; bphp = 10; bpx = 60; bpy = 150; bpd = 1; batk = 0; bwave = 0; bspawn = 0; memset(bro, 0, sizeof bro); score = 0; bboss = 0; binv = 0; }
+typedef struct { int x, y, hp, on, t, dir, hit, ty; } Bro; static Bro bro[8], boss_b; static const u8 *BRW;   /* BRWL design section (kit NR.brawlerDesign) */ static int bpx, bpy, bpd, bphp, batk, batk_t, bwave, bspawn, bboss, binv;
+static void br_init(void) { u32 zz; BRW = sec("BRWL", &zz); if (BRW && (zz < 48 || !BRW[0] || !BRW[2])) BRW = 0; lives = P[0] < 1 ? 3 : P[0]; bphp = 10; bpx = 60; bpy = 150; bpd = 1; batk = 0; bwave = 0; bspawn = 0; memset(bro, 0, sizeof bro); score = 0; bboss = 0; binv = 0; }
 static void br_step(void) {
     t++; if (batk_t) batk_t--; if (binv) binv--; int ehp = P[2] < 1 ? 3 : P[2];
     if (kh & KEY_LEFT) { bpx -= 2; bpd = -1; } if (kh & KEY_RIGHT) { bpx += 2; bpd = 1; } if (kh & KEY_UP) bpy -= 2; if (kh & KEY_DOWN) bpy += 2; if (bpx < 10) bpx = 10; if (bpx > 246) bpx = 246; if (bpy < 120) bpy = 120; if (bpy > 180) bpy = 180;
     int dmg = 0; if (!batk_t && (kd & KEY_A)) { batk = 1; batk_t = 14; dmg = 1; beep(300, 3); } if (!batk_t && (kd & KEY_B)) { batk = 2; batk_t = 22; dmg = 2; beep(200, 4); }
     int alive = 0; for (int i = 0; i < 8; i++) if (bro[i].on) { Bro *e = &bro[i]; alive++; e->t++; if (e->hit) e->hit--; int dx = bpx - e->x, dy = bpy - e->y;
-        if (abs(dx) > 22) e->x += dx > 0 ? 1 : -1; if (abs(dy) > 4) e->y += dy > 0 ? 1 : -1; e->dir = dx > 0 ? 1 : -1;
-        if (abs(dx) < 26 && abs(dy) < 10 && e->t % 60 == 30 && !binv) { bphp -= i == 0 && bboss ? 2 : 1; binv = 30; thud(5); if (bphp <= 0) { lives--; bphp = 10; bpx = 60; if (lives <= 0) status = 2; } }
+        if (abs(dx) > 22) { int sp = (BRW && !(bboss && i == 0)) ? BRW[9 + e->ty * 6] : 4; if ((e->t * sp) % 4 < sp || sp >= 4) e->x += dx > 0 ? (sp > 4 && (e->t & 1) ? 2 : 1) : (sp > 4 && (e->t & 1) ? -2 : -1); } if (abs(dy) > 4) e->y += dy > 0 ? 1 : -1; e->dir = dx > 0 ? 1 : -1;
+        if (abs(dx) < 26 && abs(dy) < 10 && e->t % 60 == 30 && !binv) { bphp -= (i == 0 && bboss) ? (BRW ? BRW[4] : 2) : (BRW ? BRW[10 + e->ty * 6] : 1); binv = 30; thud(5); if (bphp <= 0) { lives--; bphp = 10; bpx = 60; if (lives <= 0) status = 2; } }
         if (dmg && (bpd > 0 ? dx * -1 < 0 : dx > 0) == 0 && abs(e->x - bpx) < 34 && abs(e->y - bpy) < 14) {}
-        if (dmg && abs(e->x - bpx) < 34 && abs(e->y - bpy) < 14 && ((bpd > 0 && e->x >= bpx - 4) || (bpd < 0 && e->x <= bpx + 4))) { e->hp -= dmg; e->hit = 8; e->x += bpd * 8; thud(3); if (e->hp <= 0) { e->on = 0; score += i == 0 && bboss ? 300 : 40; } } }
-    if (!alive) { if (bboss) { status = 1; } else if (bwave >= (P[1] < 1 ? 4 : P[1])) { if (P[3]) { bboss = 1; bro[0] = (Bro){ 220, 150, 18, 1, 0, -1, 0 }; } else status = 1; } else if (++bspawn > 40) { bspawn = 0; int n = 2 + bwave; if (n > 6) n = 6; for (int i = 0; i < n; i++) bro[i] = (Bro){ (i & 1) ? 270 + i * 10 : -20 - i * 10, 125 + (i * 17) % 55, ehp, 1, i * 11, 1, 0 }; bwave++; } }
+        if (dmg && abs(e->x - bpx) < 34 && abs(e->y - bpy) < 14 && ((bpd > 0 && e->x >= bpx - 4) || (bpd < 0 && e->x <= bpx + 4))) { e->hp -= dmg; e->hit = 8; e->x += bpd * 8; thud(3); if (e->hp <= 0) { e->on = 0; score += (i == 0 && bboss) ? 300 : (BRW ? BRW[11 + e->ty * 6] * 10 : 40); } } }
+    if (!alive) { if (bboss) { status = 1; } else if (bwave >= (BRW ? BRW[2] : (P[1] < 1 ? 4 : P[1]))) { if (P[3]) { bboss = 1; bro[0] = (Bro){ 220, 150, BRW ? BRW[3] : 18, 1, 0, -1, 0, 0 }; } else status = 1; }
+        else if (BRW && ++bspawn > 40) { bspawn = 0; const u8 *w = BRW + 40 + bwave * 3; int ty = w[0] < BRW[1] ? w[0] : 0, n = w[1] > 8 ? 8 : w[1]; for (int i = 0; i < n; i++) { int left = w[2] == 1 || (w[2] == 2 && (i & 1)); bro[i] = (Bro){ left ? -20 - i * 10 : 270 + i * 10, 125 + (i * 17) % 55, BRW[8 + ty * 6], 1, i * 11, left ? 1 : -1, 0, ty }; } bwave++; } else if (++bspawn > 40) { bspawn = 0; int n = 2 + bwave; if (n > 6) n = 6; for (int i = 0; i < n; i++) bro[i] = (Bro){ (i & 1) ? 270 + i * 10 : -20 - i * 10, 125 + (i * 17) % 55, ehp, 1, i * 11, 1, 0 }; bwave++; } }
 }
 static void person(int x, int y, int dir, u16 body, u16 head, int atk, int big) { int s = big ? 2 : 1; rect(x - 5 * s, y - 24 * s, 10 * s, 14 * s, body); rect(x - 4 * s, y - 34 * s, 8 * s, 10 * s, head); rect(x - 5 * s, y - 10 * s, 4 * s, 10 * s, RGB(40, 40, 60)); rect(x + s, y - 10 * s, 4 * s, 10 * s, RGB(40, 40, 60)); if (atk) rect(x + dir * 6 * s, y - 20 * s, dir * 14 * s + (dir < 0 ? 0 : 0), 4 * s, head); }
 static void br_draw(void) {
     clear(RGB(40, 30, 60)); rect(0, 110, 256, 82, RGB(70, 60, 80)); for (int i = 0; i < 8; i++) rect(i * 40 + 6, 40, 20, 50, RGB(70, 90, 140)); rect(0, 108, 256, 4, RGB(130, 110, 150));
     int ord[9], n = 0; for (int i = 0; i < 8; i++) if (bro[i].on) ord[n++] = i; ord[n++] = 99; for (int i = 0; i < n; i++) for (int j = i + 1; j < n; j++) { int yi = ord[i] == 99 ? bpy : bro[ord[i]].y, yj = ord[j] == 99 ? bpy : bro[ord[j]].y; if (yj < yi) { int q = ord[i]; ord[i] = ord[j]; ord[j] = q; } }
-    for (int k = 0; k < n; k++) { if (ord[k] == 99) { if (!(binv & 4)) { rect(bpx - 8, bpy + 1, 16, 3, RGB(20, 20, 30)); person(bpx, bpy, bpd, c1, RGB(240, 200, 160), batk_t > 6, 0); } } else { Bro *e = &bro[ord[k]]; rect(e->x - 8, e->y + 1, 16, 3, RGB(20, 20, 30)); person(e->x, e->y, e->dir, e->hit ? RGB(255, 255, 255) : c2, RGB(220, 170, 140), 0, ord[k] == 0 && bboss); } }
+    for (int k = 0; k < n; k++) { if (ord[k] == 99) { if (!(binv & 4)) { rect(bpx - 8, bpy + 1, 16, 3, RGB(20, 20, 30)); person(bpx, bpy, bpd, c1, RGB(240, 200, 160), batk_t > 6, 0); } } else { Bro *e = &bro[ord[k]]; rect(e->x - 8, e->y + 1, 16, 3, RGB(20, 20, 30)); person(e->x, e->y, e->dir, e->hit ? RGB(255, 255, 255) : (BRW && !(ord[k] == 0 && bboss) ? shm_col(BRW[12 + e->ty * 6]) : c2), RGB(220, 170, 140), 0, ord[k] == 0 && bboss); } }
     for (int i = 0; i < bphp; i++) rect(8 + i * 8, 8, 6, 6, RGB(80, 220, 90));
 }
 /* ======================= falling blocks ======================= */

@@ -427,6 +427,20 @@ NR.buildDSScenes = P => {
     if (col && !(P.coloring && P.coloring.pages && P.coloring.pages.length) && col.cfg.custom) P = Object.assign({}, P, { coloring: { pages: col.cfg.custom, only: !!col.cfg.onlyCustom } });
     return NR.buildDSArcade(P, { list, first });
 };
+/* DS arcade engine design sections. SHMP (160 bytes): [0]=1 [1] types [2] waves [3] boss hp [4] boss pattern [5] boss fire; types at 8 + 8k: hp, speed x4, pattern, fire/4, score/10, colour, size; waves at 56 + 6k: at u16, type, n, form, x. BRKL: [0]=1 [1] rows [2] cols, then rows*cols cells (0-4). */
+NR.shmupDesign = d => {
+    const b = new Uint8Array(160), cl = (v, lo, hi) => Math.max(lo, Math.min(hi, Math.round(+v || 0))), ty = d.types.slice(0, 6), wv = d.waves.slice(0, 16).sort((p, q) => p.at - q.at);
+    b[0] = 1; b[1] = ty.length; b[2] = wv.length; b[3] = cl(d.boss && d.boss.hp, 0, 255); b[4] = cl(d.boss && d.boss.pattern, 0, 2); b[5] = cl(d.boss && d.boss.fire, 0, 255);
+    ty.forEach((t, k) => { const o = 8 + k * 8; b[o] = cl(t.hp, 1, 60); b[o + 1] = cl((t.speed || 1) * 4, 1, 24); b[o + 2] = cl(t.pattern, 0, 3); b[o + 3] = cl((t.fire || 0) / 4, 0, 255); b[o + 4] = cl((t.score || 100) / 10, 1, 250); b[o + 5] = cl(t.color, 0, 4); b[o + 6] = cl(t.size, 0, 2); });
+    wv.forEach((w, k) => { const o = 56 + k * 6, at = cl(w.at, 0, 65535); b[o] = at & 255; b[o + 1] = at >> 8; b[o + 2] = cl(w.type, 0, Math.max(0, ty.length - 1)); b[o + 3] = cl(w.n, 1, 12); b[o + 4] = cl(w.form, 0, 3); b[o + 5] = cl(w.x, 0, 255); });
+    return b;
+};
+/* RACE: [0]=1 [1] sections [4..6] grass rgb; sections at 8 + 2k: length (x50 units), curve (signed) */
+NR.raceDesign = d => { const t = d.track.slice(0, 16), b = new Uint8Array(8 + t.length * 2 + 8), g = d.grass || [42, 138, 42]; b[0] = 1; b[1] = t.length; for (let i = 0; i < 3; i++) b[4 + i] = Math.max(0, Math.min(255, g[i] | 0)); t.forEach((q, k) => { b[8 + k * 2] = Math.max(1, Math.min(20, q.len | 0)); b[9 + k * 2] = Math.max(-6, Math.min(6, Math.round(q.curve || 0))) & 255; }); return b; };
+/* BRWL: [0]=1 [1] types [2] waves [3] boss hp [4] boss dmg; types at 8 + 6k: hp, speed x4, dmg, score/10, colour; waves at 40 + 3k: type, n, side */
+NR.brawlerDesign = d => { const b = new Uint8Array(96), cl = (v, lo, hi) => Math.max(lo, Math.min(hi, Math.round(+v || 0))), ty = d.types.slice(0, 4), wv = d.waves.slice(0, 16); b[0] = 1; b[1] = ty.length; b[2] = wv.length; b[3] = cl(d.boss && d.boss.hp, 1, 250); b[4] = cl(d.boss && d.boss.dmg, 1, 9);
+    ty.forEach((t, k) => { const o = 8 + k * 6; b[o] = cl(t.hp, 1, 60); b[o + 1] = cl((t.speed || 1) * 4, 2, 10); b[o + 2] = cl(t.dmg, 1, 9); b[o + 3] = cl((t.score || 50) / 10, 1, 250); b[o + 4] = cl(t.color, 0, 4); }); wv.forEach((w, k) => { const o = 40 + k * 3; b[o] = cl(w.type, 0, Math.max(0, ty.length - 1)); b[o + 1] = cl(w.n, 1, 8); b[o + 2] = cl(w.side, 0, 2); }); return b; };
+NR.breakoutDesign = d => { const g = d.grid.slice(0, 8), cols = Math.max(2, Math.min(16, Math.max(...g.map(r => r.length)))), b = new Uint8Array(4 + g.length * cols); b[0] = 1; b[1] = g.length; b[2] = cols; g.forEach((r, y) => { for (let x = 0; x < cols; x++) b[4 + y * cols + x] = Math.max(0, Math.min(4, (r[x] | 0))); }); return b; };
 NR.buildDSArcade = (P, scenes) => {
     const A = scenes ? { mode: scenes.first.mode, cfg: scenes.first.cfg } : P.arcade; if (!A) throw new Error('No arcade game set up yet');
     const modes = Object.keys(NR.ARCADE_KEYS), hex = h => [1, 3, 5].map(i => parseInt((h || '#000000').slice(i, i + 2), 16) || 0), rgb15 = c => (c[0] >> 3 | (c[1] >> 3) << 5 | (c[2] >> 3) << 10 | 0x8000), warn = [];
@@ -435,6 +449,10 @@ NR.buildDSArcade = (P, scenes) => {
         dv.setUint16(20, rgb15(hex(cfg.color)), true); dv.setUint16(22, rgb15(hex(cfg.color2)), true); const t = String(cfg.title || 'Arcade').slice(0, 31); for (let i = 0; i < t.length; i++) b[24 + i] = t.charCodeAt(i) & 127; return b; };
     const cfg = A.cfg || {}, b = mk(A.mode, cfg);
     const sections = [['ARCF', b]];
+    if (!scenes && A.mode === 'shmup' && cfg.design && cfg.design.types && cfg.design.waves) sections.push(['SHMP', NR.shmupDesign(cfg.design)]);
+    if (!scenes && A.mode === 'brawler' && cfg.design && cfg.design.types && cfg.design.waves) sections.push(['BRWL', NR.brawlerDesign(cfg.design)]);
+    if (!scenes && A.mode === 'race' && cfg.design && Array.isArray(cfg.design.track) && cfg.design.track.length) sections.push(['RACE', NR.raceDesign(cfg.design)]);
+    if (!scenes && A.mode === 'breakout' && cfg.design && Array.isArray(cfg.design.grid) && cfg.design.grid.length) sections.push(['BRKL', NR.breakoutDesign(cfg.design)]);
     if (A.mode === 'combat' && !scenes) { const W3 = typeof NRWorld3D !== 'undefined' ? NRWorld3D : require('./nrworld3d.js'), cb = W3.combatBlock(cfg); sections.push(['KCFG', cb.subarray(80, 110)]); }
     if (A.mode === 'coloring' || (scenes && scenes.list.some(x => x.mode === 'coloring'))) {   /* COLR: the coloring-book pages (shapes + magic hint colours), same data as the PC engine; the DS ROM rasterises them itself */
         const CC = typeof NRColor !== 'undefined' ? NRColor : require('./nrcolor.js'), cu = ((A.cfg && A.cfg.custom) || (P.coloring && P.coloring.pages) || []).map(CC.cleanPage).filter(p => p.regions.length), only = !!((A.cfg && A.cfg.onlyCustom) || (P.coloring && P.coloring.only)), list = (only && cu.length ? [] : CC.PAGES).concat(cu).slice(0, 60), W = [], u8 = v => W.push(v & 255), i16 = v => { v = Math.max(-32768, Math.min(32767, Math.round(v))); u8(v); u8(v >> 8); }, rec = (kind, hint, vals) => { u8(kind); u8(hint); u8(vals.length); u8(vals.length >> 8); vals.forEach(i16); };

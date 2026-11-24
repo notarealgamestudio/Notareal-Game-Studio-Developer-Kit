@@ -64,7 +64,7 @@ const NAV_GROUPS = [['Game', ['templates', 'builder', 'settings', 'recipes', 'fi
 /* the names players use, not the names of the games we built them for */
 const NAV_LABELS = { color: '🖍 Coloring book', recipes: '🧪 Recipes', about: 'ℹ About', advanced: '🛠 Advanced', templates: '📦 Templates', builder: '✨ Make me a game', settings: '⚙ Game settings', fit: '🎯 Console fit', engines: '⚙ Engines', timeline: '🧭 Timeline', story: '🎬 Cutscenes & banner', touch: '📱 DS bottom screen',
     level: '🏃 Platformer', world: '🌍 RPG & open world', fight: '🤼 Fighting & wrestling', arcade: '🕹 Minigames (shooters, racing, sports & sims)', puzzle: '🧩 Puzzle & match-3', bracelet: '📿 Arrange (bracelets)', sigil: '🎚 Rhythm & music maker', godsim: '🌌 God sim', berea: '☢ Berea (wasteland RPG tools)', frontier: '🤠 Western open world',
-    assets: '🧰 Asset library', level3d: '🏙 3D level builder', chars: '🧍 Characters', art: '🎨 Art', gfx: '🖼 Graphics', music: '🎵 Music', sound: '🔊 Sounds', fix: '🩺 Fix it', tech: '📚 Technique library', lab: '🔬 Research lab' };
+    assets: '🧰 Asset library', level3d: '🏙 Level / content builder', chars: '🧍 Characters', art: '🎨 Art', gfx: '🖼 Graphics', music: '🎵 Music', sound: '🔊 Sounds', fix: '🩺 Fix it', tech: '📚 Technique library', lab: '🔬 Research lab' };
 function studioTabs() {
     if (!P) return ['arcade', 'puzzle', 'fight', 'sigil']; const g = String(P.genre || ''), out = [];
     if (P.arcade || /craft|life|sim|shooter|warfare|sandbox|open_world|platformer_3d|racing|breakout|falling|memory|skate|shmup/.test(g)) out.push('arcade');

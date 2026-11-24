@@ -53,3 +53,11 @@ Plain categories. "Verified" means I ran it in this session (emulator, browser o
   - FULL content tools: platformers and runners (Level tab), RPG / open world / farm / adventure (World tab), fighting and wrestling (Fight tab + shared cast), puzzle (Puzzle tab), coloring book, godsim, bracelet, sigil, berea.
   - Content tools added this session: 3D skate (park builder), store job sim (store builder), 3D open world / war / RPG world (3D level builder, buildings and props from the asset library).
   - SETTINGS ONLY (numbers and toggles, no layout / content editor): shoot-em-up, breakout, arcade racing, first-person arcade, beat-em-up, falling blocks, memory, city sim, hoops, vehicle combat, rail shooter, baseball, basketball, kart racing, life sim 3D, side-scroller 3D. These need their own editors (waves and enemies, brick layouts, tracks, stages, courts and teams, arenas, rails).
+
+## Content designers for the arcade engines (added)
+Each lives in the "Level / content builder" tab when the game is that type, is stored in the project (`cfg.design`), and is played by the PC / Xbox engine AND the DS ROM (new ROM sections SHMP, BRKL, RACE, BRWL).
+- Shoot-em-up: enemy types (HP, speed, movement, fire rate, score, colour, size), up to 16 timed waves with formations, boss (HP, movement, fire rate). Checked: node tests, editor click-through, PC run to a win, DS emulator screenshot.
+- Breakout: 8x16 brick grid, 0-4 hits per brick. Same checks.
+- Racing: track sections (length, bend), grass colour. Same checks (DS screenshot showed the custom bend and colour).
+- Beat-em-up: fighter types, up to 16 waves (type, count, side), boss. Same checks.
+- STILL SETTINGS ONLY: falling blocks, memory, city sim, hoops / basketball, baseball, vehicle combat, rail shooter, kart racing, first-person arcade, 3D life sim, 3D side-scroller. Timeline-driven DS ROMs (several scenes in one ROM) still use the old built-in content, not these designs.

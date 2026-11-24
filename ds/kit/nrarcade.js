@@ -50,48 +50,67 @@
     const end = (g, s) => { if (s.status === 'play') return; g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(0, H / 2 - 24, W, 48); fillText(g, s.status === 'win' ? 'YOU WIN!' : 'GAME OVER', W / 2, H / 2 + 4, s.status === 'win' ? '#4ae87a' : '#ff5a5a', 20, 'center'); fillText(g, 'press A', W / 2, H / 2 + 20, '#aaa', 9, 'center'); };
 
     /* ---------------------------------------------------------------- shmup */
+    /* design = { types: [{ name, hp, speed, pattern 0 straight / 1 weave / 2 chase / 3 dive, fire (avg frames between shots, 0 = never), score, color 0-4, size 0-2 }], waves: [{ at (frames), type, n, form 0 line / 1 V / 2 column / 3 sides, x }], boss: { hp, pattern 0-2, fire } } */
+    A.SHMUP_DESIGN = () => ({ types: [{ name: 'Scout', hp: 1, speed: 1, pattern: 0, fire: 160, score: 100, color: 0, size: 0 }, { name: 'Weaver', hp: 2, speed: 1, pattern: 1, fire: 120, score: 150, color: 1, size: 0 }, { name: 'Chaser', hp: 2, speed: 1.2, pattern: 2, fire: 0, score: 200, color: 2, size: 1 }, { name: 'Diver', hp: 3, speed: 1, pattern: 3, fire: 0, score: 250, color: 3, size: 1 }],
+        waves: [{ at: 60, type: 0, n: 4, form: 0, x: 128 }, { at: 360, type: 1, n: 5, form: 1, x: 128 }, { at: 700, type: 2, n: 3, form: 3, x: 128 }, { at: 1000, type: 0, n: 6, form: 0, x: 128 }, { at: 1300, type: 3, n: 4, form: 2, x: 80 }, { at: 1600, type: 1, n: 7, form: 1, x: 128 }], boss: { hp: 40, pattern: 0, fire: 40 } });
     A.shmup = (cfg, o) => {
         const C = Object.assign({}, A.DEFAULTS.shmup, cfg), r = rng(o.seed || 1), s = { status: 'play', score: 0, lives: C.lives, t: 0, px: W / 2, py: H - 30, shots: [], en: [], eb: [], cool: 0, inv: 0, wave: 0, boss: null };
+        const D = C.design && C.design.waves && C.design.types ? C.design : null; if (D) { s.q = 0; s.bossHp = (D.boss && D.boss.hp) | 0; }
+        const SC = [null, '#ffd24a', '#5be08a', '#c07aff', '#ffffff'];
+        const spawnD = w => { const ty = D.types[w.type] || D.types[0]; for (let i = 0; i < w.n; i++) { const f = w.form | 0; let x = w.x, y = -10 - i * 14; if (f === 0) x = clamp(w.x + (i - (w.n - 1) / 2) * 34, 12, W - 12); else if (f === 1) { x = clamp(w.x + (i - (w.n - 1) / 2) * 30, 12, W - 12); y = -10 - Math.abs(i - (w.n - 1) / 2) * 16; } else if (f === 2) { x = w.x; y = -10 - i * 24; } else { x = i % 2 ? W - 16 : 16; y = -10 - i * 18; } s.en.push({ x, y, hp: ty.hp, pat: ty.pattern, ph: r() * 6, ty, t: 0 }); } };
         const spawn = () => { const n = 3 + Math.min(5, s.wave); for (let i = 0; i < n; i++) s.en.push({ x: 30 + (i + .5) * (W - 60) / n, y: -10 - i * 14, hp: C.enemyHp, pat: s.wave % 3, ph: r() * 6 }); };
         const shoot = (x, y, tx, ty, sp) => { const d = Math.max(1, dist(x, y, tx, ty)); s.eb.push({ x, y, vx: (tx - x) / d * sp, vy: (ty - y) / d * sp }); };
         return { s, C, step(k) {
             if (s.status !== 'play') return; s.t++; s.px = clamp(s.px + ax(k) * C.speed, 8, W - 8); s.py = clamp(s.py + ay(k) * C.speed, 20, H - 12);
             if (k.z && s.cool <= 0) { s.shots.push({ x: s.px, y: s.py - 8 }); s.cool = C.fireRate; } s.cool--; s.inv--;
             s.shots = s.shots.filter(b => (b.y -= 6) > -4);
+            if (D) {
+                while (s.q < D.waves.length && D.waves[s.q].at <= s.t) spawnD(D.waves[s.q++]);
+                for (const e of s.en) { e.t++; const sp = e.ty.speed || 1; e.y += e.pat === 3 ? sp * (e.t > 40 ? 2.4 : .5) : sp * .7; if (e.pat === 1) e.x += Math.sin(s.t / 20 + e.ph) * 1.4; if (e.pat === 2) e.x += Math.sign(s.px - e.x) * .6; if (e.ty.fire && r() < 1 / e.ty.fire) shoot(e.x, e.y, s.px, s.py, 2); }
+            } else
             for (const e of s.en) { e.y += .7; if (e.pat === 1) e.x += Math.sin(s.t / 20 + e.ph) * 1.4; if (e.pat === 2) e.x += Math.sign(s.px - e.x) * .5; if (r() < .006) shoot(e.x, e.y, s.px, s.py, 2); }
-            if (s.boss) { const b = s.boss; b.x = W / 2 + Math.sin(s.t / 50) * 100; if (s.t % 40 === 0) for (let i = -2; i <= 2; i++) shoot(b.x, b.y + 10, b.x + i * 40, H, 2); }
-            for (const b of s.shots) { for (const e of s.en) if (e.hp > 0 && Math.abs(b.x - e.x) < 10 && Math.abs(b.y - e.y) < 10) { e.hp--; b.y = -99; if (e.hp <= 0) s.score += 100; } if (s.boss && b.y > -50 && Math.abs(b.x - s.boss.x) < 22 && Math.abs(b.y - s.boss.y) < 14) { s.boss.hp--; b.y = -99; s.score += 10; } }
+            if (s.boss) { const b = s.boss, bp = D && D.boss ? D.boss.pattern | 0 : 0; b.x = bp === 1 ? W / 2 + Math.sin(s.t / 25) * 120 : bp === 2 ? clamp(b.x + Math.sign(s.px - b.x) * 1.2, 30, W - 30) : W / 2 + Math.sin(s.t / 50) * 100; const fr = D && D.boss && D.boss.fire ? D.boss.fire : 40; if (s.t % fr === 0) for (let i = -2; i <= 2; i++) shoot(b.x, b.y + 10, b.x + i * 40, H, 2); }
+            for (const b of s.shots) { for (const e of s.en) if (e.hp > 0 && Math.abs(b.x - e.x) < 10 && Math.abs(b.y - e.y) < 10) { e.hp--; b.y = -99; if (e.hp <= 0) s.score += e.ty ? e.ty.score : 100; } if (s.boss && b.y > -50 && Math.abs(b.x - s.boss.x) < 22 && Math.abs(b.y - s.boss.y) < 14) { s.boss.hp--; b.y = -99; s.score += 10; } }
             s.en = s.en.filter(e => e.hp > 0 && e.y < H + 12); s.eb = s.eb.filter(b => (b.x += b.vx, b.y += b.vy, b.y < H + 8 && b.y > -8 && b.x > -8 && b.x < W + 8));
             if (s.inv <= 0) { const hit = s.eb.some(b => dist(b.x, b.y, s.px, s.py) < 6) || s.en.some(e => dist(e.x, e.y, s.px, s.py) < 11); if (hit) { s.lives--; s.inv = 90; s.eb = []; if (s.lives <= 0) s.status = 'lose'; } }
-            if (!s.en.length && !s.boss) { if (s.wave >= C.waves) { if (C.boss) s.boss = { x: W / 2, y: 36, hp: 40 }; else s.status = 'win'; } else { s.wave++; spawn(); } }
+            if (D) { if (!s.en.length && !s.boss && s.q >= D.waves.length) { if (C.boss && s.bossHp > 0) { s.boss = { x: W / 2, y: 36, hp: s.bossHp, max: s.bossHp }; } else s.status = 'win'; } }
+            else if (!s.en.length && !s.boss) { if (s.wave >= C.waves) { if (C.boss) s.boss = { x: W / 2, y: 36, hp: 40 }; else s.status = 'win'; } else { s.wave++; spawn(); } }
             if (s.boss && s.boss.hp <= 0) { s.score += 2000; s.status = 'win'; }
         }, draw(g) {
             g.fillStyle = '#05060f'; g.fillRect(0, 0, W, H); for (let i = 0; i < 40; i++) { g.fillStyle = '#334'; g.fillRect((i * 97) % W, (i * 53 + s.t * (1 + i % 3)) % H, 1, 1); }
             g.fillStyle = C.color; if (s.inv <= 0 || s.t % 6 < 3) { g.beginPath(); g.moveTo(s.px, s.py - 8); g.lineTo(s.px - 7, s.py + 7); g.lineTo(s.px + 7, s.py + 7); g.fill(); }
-            g.fillStyle = '#fff'; for (const b of s.shots) g.fillRect(b.x - 1, b.y - 4, 2, 6); g.fillStyle = C.color2; for (const e of s.en) g.fillRect(e.x - 7, e.y - 6, 14, 12); if (s.boss) { g.fillRect(s.boss.x - 24, s.boss.y - 12, 48, 24); g.fillStyle = '#fff'; g.fillRect(s.boss.x - 24, s.boss.y - 18, 48 * s.boss.hp / 40, 3); }
+            g.fillStyle = '#fff'; for (const b of s.shots) g.fillRect(b.x - 1, b.y - 4, 2, 6); for (const e of s.en) { g.fillStyle = e.ty && e.ty.color ? SC[e.ty.color] || C.color2 : C.color2; const z = e.ty ? [7, 10, 15][e.ty.size | 0] || 7 : 7; g.fillRect(e.x - z, e.y - z * .85, z * 2, z * 1.7); } if (s.boss) { g.fillRect(s.boss.x - 24, s.boss.y - 12, 48, 24); g.fillStyle = '#fff'; g.fillRect(s.boss.x - 24, s.boss.y - 18, 48 * s.boss.hp / (s.boss.max || 40), 3); }
             g.fillStyle = '#ffd24a'; for (const b of s.eb) g.fillRect(b.x - 2, b.y - 2, 4, 4); hud(g, s, C); end(g, s); } };
     };
 
     /* ---------------------------------------------------------------- breakout */
+    /* design = { grid: rows of numbers, 0 = empty, 1-4 = hits the brick takes (up to 8 rows x 16 columns) } */
+    A.BREAKOUT_DESIGN = () => ({ grid: [[0,0,1,1,1,1,1,1,1,1,0,0],[0,1,2,2,2,2,2,2,2,2,1,0],[1,1,2,3,3,3,3,3,3,2,1,1],[1,2,3,4,4,0,0,4,4,3,2,1],[1,1,2,3,3,3,3,3,3,2,1,1],[0,1,2,2,2,2,2,2,2,2,1,0]] });
     A.breakout = (cfg, o) => {
         const C = Object.assign({}, A.DEFAULTS.breakout, cfg), s = { status: 'play', score: 0, lives: C.lives, px: W / 2, bx: W / 2, by: H - 30, vx: 0, vy: 0, held: true, bricks: [], t: 0 }, bw = W / C.cols;
-        for (let y = 0; y < C.rows; y++) for (let x = 0; x < C.cols; x++) s.bricks.push({ x: x * bw, y: 24 + y * 12, hit: false, row: y });
+        const G = C.design && Array.isArray(C.design.grid) && C.design.grid.length ? C.design.grid : null, gc = G ? Math.max(...G.map(r => r.length)) : 0, gw = G ? W / gc : bw;
+        if (G) G.forEach((row, y) => row.forEach((v, x) => { if (v > 0) s.bricks.push({ x: x * gw, y: 24 + y * 12, hit: false, row: y, hp: v, v, w: gw }); }));
+        else for (let y = 0; y < C.rows; y++) for (let x = 0; x < C.cols; x++) s.bricks.push({ x: x * bw, y: 24 + y * 12, hit: false, row: y, hp: 1, v: 1 + y % 4, w: bw });
         return { s, C, step(k) {
             if (s.status !== 'play') return; s.t++; s.px = clamp(s.px + ax(k) * 4, C.paddle / 2, W - C.paddle / 2);
             if (s.held) { s.bx = s.px; s.by = H - 30; if (k.z) { s.held = false; s.vx = 1.2; s.vy = -C.ballSpeed; } return; }
             s.bx += s.vx; s.by += s.vy; if (s.bx < 3 || s.bx > W - 3) { s.vx = -s.vx; s.bx = clamp(s.bx, 3, W - 3); } if (s.by < 3) { s.vy = Math.abs(s.vy); }
             if (s.vy > 0 && s.by > H - 24 && s.by < H - 16 && Math.abs(s.bx - s.px) < C.paddle / 2 + 3) { s.vy = -Math.abs(s.vy); s.vx = clamp((s.bx - s.px) / (C.paddle / 2) * 3.2, -3.6, 3.6); }
-            for (const b of s.bricks) if (!b.hit && s.bx > b.x - 2 && s.bx < b.x + bw + 2 && s.by > b.y - 2 && s.by < b.y + 11) { b.hit = true; s.score += 10 + (C.rows - b.row) * 2; s.vy = -s.vy; break; }
+            for (const b of s.bricks) if (!b.hit && s.bx > b.x - 2 && s.bx < b.x + b.w + 2 && s.by > b.y - 2 && s.by < b.y + 11) { if (--b.hp <= 0) { b.hit = true; s.score += 10 + (G ? b.v * 5 : (C.rows - b.row) * 2); } s.vy = -s.vy; break; }
             if (s.by > H) { s.lives--; s.held = true; s.vx = 0; s.vy = 0; if (s.lives <= 0) s.status = 'lose'; } if (s.bricks.every(b => b.hit)) s.status = 'win';
         }, draw(g) {
-            g.fillStyle = '#080a14'; g.fillRect(0, 0, W, H); for (const b of s.bricks) if (!b.hit) { g.fillStyle = `hsl(${(b.row * 40 + 20) % 360},70%,55%)`; g.fillRect(b.x + 1, b.y + 1, bw - 2, 10); }
+            g.fillStyle = '#080a14'; g.fillRect(0, 0, W, H); for (const b of s.bricks) if (!b.hit) { g.fillStyle = G ? ['#7ae87a', '#4ae8ff', '#f5c542', '#ff5a5a'][(b.hp - 1) & 3] : `hsl(${(b.row * 40 + 20) % 360},70%,55%)`; g.fillRect(b.x + 1, b.y + 1, b.w - 2, 10); }
             g.fillStyle = C.color; g.fillRect(s.px - C.paddle / 2, H - 20, C.paddle, 6); g.fillStyle = '#fff'; g.beginPath(); g.arc(s.bx, s.by, 3, 0, 7); g.fill(); hud(g, s, C); end(g, s); } };
     };
 
+    /* design = { track: [{ len 1-20, curve -6..6 (negative = left) }] up to 16 sections, grass: [r, g, b] } */
+    A.RACE_DESIGN = () => ({ grass: [42, 138, 42], track: [{ len: 3, curve: 0 }, { len: 2, curve: 3 }, { len: 3, curve: 6 }, { len: 2, curve: 3 }, { len: 3, curve: 0 }, { len: 2, curve: -3 }, { len: 3, curve: -6 }, { len: 2, curve: -3 }, { len: 3, curve: 0 }, { len: 2, curve: 4 }] });
     /* ---------------------------------------------------------------- race (pseudo-3D road) */
     A.race = (cfg, o) => {
         const C = Object.assign({}, A.DEFAULTS.race, cfg), r = rng(o.seed || 1), seg = 200, total = 600, curveAt = [], cars = [];
-        for (let i = 0; i < total; i++) curveAt.push(Math.sin(i / (total / (C.curves * 2 * Math.PI) * 1)) * 1.6); for (let i = 0; i < C.laneCars; i++) cars.push({ z: 40 + r() * (total - 40) * 1, x: (r() - .5) * 1.4, v: 20 + r() * 40 });
+        const RD = C.design && Array.isArray(C.design.track) && C.design.track.length ? C.design : null, grass = RD && RD.grass ? RD.grass : [42, 138, 42];
+        if (RD) { const sum = RD.track.reduce((n, q) => n + Math.max(1, q.len | 0), 0); let acc = 0, k = 0; for (let i = 0; i < total; i++) { while (k < RD.track.length - 1 && i >= (acc + Math.max(1, RD.track[k].len | 0)) / sum * total) { acc += Math.max(1, RD.track[k].len | 0); k++; } curveAt.push((RD.track[k].curve || 0) * .4); } }
+        else for (let i = 0; i < total; i++) curveAt.push(Math.sin(i / (total / (C.curves * 2 * Math.PI) * 1)) * 1.6); for (let i = 0; i < C.laneCars; i++) cars.push({ z: 40 + r() * (total - 40) * 1, x: (r() - .5) * 1.4, v: 20 + r() * 40 });
         const s = { status: 'play', score: 0, t: 0, z: 0, x: 0, v: 0, lap: 1, time: C.timeLimit, crash: 0, place: 0, laps: C.laps };
         return { s, C, step(k) {
             if (s.status !== 'play') return; s.t++; if (s.t % 60 === 0) s.time--; const cur = curveAt[Math.floor(s.z) % total];
@@ -99,8 +118,8 @@
             s.z += s.v / 60 / 4; s.score += Math.round(s.v / 30); for (const c of cars) { c.z += c.v / 60 / 4 * .6; if (c.z > s.z + total) c.z -= total; if (Math.abs(((c.z - s.z) % total + total) % total) < .6 && Math.abs(c.x - s.x) < .22) { s.v *= .4; s.crash = 20; c.z += 6; } }
             if (s.crash > 0) s.crash--; if (s.z >= s.lap * total) { s.lap++; s.time += 25; if (s.lap > C.laps) { s.status = 'win'; s.score += 1000 + s.time * 10; } } if (s.time <= 0) s.status = 'lose';
         }, draw(g) {
-            g.fillStyle = '#58b8ff'; g.fillRect(0, 0, W, H / 2); g.fillStyle = '#2a8a2a'; g.fillRect(0, H / 2, W, H / 2); let x = 0, dx = 0, y = H; const base = Math.floor(s.z);
-            for (let n = 1; n < 80; n++) { const i = (base + n) % total, sc = 1 / (n * .12 + .2), yy = H / 2 + (H / 2) * sc * .55, w = 150 * sc; dx += curveAt[i] * .35; x += dx; const cx = W / 2 + x * sc * 8 - s.x * w * .9; if (yy > y) continue; g.fillStyle = (i % 6 < 3) ? '#3a8a3a' : '#2f7a2f'; g.fillRect(0, yy, W, y - yy + 1); g.fillStyle = (i % 6 < 3) ? '#d44' : '#eee'; g.fillRect(cx - w * 1.15, yy, w * 2.3, y - yy + 1); g.fillStyle = '#555'; g.fillRect(cx - w, yy, w * 2, y - yy + 1); if (i % 4 < 2) { g.fillStyle = '#ddd'; g.fillRect(cx - 2 * sc, yy, 4 * sc, y - yy + 1); } y = yy;
+            g.fillStyle = '#58b8ff'; g.fillRect(0, 0, W, H / 2); g.fillStyle = `rgb(${grass[0]},${grass[1]},${grass[2]})`; g.fillRect(0, H / 2, W, H / 2); let x = 0, dx = 0, y = H; const base = Math.floor(s.z);
+            for (let n = 1; n < 80; n++) { const i = (base + n) % total, sc = 1 / (n * .12 + .2), yy = H / 2 + (H / 2) * sc * .55, w = 150 * sc; dx += curveAt[i] * .35; x += dx; const cx = W / 2 + x * sc * 8 - s.x * w * .9; if (yy > y) continue; g.fillStyle = `rgb(${grass[0] + (i % 6 < 3 ? 14 : 0)},${grass[1] + (i % 6 < 3 ? 14 : 0)},${grass[2] + (i % 6 < 3 ? 14 : 0)})`; g.fillRect(0, yy, W, y - yy + 1); g.fillStyle = (i % 6 < 3) ? '#d44' : '#eee'; g.fillRect(cx - w * 1.15, yy, w * 2.3, y - yy + 1); g.fillStyle = '#555'; g.fillRect(cx - w, yy, w * 2, y - yy + 1); if (i % 4 < 2) { g.fillStyle = '#ddd'; g.fillRect(cx - 2 * sc, yy, 4 * sc, y - yy + 1); } y = yy;
                 for (const c of cars) if (Math.floor(c.z) % total === i) { g.fillStyle = C.color2; g.fillRect(cx + c.x * w - 10 * sc * 1.5, yy - 14 * sc * 1.5, 20 * sc * 1.5, 14 * sc * 1.5); } }
             g.fillStyle = C.color; g.fillRect(W / 2 - 14 + (s.crash % 4 < 2 ? 0 : 3), H - 34, 28, 18); g.fillStyle = '#111'; g.fillRect(W / 2 - 16, H - 22, 6, 6); g.fillRect(W / 2 + 10, H - 22, 6, 6);
             fillText(g, Math.round(s.v) + ' km/h', W - 4, H - 4, '#fff', 9, 'right'); fillText(g, 'LAP ' + Math.min(s.lap, C.laps) + '/' + C.laps + '  TIME ' + Math.max(0, s.time), 4, 10, '#fff', 9); hud2(g, s, C); end(g, s); } };
@@ -126,20 +145,24 @@
             fillText(g, 'HP ' + s.hp + '  AMMO ' + s.ammo + '  KILLS ' + s.kills + '/' + C.enemies, 4, 10, '#fff', 9); fillText(g, 'SCORE ' + s.score, W - 4, 10, '#fff', 8, 'right'); end(g, s); } };
     };
 
+    /* design = { types: [{ name, hp, speed (0.5-2), dmg, score, color 0-4 }], waves: [{ type, n, side 0 right / 1 left / 2 both }], boss: { hp, dmg } } - waves play one after another */
+    A.BRAWLER_DESIGN = () => ({ types: [{ name: 'Thug', hp: 3, speed: 1, dmg: 1, score: 50, color: 0 }, { name: 'Runner', hp: 2, speed: 1.6, dmg: 1, score: 60, color: 1 }, { name: 'Bruiser', hp: 7, speed: .7, dmg: 2, score: 120, color: 3 }],
+        waves: [{ type: 0, n: 2, side: 0 }, { type: 0, n: 3, side: 2 }, { type: 1, n: 3, side: 1 }, { type: 2, n: 1, side: 0 }, { type: 1, n: 4, side: 2 }], boss: { hp: 30, dmg: 3 } });
     /* ---------------------------------------------------------------- brawler */
     A.brawler = (cfg, o) => {
         const C = Object.assign({}, A.DEFAULTS.brawler, cfg), r = rng(o.seed || 1), s = { status: 'play', score: 0, lives: C.lives, t: 0, px: 60, py: 170, face: 1, hp: 20, atk: 0, kind: 0, cool: 0, en: [], wave: 0, boss: null, inv: 0, cam: 0 };
-        const spawn = () => { const n = 2 + s.wave; for (let i = 0; i < n; i++) s.en.push({ x: W - 20 + i * 24, y: 140 + r() * 70, hp: C.enemyHp, cd: 30 + i * 10, hit: 0 }); };
+        const BD = C.design && Array.isArray(C.design.waves) && C.design.types && C.design.types.length ? C.design : null, BC = [null, '#ffd24a', '#5be08a', '#c07aff', '#ffffff'];
+        const spawn = () => { if (BD) { const w = BD.waves[s.wave - 1], ty = BD.types[w.type] || BD.types[0]; for (let i = 0; i < Math.min(8, w.n); i++) { const left = w.side === 1 || (w.side === 2 && i % 2); s.en.push({ x: left ? -20 - i * 24 : W + 20 + i * 24, y: 140 + r() * 70, hp: ty.hp, cd: 30 + i * 10, hit: 0, ty }); } return; } const n = 2 + s.wave; for (let i = 0; i < n; i++) s.en.push({ x: W - 20 + i * 24, y: 140 + r() * 70, hp: C.enemyHp, cd: 30 + i * 10, hit: 0 }); };
         return { s, C, step(k) {
             if (s.status !== 'play') return; s.t++; s.cool--; s.inv--; if (s.atk > 0) s.atk--; else { const mx = ax(k), my = ay(k); s.px = clamp(s.px + mx * 2, 10, W - 10); s.py = clamp(s.py + my * 1.4, 130, 215); if (mx) s.face = mx; if (s.cool <= 0 && (k.z || k.x)) { s.atk = 8; s.kind = k.x ? 1 : 0; s.cool = 16; const rng_ = s.kind ? 34 : 26, dmg = s.kind ? 2 : 1; for (const e of [...s.en, ...(s.boss ? [s.boss] : [])]) if (Math.abs(e.y - s.py) < 16 && (e.x - s.px) * s.face > 0 && Math.abs(e.x - s.px) < rng_) { e.hp -= dmg; e.hit = 8; e.x += s.face * 6; s.score += 10; } } }
-            for (const e of s.en.concat(s.boss ? [s.boss] : [])) { e.hit--; e.cd--; const d = dist(e.x, e.y, s.px, s.py); if (d > 22) { e.x += Math.sign(s.px - e.x) * (e === s.boss ? .6 : .45); e.y += Math.sign(s.py - e.y) * .3; } else if (e.cd <= 0 && s.inv <= 0) { s.hp -= e === s.boss ? 3 : 1; s.inv = 30; e.cd = 50; if (s.hp <= 0) { s.lives--; s.hp = 20; s.inv = 90; if (s.lives <= 0) s.status = 'lose'; } } }
-            const dead = s.en.filter(e => e.hp <= 0).length; if (dead) s.score += dead * 50; s.en = s.en.filter(e => e.hp > 0);
+            for (const e of s.en.concat(s.boss ? [s.boss] : [])) { e.hit--; e.cd--; const d = dist(e.x, e.y, s.px, s.py); if (d > 22) { e.x += Math.sign(s.px - e.x) * (e === s.boss ? .6 : e.ty ? .45 * e.ty.speed : .45); e.y += Math.sign(s.py - e.y) * .3; } else if (e.cd <= 0 && s.inv <= 0) { s.hp -= e === s.boss ? (BD && BD.boss ? BD.boss.dmg : 3) : (e.ty ? e.ty.dmg : 1); s.inv = 30; e.cd = 50; if (s.hp <= 0) { s.lives--; s.hp = 20; s.inv = 90; if (s.lives <= 0) s.status = 'lose'; } } }
+            const dead = s.en.filter(e => e.hp <= 0).length; if (dead) s.score += BD ? s.en.filter(e => e.hp <= 0).reduce((n, e) => n + (e.ty ? e.ty.score : 50), 0) : dead * 50; s.en = s.en.filter(e => e.hp > 0);
             if (s.boss && s.boss.hp <= 0) { s.score += 1000; s.status = 'win'; }
-            if (!s.en.length && !s.boss) { if (s.wave >= C.waves) { if (C.boss) s.boss = { x: W - 30, y: 170, hp: C.enemyHp * 8, cd: 40, hit: 0 }; else s.status = 'win'; } else { s.wave++; spawn(); } }
+            if (!s.en.length && !s.boss) { const nw = BD ? BD.waves.length : C.waves; if (s.wave >= nw) { if (C.boss) { const bh = BD && BD.boss ? BD.boss.hp : C.enemyHp * 8; s.bossMax = bh; s.boss = { x: W - 30, y: 170, hp: bh, cd: 40, hit: 0 }; } else s.status = 'win'; } else { s.wave++; spawn(); } }
         }, draw(g) {
             g.fillStyle = '#243'; g.fillRect(0, 0, W, 130); g.fillStyle = '#586'; g.fillRect(0, 130, W, H - 130); for (let i = 0; i < 8; i++) { g.fillStyle = '#354'; g.fillRect(i * 48 + 6, 40, 30, 70); }
             const body = (x, y, c, face, flash, atk) => { g.fillStyle = flash > 0 ? '#fff' : c; g.fillRect(x - 6, y - 30, 12, 22); g.fillStyle = '#e8b890'; g.fillRect(x - 5, y - 38, 10, 9); g.fillStyle = '#222'; g.fillRect(x - 6, y - 8, 5, 8); g.fillRect(x + 1, y - 8, 5, 8); if (atk) { g.fillStyle = '#e8b890'; g.fillRect(x + face * 6, y - 26, face * (atk > 1 ? 20 : 12), 5); } };
-            for (const e of [...s.en, ...(s.boss ? [s.boss] : []), { player: 1 }].sort((a, b) => (a.player ? s.py : a.y) - (b.player ? s.py : b.y))) { if (e.player) { if (s.inv <= 0 || s.t % 6 < 3) body(s.px, s.py, C.color, s.face, 0, s.atk > 0 ? (s.kind ? 3 : 2) : 0); } else { body(e.x, e.y, e === s.boss ? '#a22' : C.color2, e.x > s.px ? -1 : 1, e.hit, 0); if (e === s.boss) { g.fillStyle = '#e22'; g.fillRect(e.x - 18, e.y - 48, 36 * e.hp / (C.enemyHp * 8), 3); } } }
+            for (const e of [...s.en, ...(s.boss ? [s.boss] : []), { player: 1 }].sort((a, b) => (a.player ? s.py : a.y) - (b.player ? s.py : b.y))) { if (e.player) { if (s.inv <= 0 || s.t % 6 < 3) body(s.px, s.py, C.color, s.face, 0, s.atk > 0 ? (s.kind ? 3 : 2) : 0); } else { body(e.x, e.y, e === s.boss ? '#a22' : (e.ty && e.ty.color ? BC[e.ty.color] : C.color2), e.x > s.px ? -1 : 1, e.hit, 0); if (e === s.boss) { g.fillStyle = '#e22'; g.fillRect(e.x - 18, e.y - 48, 36 * e.hp / (s.bossMax || C.enemyHp * 8), 3); } } }
             fillText(g, 'HP ' + s.hp, 4, 22, '#fff', 9); hud(g, s, C); end(g, s); } };
     };
 

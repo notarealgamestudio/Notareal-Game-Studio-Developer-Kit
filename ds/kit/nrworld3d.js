@@ -37,10 +37,10 @@
     }
 
     function store(cfg) {
-        const St = req('nr3d_store.js'), w = St.world(), d = cfg || {}, boxes = [], ents = [], E = (type, flags, x, z, y) => ents.push({ type, flags: flags || 0, x, z, y: y || 0 });
+        const St = req('nr3d_store.js'), d = cfg || {}, w = St.world(d.store), PR = d.store && d.store.products && d.store.products.length ? d.store.products : St.PRODUCTS, pidx = id => { const k = St.PRODUCTS.findIndex(q => q.id === id); return k >= 0 ? k : Math.min(5, Math.max(0, PR.findIndex(q => q.id === id))); }, boxes = [], ents = [], E = (type, flags, x, z, y) => ents.push({ type, flags: flags || 0, x, z, y: y || 0 });
         for (const b of w.S) { if (b.kind === 'kerb' && b.ghost) { boxes.push({ x0: b.x0, y0: b.y0, z0: b.z0, x1: b.x1, y1: b.y1, z1: b.z1, col: b.col }); continue; } const inv = (b.kind === 'invis' || b.kind === 'npc' || !b.col); boxes.push({ x0: b.x0, y0: b.y0, z0: b.z0, x1: b.x1, y1: b.y1, z1: b.z1, col: b.col || [90, 90, 90], top: b.top, inv }); }
-        w.shelves.forEach((s, i) => { const px = St.PRODUCTS.findIndex(p => p.id === s.id); E(9, px, s.fx, s.fz); E(16, px, s.x, s.z, Math.round((s.face === 'x-' ? -7 : s.w) * 8)); });
-        w.piles.forEach(p => E(10, St.PRODUCTS.findIndex(q => q.id === p.id), p.fx, p.fz));
+        w.shelves.forEach((s, i) => { const px = pidx(s.id); E(9, px, s.fx, s.fz); E(16, px, s.x, s.z, Math.round((s.face === 'x-' ? -7 : s.w) * 8)); });
+        w.piles.forEach(p => E(10, pidx(p.id), p.fx, p.fz));
         E(11, 0, w.reg.x, w.reg.z); w.queue.forEach((q, i) => E(12, i, q.x, q.z)); E(13, 0, w.hobo.x, w.hobo.z); E(14, 0, w.dealer.x, w.dealer.z); E(15, 0, w.door.x, w.door.z); E(15, 1, w.spawnOut.x, w.spawnOut.z);
         E(17, 0, w.zone.x0, w.zone.z0); E(17, 1, w.zone.x1, w.zone.z1);
         const hr = (+d.startHour || 14) | ((+d.endHour || 22) << 8), fl = Math.round((d.thieves == null ? .16 : d.thieves) * 100) | ((d.hobo === false ? 0 : 1) << 8) | ((d.dealer === false ? 0 : 2) << 8) | ((d.robbery === false ? 0 : 4) << 8);

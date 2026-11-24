@@ -29,6 +29,7 @@ async function level3dDraw(cv) {
 }
 function level3dTab(main) {
     if (P.arcade && P.arcade.mode === 'skate') return skateparkTab(main);
+    if (P.arcade && P.arcade.mode === 'store3d') return storeTab(main);
     const L = level3dInit(), box = el('div', { class: 'pane' }), cv = el('canvas', { width: 640, height: 640, style: 'width:100%;max-width:640px;border:1px solid #444;border-radius:6px;cursor:crosshair;image-rendering:pixelated' });
     box.append(el('h2', {}, '🏙 3D level builder'), el('p', { class: 'hint' }, 'Build the map for the 3D game types (open world, war, RPG world) on any console that has a 3D engine: DS, PlayStation, N64. Pick a tool, click the map. Buildings use your Asset library walls. Top-down view; export the ROM to walk it in 3D.'));
     const tools = [['building', '🏢 Building'], ['prop', '🌳 Prop'], ['ramp', '⛰ Ramp'], ['star', '★ Star'], ['health', '+ Health'], ['ammo', 'Ammo'], ['enemy', 'Enemy'], ['npc', 'Person'], ['spawn', 'S Spawn'], ['erase', '🗑 Erase']];

@@ -41,3 +41,8 @@ Plain categories. "Verified" means I ran it in this session (emulator, browser o
 - REAL: the 3D skate engine reads an 'SKPK' section (rails, ledges, coping, kickers, funboxes, blocks, 7 letters, spawn, colours). Edited in the 3D level builder tab when the project is a skate game. Checked: node test (8), Playwright click-through, DS emulator screenshot of a custom park.
 - STARTER: goals/challenges still come from the chosen base park; limits are 8 rails, 4 ramps, 2 blocks.
 - NOT DONE: other skate engines (PC/other consoles) do not read it.
+
+## Convenience store job sim: your own store (added)
+- REAL (PC / Xbox / desktop): the store engine plays a layout you build in the 3D level builder tab (store builder): products with names, prices, costs and colours (up to 8), shelves (product, position, length, facing, up to 12), register / counter position, outside props. Customers only shop for products that have a shelf. Checked: node tests (7 new, 31 old pass), Playwright click-through of the builder, engine run on a custom layout without errors.
+- PARTIAL (N64 / PlayStation): shelf and register positions from your layout go into the world data and the soft engine plays them (host build, screenshot differs from default). Product names and prices there are still the engine's built-in six. Not run on a real N64 / PSX emulator.
+- NOT DONE: the shop shell (walls, door, back room) is fixed; no DS store engine; the store does not read the shared cast, the asset library or story/NPC data; your original Convenience Store minigames are not a rebuildable project in the kit.

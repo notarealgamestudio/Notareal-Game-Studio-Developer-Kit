@@ -34,7 +34,11 @@
     ST.DEALER_LINES = ["Keep it quiet, kid. I'm just a guy who sells bats.", "You didn't get these from me. You got these from 'a friend.'", "Looking for protection? I got insurance... with a wooden handle.", "Customers come and go. Thieves come and go faster. Be faster.", "No refunds. No receipts. No questions. Fine, one question: you got cash?", "Nice store. Be a shame if somebody robbed it. Anyway, shotguns."];
     A.MODES.store3d = { name: 'Convenience store job sim (3D, GTA-style controls)', controls: 'Up/Down walk, Left/Right turn, hold C sprint, Z action or talk (see prompt), X shout / tackle or use weapon, V swap weapon; at the register Up/Down = +$1, Left/Right = +5c (hold C = 25c)', genres: ['crafting_sim', 'life_sim', 'open_world_3d', 'action_adventure'] };
     const money = v => Math.round(v * 100) / 100;
-    ST.world = () => {
+    /* the default store (also the starting point of the editor's store builder): products, shelves (product, x, z, length, facing) and the counter */
+    ST.DEFAULT_STORE = () => ({ products: ST.PRODUCTS.map(p => Object.assign({}, p, { col: p.col.slice() })), counter: { x: 8, z: -6.1 },
+        shelves: [['soda', -8, -2, 8, -1], ['chips', -8, 1.2, 8, -1], ['candy', -8, 4.6, 8, 1], ['bread', 6.5, 1, 7, -1], ['energy', 6.5, 4.6, 7, 1], ['milk', 13.2, 0, 7, 'x-']].map(q => ({ id: q[0], x: q[1], z: q[2], w: q[3], face: q[4] })), decor: [] });
+    ST.world = (L) => {
+        L = L || ST.DEFAULT_STORE(); const PR = L.products && L.products.length ? L.products : ST.PRODUCTS, CT = L.counter || { x: 8, z: -6.1 }, cx0 = CT.x, cz0 = CT.z;
         const S = [], add = (b, col, kind, extra) => { b.col = col; b.kind = kind || 'solid'; if (extra) Object.assign(b, extra); S.push(b); return b; };
         const WALL = [226, 222, 210], TRIM = [190, 60, 50], WH = 3.4;
         // shell: south wall with door gap, north wall with back-room door, east/west
@@ -44,26 +48,27 @@
         // back room
         add(N3.box(-14, 0, 12.5, .5, WH, 7), [200, 196, 184], 'wall'); add(N3.box(-6, 0, 12.5, .5, WH, 7), [200, 196, 184], 'wall'); add(N3.box(-10, 0, 16, 8.5, WH, .5), [200, 196, 184], 'wall');
         // counter (front) with register, side display
-        add(N3.box(8, 0, -6.1, 6, 1.05, .8), [150, 100, 60], 'counter', { top: [210, 190, 150] }); add(N3.box(12.5, 0, -6.4, 3, 1.2, 1.2), [200, 80, 60], 'display');
+        add(N3.box(cx0, 0, cz0, 6, 1.05, .8), [150, 100, 60], 'counter', { top: [210, 190, 150] }); add(N3.box(cx0 + 4.5, 0, cz0 - .3, 3, 1.2, 1.2), [200, 80, 60], 'display');
         // shelves: id, product, centre x,z, w,d, face (+1 customers stand at +z, -1 at -z, 'x+' east side)
-        const sh = [['soda', -8, -2, 8, .9, -1], ['chips', -8, 1.2, 8, .9, -1], ['candy', -8, 4.6, 8, .9, 1], ['bread', 6.5, 1, 7, .9, -1], ['energy', 6.5, 4.6, 7, .9, 1], ['milk', 13.2, 0, 7, 1.2, 'x-']];
+        const sh = (L.shelves || []).filter(q => PR.some(p => p.id === q.id)).map(q => [q.id, q.x, q.z, q.face === 'x-' ? 7 : Math.max(2, Math.min(14, q.w || 7)), q.face === 'x-' ? 1.2 : .9, q.face === 'x-' ? 'x-' : (q.face === 1 ? 1 : -1)]);
         const shelves = sh.map((q, i) => { const w = q[5] === 'x-' ? q[4] : q[3], d = q[5] === 'x-' ? q[3] : q[4], b = add(q[5] === 'x-' ? N3.box(q[1], 0, q[2], q[4] * 0 + 1.2, 2.0, 7) : N3.box(q[1], 0, q[2], q[3], 1.75, q[4]), q[5] === 'x-' ? [200, 220, 235] : [170, 175, 185], 'shelf'); const face = q[5];
             const fx = face === 'x-' ? q[1] - 1.5 : q[1], fz = face === 'x-' ? q[2] : q[2] + (face === 1 ? 1.2 : -1.2); return { id: q[0], i, b, face, x: q[1], z: q[2], w: face === 'x-' ? 7 : q[3], fx, fz, cap: 12, stock: 6, spots: [0, .5].map(f => ({ x: face === 'x-' ? fx : q[1] - q[3] / 2 + q[3] * (.25 + .5 * f), z: face === 'x-' ? q[2] - 2 + 4 * f : fz })) }; });
         // back room racks (crate piles per product)
-        const piles = ST.PRODUCTS.map((p, i) => { const x = -12.6 + (i % 3) * 2.8, z = 10.8 + Math.floor(i / 3) * 2.6; add(N3.box(x, 0, z, 1.6, 1.0, 1.2), [150, 110, 70], 'crate', { nonav: false }); return { id: p.id, x, z, fx: x, fz: z + (i < 3 ? -1.0 : 1.0), qty: 14 }; }); // pick position beside the pile
+        const piles = PR.map((p, i) => { const x = -12.6 + (i % 3) * 2.8, z = 10.8 + Math.floor(i / 3) * 2.6; add(N3.box(x, 0, z, 1.6, 1.0, 1.2), [150, 110, 70], 'crate', { nonav: false }); return { id: p.id, x, z, fx: x, fz: z + (i < 3 ? -1.0 : 1.0), qty: 14 }; }); // pick position beside the pile
         // outside: kerb + parked cars (decor, solid)
         add(N3.box(0, 0, -11, 60, .15, 1), [150, 150, 150], 'kerb', { ghost: true }); add(N3.box(-20, 0, -18, 4.4, 1.5, 2), [60, 90, 150], 'car'); add(N3.box(18, 0, -22, 4.4, 1.5, 2), [160, 160, 170], 'car'); add(N3.box(-30, 0, -4, 1, 1, 30), [150, 150, 150], 'fence', { ghost: false });
         // GTA street: dumpster, barrel fire, cart, lamp posts, a van, bounds
         add(N3.box(-17, 0, -12.6, 3, 1.3, 1.4), [50, 110, 70], 'solid'); add(N3.box(-11.8, 0, -13.6, .9, 1.0, .9), [110, 60, 40], 'solid', { barrel: true }); add(N3.box(-20.6, 0, -13.2, 1.3, .9, .8), [150, 150, 158], 'solid');
         for (const lx of [-22, -8, 8, 22]) add(N3.box(lx, 0, -25.4, .22, 4.8, .22), [60, 62, 70], 'solid', { lamp: true });
         add(N3.box(27, 0, -17.5, 2.6, 2.0, 5.4), [26, 28, 34], 'car'); add(N3.box(-9.9, 0, -14.4, .7, 1.8, .7), 0, 'npc', { ghost: false }); add(N3.box(23.8, 0, -17.6, .7, 1.8, .7), 0, 'npc', { ghost: false });
+        for (const d of (L.decor || [])) { const K = { dumpster: [3, 1.3, 1.4, [50, 110, 70]], crate: [1.6, 1.0, 1.2, [150, 110, 70]], barrel: [.9, 1.0, .9, [110, 60, 40]], car: [4.4, 1.5, 2, [60, 90, 150]], lamp: [.22, 4.8, .22, [60, 62, 70]], bench: [2.2, .9, .8, [140, 100, 60]], tree: [1.2, 3.2, 1.2, [60, 130, 60]] }[d.kind]; if (K) add(N3.box(d.x, 0, d.z, K[0], K[1], K[2]), K[3], d.kind === 'car' ? 'car' : 'solid', d.kind === 'lamp' ? { lamp: true } : d.kind === 'barrel' ? { barrel: true } : null); }
         add(N3.box(30.5, 0, -12, .6, 3, 62), 0, 'invis'); add(N3.box(0, 0, -44, 62, 3, .6), 0, 'invis');
         const grid = N3.grid(S, 6), nav = N3.nav(S, -29, -42, 29, 18, 1.0, .4, .4);
-        const queue = [0, 1, 2, 3, 4, 5].map(i => ({ x: 8 - i * 1.5, z: -7.7 }));
-        return { S, grid, nav, shelves, piles, queue, reg: { x: 8, z: -6.1 }, zone: { x0: 5.2, x1: 10.8, z0: -5.6, z1: -3.4 }, panic: { x: 6.2, z: -5.1 }, door: { x: 0, z: -9 }, spawnOut: { x: 0.6, z: -26 }, start: { x: 7.5, z: -4.4 }, hobo: { x: -9.9, z: -13.4 }, dealer: { x: 23.6, z: -16.6 }, spawnHero: { x: 0, z: -15.5 } };
+        const queue = [0, 1, 2, 3, 4, 5].map(i => ({ x: cx0 - i * 1.5, z: cz0 - 1.6 }));
+        return { S, grid, nav, shelves, piles, queue, reg: { x: cx0, z: cz0 }, zone: { x0: cx0 - 2.8, x1: cx0 + 2.8, z0: cz0 + .5, z1: cz0 + 2.7 }, panic: { x: cx0 - 1.8, z: cz0 + 1 }, door: { x: 0, z: -9 }, spawnOut: { x: 0.6, z: -26 }, start: { x: cx0 - .5, z: cz0 + 1.7 }, hobo: { x: -9.9, z: -13.4 }, dealer: { x: 23.6, z: -16.6 }, spawnHero: { x: 0, z: -15.5 } };
     };
     A.store3d = (cfg, o) => {
-        const C = Object.assign({}, DEF, cfg), r = rng(o.seed || 1), Wd = ST.world(), grid = Wd.grid, nav = Wd.nav, P = ST.PRODUCTS, prod = id => P.find(q => q.id === id);
+        const C = Object.assign({}, DEF, cfg), r = rng(o.seed || 1), Wd = ST.world(C.store), grid = Wd.grid, nav = Wd.nav, P = C.store && C.store.products && C.store.products.length ? C.store.products : ST.PRODUCTS, prod = id => P.find(q => q.id === id), PS0 = P.filter(p => Wd.shelves.some(q => q.id === p.id)), PS = PS0.length ? PS0 : P;
         const hero = An.actor(Object.assign({}, An.STYLES[C.hero] || An.STYLES.austin), 31), per = 1 / 60, minPerSec = (C.endHour - C.startHour) * 60 / C.shiftSeconds;
         const p = { x: Wd.start.x, y: 0, z: Wd.start.z, yaw: 0, r: .36, h: 1.75, vx: 0, vy: 0, vz: 0, groundFn: () => 0, speed: 0 };
         const s = { status: 'play', t: 0, min: C.startHour * 60, p, cash: C.till, bank: 0, sales: 0, loss: 0, rep: 55, energy: 1, stamina: 1, health: 100, custDone: 0, caught: 0, stolen: 0, spills: 0, mopped: 0, stocked: 0, robbed: 0, cust: [], carry: null, reg: null, prompt: '', msg: '', msgT: 0, last: {}, shelves: Wd.shelves, piles: Wd.piles, world: Wd, anim: hero, spill: [], items: [], log: [], heldKey: {}, robber: null, nextCust: 4, nextSpill: 60 + r() * 40, cid: 0, alarm: 0, police: 0, noise: 0, stats: { scanned: 0, changeOk: 0, changeBad: 0, shouts: 0, tackles: 0, left: 0 } };
@@ -78,7 +83,7 @@
         /* ---------------------------------------------------------------- customers */
         const spawnCustomer = (kind) => {
             const id = s.cid++, tk = kind === 'robber' ? 'psycho' : kind === 'thief' ? 'criminal' : (() => { const ks = Object.keys(ST.TYPES), tw = ks.reduce((a, k) => a + ST.TYPES[k].w, 0); let q = r() * tw; for (const k of ks) { q -= ST.TYPES[k].w; if (q < 0) return k; } return 'shopper'; })(), ty = ST.TYPES[tk], sty = kind === 'robber' ? Object.assign({}, An.STYLES.robber) : kind === 'thief' ? Object.assign(An.randomStyle(id + 5), { shirt: [38, 38, 46], pants: [34, 34, 40], hairStyle: 'short', stubble: true }) : An.randomStyle(id + 3);
-            const n = kind === 'robber' ? 0 : 1 + Math.floor(r() * (kind === 'thief' ? 2 : 4)), list = []; for (let i = 0; i < n; i++) { const w = r(); list.push(P[Math.floor(r() * P.length)].id); }
+            const n = kind === 'robber' ? 0 : 1 + Math.floor(r() * (kind === 'thief' ? 2 : 4)), list = []; for (let i = 0; i < n; i++) { const w = r(); list.push(PS[Math.floor(r() * PS.length)].id); }
             const c = { id, kind, x: Wd.spawnOut.x + (r() - .5) * 2, z: Wd.spawnOut.z, yaw: 0, st: 'enter', list, basket: [], idx: 0, type: tk, ty, patience: (30 + (100 - ty.temper) * .55) + r() * 20, path: null, pk: 0, t: 0, actor: An.actor(sty, id + 40), speed: 0, wantRun: false, stolen: null, alerted: false, pay: r() < .62 ? 'card' : 'cash', happy: 1, seen: false, tendered: 0, due: 0, oos: 0, spot: 0, gone: false, flee: false, face: 0 };
             c.actor.mood = 'onduty'; c.actor.ctx = 'onduty'; if (kind === 'robber') c.actor.held = { kind: 'pistol' }; s.cust.push(c); return c;
         };
@@ -166,7 +171,7 @@
             s.nextCust -= dt; const hr = s.min / 60, rush = (hr > 16.8 && hr < 19.2) ? .55 : hr > 20.5 ? 1.4 : 1;
             if (s.nextCust <= 0 && s.min >= C.startHour * 60 && s.cust.filter(c => !c.gone).length < 8 && s.cust.filter(c => c.st === 'queue' || c.st === 'service').length < 5 && s.min < C.endHour * 60 - 25) { const roll = r(), kind = roll < C.thieves * (s.hobo.given >= 6 ? .75 : 1) ? 'thief' : 'cust'; spawnCustomer(kind); s.nextCust = (5 + r() * 7) * rush / C.rate; }
             if (C.robbery && !s.robbery && s.min > (C.endHour - 2.2) * 60 && r() < .004) { s.robbery = true; spawnCustomer('robber'); }
-            s.nextSpill -= dt; if (s.nextSpill <= 0) { s.nextSpill = 50 + r() * 50; const sh = Wd.shelves[Math.floor(r() * 4)]; s.spill.push({ x: sh.spots[1].x + (r() - .5), z: sh.fz, done: 0 }); say('Spill on aisle! Clean it before someone slips', 160); }
+            s.nextSpill -= dt; if (s.nextSpill <= 0) { s.nextSpill = 50 + r() * 50; const sh = Wd.shelves[Math.floor(r() * Math.min(4, Wd.shelves.length))]; s.spill.push({ x: sh.spots[1].x + (r() - .5), z: sh.fz, done: 0 }); say('Spill on aisle! Clean it before someone slips', 160); }
             for (const c of s.cust) stepCust(c, dt); s.cust = s.cust.filter(c => !c.gone || c.st !== 'gone' ? true : false); s.cust = s.cust.filter(c => c.st !== 'gone');
             /* shout / tackle (X) */
             if (xP && !regOn && !busyAct && s.weapon !== 'fists') useWeapon();

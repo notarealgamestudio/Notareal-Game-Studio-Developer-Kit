@@ -209,7 +209,8 @@ async function drawLevel(cv, L) {
 /* ------------------------------------------------------------------ characters: library heroes + character builder */
 function charsTab(main) {
     const box = el('div', { class: 'pane' });
-    box.append(styleBar(), el('h2', {}, 'Your hero'));
+    castPanel(box);
+    box.append(styleBar(), el('h2', {}, '2D hero (sprite based, used by the platformer and other 2D games)'));
     const cur = el('div', { class: 'row' }); thumb(cur, P.sprites.hero.image, P.sprites.hero.w, P.sprites.hero.h, 0, 4).then(() => {}); box.append(cur);
     box.append(el('h3', {}, 'Pick a premade hero'));
     box.append(el('div', { class: 'row' }, ...byStyle(LIB.sprites.filter(s => s.role === 'hero')).map(s => { const b = el('div', { class: 'pick', onclick: () => { P.sprites.hero = spriteRef(s); dirty = true; renderAll(); } }); thumb(b, 'lib:' + s.png, s.w, s.h, 0, s.h > 32 ? 2 : 3); b.append(el('small', {}, s.name)); return b; })));

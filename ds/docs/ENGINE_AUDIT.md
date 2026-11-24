@@ -8,7 +8,7 @@ Plain categories. "Verified" means I ran it in this session (emulator, browser o
 | Asset library: 12 skylines, 16 land types, 10 buildings, 21 props, import your own | Real. Tab in Assets group, same for every game type (click-tested for 3D world, skate, wrestling). |
 | Where the assets reach the game | DS 3D world: ground, skyline ring, building walls (emulator-verified ground + skyline; walls not seen yet). DS skate park: skyline + slab (boots, verified). DS wrestling: crowd/backdrop + floor (boots). PSX/N64 soft engine: skyline + ground (verified on the PC host build only). PC 3D engines: ground (verified in browser), skyline (works, mostly behind scenery). 2D engines: skyline becomes the backdrop. |
 | Buildings and props | Chosen and saved with the project. NOT yet placed in any engine except as building wall textures. Placing them in levels is still to do. |
-| Characters / faces (one shared roster for all game types) | NOT done. Wrestling roster, skater look and 2D hero are still separate editors. This is the next reorganization. |
+| Characters (one shared cast for all game types) | Real for wrestling and skate: one cast list (Assets > Characters), the wrestling roster and the skater both read it (click-tested, wrestling verified in emulator). NOT yet read by the 3D world player, basketball or the 2D engines. Face preview in the editor: none (the engine draws the face from the numbers); face-from-photo tool still separate. |
 | Level / world building shared across types | NOT done. Platformer level editor, RPG world editor and DS 3D box worlds are separate. |
 | Music, sounds | Shared tabs exist in the Assets group; not re-checked this session. |
 

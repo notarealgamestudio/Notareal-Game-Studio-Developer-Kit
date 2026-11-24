@@ -360,7 +360,8 @@ NR.ARCADE_KEYS = { shmup: ['lives', 'speed', 'fireRate', 'waves', 'enemyHp', 'bo
 /* DS 3D skate ROM (engine/skate3d, built from the Jabroni Hawk engine): one SKCF section = park, run length, goal, physics, skater look (the CAW face generator), title */
 NR.buildDSSkate = P => {
     const A = P.arcade; if (!A || A.mode !== 'skate') throw new Error('No skate game set up yet');
-    const c = A.cfg || {}, b = new Uint8Array(120), dv = new DataView(b.buffer), u = (i, v) => dv.setUint16(i * 2, Math.max(0, Math.min(65535, Math.round(+v || 0))), true);
+    let c = A.cfg || {}; const sk = NR.castFor(P, 'skate')[0]; if (sk) c = Object.assign({}, c, { sex: sk.sex, skin: sk.skin, hair: sk.hair, hairc: sk.hairc, eyes: sk.eyes, beard: sk.beard, top: sk.top, pants: sk.pants, boots: sk.boots, skaterHeight: sk.height, skaterBuild: sk.build });   // the shared cast decides who skates
+    const b = new Uint8Array(120), dv = new DataView(b.buffer), u = (i, v) => dv.setUint16(i * 2, Math.max(0, Math.min(65535, Math.round(+v || 0))), true);
     u(0, (c.spot || 0) % 3); u(1, c.seconds || 120); u(2, c.goalScore || 0); u(3, (c.maxSpeed || 4.2) * 4.05); u(4, (c.ollie || 4.6) * 4.13); u(5, (c.gravity || .24) * 45.8);
     [c.sex, c.skin, c.hair, c.hairc, c.eyes, c.beard, c.top, c.pants, c.boots].forEach((v, i) => u(6 + i, v)); u(15, (c.skaterHeight || 1) * 100); u(16, (c.skaterBuild || 1) * 100);
     const t = String(c.title || 'Skate Session').slice(0, 30).toUpperCase(); for (let i = 0; i < t.length; i++) b[40 + i] = t.charCodeAt(i) & 127;
@@ -373,8 +374,11 @@ NR.buildDSSkate = P => {
 NR.WRESTLE_DEFAULT = () => ({ title: 'Pro Wrestling', matchType: 5, roster: [
     { name: 'Hero', sex: 0, skin: 2, hair: 1, hairc: 1, eyes: 1, beard: 0, top: 1, pants: 2, boots: 4, height: 1, build: 1, fin: 0, heel: 0, preset: 0, key: 5, tempo: 124, power: 100, tough: 100, speed: 100, gain: 100 },
     { name: 'Rival', sex: 0, skin: 4, hair: 0, hairc: 0, eyes: 2, beard: 1, top: 3, pants: 1, boots: 2, height: 1.05, build: 1.1, fin: 2, heel: 1, preset: 1, key: 3, tempo: 96, power: 110, tough: 110, speed: 90, gain: 100 }] });
+/* the shared cast: one list of characters (look + per-game extras) used by every game type. c.games = { wrestling, skate } turns a character on or off for a game (default on). */
+NR.CAST_NEW = i => ({ name: 'Character ' + (i + 1), sex: 0, skin: i % 8, hair: i % 8, hairc: i % 8, eyes: 1, beard: 0, top: i % 10, pants: 2, boots: 4, height: 1, build: 1, fin: i % 4, heel: i % 2, preset: i % 3, key: i % 12, tempo: 110, power: 100, tough: 100, speed: 100, gain: 100, games: { wrestling: true, skate: i === 0 } });
+NR.castFor = (P, game) => (P.cast || []).filter(c => !c.games || c.games[game] !== false);
 NR.buildDSWrestling = P => {
-    const W = P.wrestle || NR.WRESTLE_DEFAULT(), R = (W.roster || []).slice(0, 8); if (R.length < 2) throw new Error('A wrestling game needs at least 2 wrestlers');
+    const W = P.wrestle || NR.WRESTLE_DEFAULT(), cast = NR.castFor(P, 'wrestling'), R = (cast.length >= 2 ? cast : (W.roster || [])).slice(0, 8); if (R.length < 2) throw new Error('A wrestling game needs at least 2 wrestlers');
     const pl = new Uint8Array(4 + 40 * R.length); pl[0] = R.length; pl[1] = W.matchType == null ? 5 : Math.max(0, Math.min(5, W.matchType | 0));
     R.forEach((w, i) => { const o = 4 + i * 40, nm = String(w.name || 'WRESTLER').slice(0, 15).toUpperCase(); for (let k = 0; k < nm.length; k++) pl[o + k] = nm.charCodeAt(k) & 127;
         [w.sex, w.skin, w.hair, w.hairc, w.eyes, w.beard, w.top, w.pants, w.boots].forEach((v, k) => { pl[o + 16 + k] = (+v || 0) & 255; });

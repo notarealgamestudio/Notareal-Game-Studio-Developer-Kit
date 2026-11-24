@@ -9,6 +9,8 @@ on:
         default: "1.5b"
   push:
     tags: ["ai-*"]
+    branches: [main]
+    paths: [".github/workflows/build-with-ai.yml"]
 permissions:
   contents: write
 jobs:

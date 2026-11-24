@@ -190,7 +190,14 @@ static u8 fm[MAXN][MAXN]; static int fn, fx, fy, fa, fdir_t; typedef struct { in
 #define ONE 65536
 static int cs(int a) { return cosLerp(a & 32767); } static int sn(int a) { return sinLerp(a & 32767); }
 static int cell_at(int x, int y) { int cx = x >> 16, cy = y >> 16; if (cx < 0 || cy < 0 || cx >= fn || cy >= fn) return 1; return fm[cy][cx]; }
+static void fps_design(const u8 *D) {   /* FPSL design section (kit NR.fpsDesign) */
+    int n = D[1] > 24 ? 24 : D[1]; fn = n; P[0] = n; memset(fm, 1, sizeof fm); kills = 0; hurt = 0; hitm = 0; memset(foe, 0, sizeof foe); memset(pk, 0, sizeof pk); fcount = 0; int np = 0; fx = ONE * 3 / 2; fy = ONE * 3 / 2; fa = 0;
+    for (int y = 0; y < n; y++) for (int x = 0; x < n; x++) { int c = D[8 + y * n + x]; fm[y][x] = c == 1; int cx = x * ONE + ONE / 2, cy = y * ONE + ONE / 2;
+        if (c == 2 && fcount < 16) { foe[fcount] = (Foe){ cx, cy, 8, 1, rnd(60), 0 }; fcount++; } else if ((c == 3 || c == 4) && np < 12) { pk[np] = (Pick){ cx, cy, c == 3, 1 }; np++; } else if (c == 5) { fx = cx; fy = cy; } }
+    hp = P[2] < 10 ? 100 : P[2]; ammo = P[3] < 4 ? 40 : P[3]; mag = 12; if (mag > ammo) mag = ammo; ammo -= mag; reload = 0; score = 0; P[1] = fcount;
+}
 static void fps_init(void) {
+    u32 zz; const u8 *FD = sec("FPSL", &zz); if (FD && zz >= 8u + (u32)FD[1] * FD[1] && FD[0] && FD[1] >= 8) { fps_design(FD); return; }
     fn = (P[0] < 9 ? 15 : P[0] > 24 ? 23 : P[0]) | 1; P[0] = fn; memset(fm, 1, sizeof fm); kills = 0; hurt = 0; hitm = 0;
     int stack[MAXN * MAXN][2], sp = 0; fm[1][1] = 0; stack[sp][0] = 1; stack[sp][1] = 1; sp++;
     while (sp) { int x = stack[sp - 1][0], y = stack[sp - 1][1], d[4], nd = 0; static const int dx[4] = { 2, -2, 0, 0 }, dy[4] = { 0, 0, 2, -2 }; for (int k = 0; k < 4; k++) { int nx = x + dx[k], ny = y + dy[k]; if (nx > 0 && ny > 0 && nx < fn - 1 && ny < fn - 1 && fm[ny][nx]) d[nd++] = k; }

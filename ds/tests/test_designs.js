@@ -8,4 +8,7 @@ const rd=NR.raceDesign({grass:[10,20,30],track:[{len:3,curve:-4},{len:2,curve:5}
 const bd=NR.brawlerDesign(A.BRAWLER_DESIGN());t('brawler',bd[0]===1&&bd[1]===3&&bd[2]===5&&bd[3]===30&&bd[8]===3&&bd[40+3*3+0]===2);
 const gm=A.create('brawler',{design:A.BRAWLER_DESIGN(),boss:1,lives:50},{seed:2});for(let i=0;i<60*400&&gm.s.status==='play';i++){const e=gm.s.en[0]||gm.s.boss;if(e){const side=e.x>128?-1:1;gm.s.px=Math.max(10,Math.min(246,e.x+side*18));gm.s.py=e.y;gm.s.face=-side}gm.step({z:i%2});}t('pc brawler plays through all waves and the boss',gm.s.wave===5&&gm.s.status==='win');
 const rg=A.create('race',{design:A.RACE_DESIGN()},{seed:1});for(let i=0;i<900;i++)rg.step({ArrowUp:1});t('pc race runs',rg.s.z>100);
+const bb=A.create('basketball',{design:A.BASKETBALL_DESIGN()},{seed:1});t('bball ratings',bb.s.P[1].r.dunk===1.4&&bb.s.P[2].r.name==='Flash');
+const bs=A.create('baseball',(()=>{const d=A.BASEBALL_DESIGN();d.pitcher.pitches={fastball:false,curve:false,change:false,slider:true};return {design:d}})(),{seed:1});const nm=new Set();for(let i=0;i<900;i++){bs.step({});if(bs.s.pitch)nm.add(bs.s.pitch.p.name)}t('baseball only slider',nm.size===1&&nm.has('SLIDER'));
+const fl=NR.fpsDesign({map:['####','#SE#','#HA#','####']});t('fpsl size',fl[0]===1&&fl[1]===8&&fl[8]===1);const fd=A.FPS_DESIGN();const fg=A.create('fps',{design:fd},{seed:1});t('pc fps from design',fg.s.en.length===6&&fg.s.pks.length===6&&fg.s.x===1.5);
 console.log(ok+' passed, '+bad+' failed');process.exit(bad?1:0)

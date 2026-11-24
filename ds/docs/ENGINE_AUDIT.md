@@ -60,4 +60,7 @@ Each lives in the "Level / content builder" tab when the game is that type, is s
 - Breakout: 8x16 brick grid, 0-4 hits per brick. Same checks.
 - Racing: track sections (length, bend), grass colour. Same checks (DS screenshot showed the custom bend and colour).
 - Beat-em-up: fighter types, up to 16 waves (type, count, side), boss. Same checks.
-- STILL SETTINGS ONLY: falling blocks, memory, city sim, hoops / basketball, baseball, vehicle combat, rail shooter, kart racing, first-person arcade, 3D life sim, 3D side-scroller. Timeline-driven DS ROMs (several scenes in one ROM) still use the old built-in content, not these designs.
+- First-person shooter: paint the level (walls, enemies, health and ammo pickups, start, exit). PC + DS ROM (FPSL section; DS emulator minimap showed the painted layout and enemy count). PC gained pickups for this.
+- Street basketball (PC only): two teams of two with speed / shooting / dunk / defense per player, team colours and names, court colour. Checked: node tests, editor click-through. No DS engine exists for it.
+- Baseball (PC only): pitcher repertoire, strike rate and speed, ballpark colours, team names. Checked the same way. No DS engine exists for it.
+- STILL SETTINGS ONLY: falling blocks, memory, city sim, hoops, vehicle combat, rail shooter, kart racing, 3D life sim, 3D side-scroller. Timeline-driven DS ROMs (several scenes in one ROM) still use the old built-in content, not these designs.

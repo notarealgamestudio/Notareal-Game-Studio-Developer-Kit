@@ -65,3 +65,41 @@ function brawlerDesignTab(main) {
         el('h3', {}, 'Boss'), el('div', { class: 'row wrap' }, el('label', {}, 'HP ', dsgNum(bs.hp, 1, 250, 5, v => bs.hp = v)), el('label', {}, 'Damage ', dsgNum(bs.dmg, 1, 9, 1, v => bs.dmg = v)), el('label', {}, el('input', { type: 'checkbox', checked: !!A.cfg.boss, onchange: e => { A.cfg.boss = e.target.checked ? 1 : 0; dirty = true; } }), ' Boss at the end')));
     main.append(box);
 }
+function dsgColor(v, fn) { return el('input', { type: 'color', value: v, onchange: e => { fn(e.target.value); dirty = true; renderAll(); } }); }
+function dsgRange(v, mn, mx, st, fn) { return el('span', {}, el('input', { type: 'range', min: mn, max: mx, step: st, value: v, onchange: e => { fn(+e.target.value); dirty = true; renderAll(); } }), ' ' + (+v).toFixed(2)); }
+function basketballDesignTab(main) {
+    const A = P.arcade; A.cfg = A.cfg || {}; if (!A.cfg.design || !A.cfg.design.home) A.cfg.design = NRArcade.BASKETBALL_DESIGN(); const D = A.cfg.design, box = el('div', { class: 'pane' });
+    box.append(el('h2', {}, '🏀 Team builder (street basketball)'), el('p', { class: 'hint' }, 'Two teams of two. Set each player: Speed, Shooting, Dunk (0 = cannot dunk) and Defense. The home team is yours. The court colour is the floor. Plays on PC, Xbox and the desktop window; the DS has no street-basketball ROM engine yet.'),
+        el('div', { class: 'row wrap' }, el('button', { class: 'alt', onclick: () => { A.cfg.design = NRArcade.BASKETBALL_DESIGN(); dirty = true; renderAll(); } }, 'Reset to the starter teams'), el('label', {}, 'Court ', dsgColor(D.court || '#c8905a', v => D.court = v))));
+    for (const [key, label] of [['home', 'Your team'], ['away', 'Rivals']]) { const T = D[key];
+        box.append(el('h3', {}, label), el('div', { class: 'row wrap' }, el('label', {}, 'Team name ', el('input', { value: T.name, style: 'width:110px', onchange: e => { T.name = e.target.value.slice(0, 14); dirty = true; } })), el('label', {}, 'Colour ', dsgColor(T.color, v => T.color = v))));
+        const tb = el('table', { class: 'tbl' }, el('tr', {}, ...['Player', 'Speed', 'Shooting', 'Dunk', 'Defense'].map(h => el('th', {}, h))));
+        T.players.forEach(p => tb.append(el('tr', {}, el('td', {}, el('input', { value: p.name, style: 'width:90px', onchange: e => { p.name = e.target.value.slice(0, 10); dirty = true; } })), el('td', {}, dsgRange(p.speed, .6, 1.5, .05, v => p.speed = v)), el('td', {}, dsgRange(p.shooting, .6, 1.4, .05, v => p.shooting = v)), el('td', {}, dsgRange(p.dunk, 0, 1.5, .05, v => p.dunk = v)), el('td', {}, dsgRange(p.defense, .5, 1.5, .05, v => p.defense = v)))));
+        box.append(tb); }
+    main.append(box);
+}
+function baseballDesignTab(main) {
+    const A = P.arcade; A.cfg = A.cfg || {}; if (!A.cfg.design || !A.cfg.design.pitcher) A.cfg.design = NRArcade.BASEBALL_DESIGN(); const D = A.cfg.design, box = el('div', { class: 'pane' });
+    box.append(el('h2', {}, '⚾ Pitcher and ballpark designer'), el('p', { class: 'hint' }, 'Choose which pitches the pitcher throws, how often they are strikes and how fast, then colour the ballpark. Plays on PC, Xbox and the desktop window; the DS has no baseball engine yet.'),
+        el('div', { class: 'row wrap' }, el('button', { class: 'alt', onclick: () => { A.cfg.design = NRArcade.BASEBALL_DESIGN(); dirty = true; renderAll(); } }, 'Reset'), el('label', {}, 'Your team ', el('input', { value: D.you, style: 'width:100px', onchange: e => { D.you = e.target.value.slice(0, 12); dirty = true; } })), el('label', {}, 'Rivals ', el('input', { value: D.cpu, style: 'width:100px', onchange: e => { D.cpu = e.target.value.slice(0, 12); dirty = true; } }))));
+    const pt = D.pitcher; box.append(el('h3', {}, 'Pitcher'), el('div', { class: 'row wrap' }, ...[['fastball', 'Fastball'], ['curve', 'Curveball'], ['change', 'Changeup'], ['slider', 'Slider']].map(([k, n]) => el('label', {}, el('input', { type: 'checkbox', checked: !!pt.pitches[k], onchange: e => { pt.pitches[k] = e.target.checked; dirty = true; } }), ' ' + n))),
+        el('div', { class: 'row wrap' }, el('label', {}, 'Strike rate ', dsgRange(pt.strikeRate, .3, .9, .02, v => pt.strikeRate = v)), el('label', {}, 'Speed ', dsgRange(pt.speed, .7, 1.4, .05, v => pt.speed = v))),
+        el('h3', {}, 'Ballpark'), el('div', { class: 'row wrap' }, el('label', {}, 'Grass ', dsgColor(D.field.grass, v => D.field.grass = v)), el('label', {}, 'Sky ', dsgColor(D.field.sky, v => D.field.sky = v)), el('label', {}, 'Infield dirt ', dsgColor(D.field.dirt, v => D.field.dirt = v))));
+    main.append(box);
+}
+const FD = { tool: '#' };
+function fpsDesignTab(main) {
+    const A = P.arcade; A.cfg = A.cfg || {}; if (!A.cfg.design || !A.cfg.design.map) A.cfg.design = NRArcade.FPS_DESIGN(); const D = A.cfg.design, box = el('div', { class: 'pane' }), N = Math.max(D.map.length, ...D.map.map(r => r.length)), C = 22;
+    D.map = D.map.map(r => r.padEnd(N, '#')); while (D.map.length < N) D.map.push('#'.repeat(N));
+    box.append(el('h2', {}, '🔫 First-person level designer'), el('p', { class: 'hint' }, 'Paint the level: walls, floor, enemies, health and ammo pickups, where you start, and the exit (PC; the DS level ends when every enemy is down). The edge is always wall. Up to 24 x 24, 16 enemies and 12 pickups on the DS.'));
+    const tools = [['#', 'Wall'], ['.', 'Floor'], ['E', 'Enemy'], ['H', 'Health'], ['A', 'Ammo'], ['S', 'Start'], ['X', 'Exit']];
+    box.append(el('div', { class: 'row wrap' }, ...tools.map(([k, n]) => el('button', { class: FD.tool === k ? 'go' : 'alt', onclick: () => { FD.tool = k; renderAll(); } }, n)), el('label', {}, 'Size ', dsgNum(N, 8, 24, 1, v => { const m = []; for (let y = 0; y < v; y++) m.push((D.map[y] || '').padEnd(v, '#').slice(0, v)); D.map = m; renderAll(); }, 50)),
+        el('button', { class: 'alt', onclick: () => { A.cfg.design = NRArcade.FPS_DESIGN(); dirty = true; renderAll(); } }, 'Reset to the starter level'), el('button', { class: 'alt', onclick: () => { D.map = D.map.map((r, y) => r.split('').map((c, x) => x === 0 || y === 0 || x === N - 1 || y === N - 1 ? '#' : (c === 'S' ? 'S' : '.')).join('')); dirty = true; renderAll(); } }, 'Open room')));
+    const cv = el('canvas', { width: N * C, height: N * C, style: 'border:1px solid #444;border-radius:4px;cursor:crosshair;max-width:100%' }), g = cv.getContext('2d'), COL = { '#': '#4a4f66', '.': '#14161f', E: '#ff4b4b', H: '#ff4b6b', A: '#ffd24a', S: '#4ae8ff', X: '#4ae87a' };
+    D.map.forEach((r, y) => r.split('').forEach((c, x) => { g.fillStyle = COL[c] || COL['.']; g.fillRect(x * C, y * C, C - 1, C - 1); if ('EHASX'.includes(c)) { g.fillStyle = '#000'; g.font = 'bold 12px sans-serif'; g.fillText(c, x * C + 6, y * C + 15); } }));
+    const count = ch => D.map.join('').split(ch).length - 1;
+    cv.onclick = e => { const r = cv.getBoundingClientRect(), x = Math.floor((e.clientX - r.left) / r.width * N), y = Math.floor((e.clientY - r.top) / r.height * N); if (x < 0 || y < 0 || x >= N || y >= N) return; if (x === 0 || y === 0 || x === N - 1 || y === N - 1) return;
+        let t = FD.tool; if (t === 'S' || t === 'X') D.map = D.map.map(r => r.replace(t, '.')); const row = D.map[y].split(''); row[x] = t; D.map[y] = row.join(''); dirty = true; renderAll(); };
+    box.append(cv, el('div', { class: 'hint' }, count('E') + ' enemies · ' + count('H') + ' health · ' + count('A') + ' ammo' + (count('S') ? '' : ' · no start set') + (count('E') > 16 ? ' · the DS holds 16 enemies' : '')));
+    main.append(box);
+}

@@ -440,6 +440,9 @@ NR.raceDesign = d => { const t = d.track.slice(0, 16), b = new Uint8Array(8 + t.
 /* BRWL: [0]=1 [1] types [2] waves [3] boss hp [4] boss dmg; types at 8 + 6k: hp, speed x4, dmg, score/10, colour; waves at 40 + 3k: type, n, side */
 NR.brawlerDesign = d => { const b = new Uint8Array(96), cl = (v, lo, hi) => Math.max(lo, Math.min(hi, Math.round(+v || 0))), ty = d.types.slice(0, 4), wv = d.waves.slice(0, 16); b[0] = 1; b[1] = ty.length; b[2] = wv.length; b[3] = cl(d.boss && d.boss.hp, 1, 250); b[4] = cl(d.boss && d.boss.dmg, 1, 9);
     ty.forEach((t, k) => { const o = 8 + k * 6; b[o] = cl(t.hp, 1, 60); b[o + 1] = cl((t.speed || 1) * 4, 2, 10); b[o + 2] = cl(t.dmg, 1, 9); b[o + 3] = cl((t.score || 50) / 10, 1, 250); b[o + 4] = cl(t.color, 0, 4); }); wv.forEach((w, k) => { const o = 40 + k * 3; b[o] = cl(w.type, 0, Math.max(0, ty.length - 1)); b[o + 1] = cl(w.n, 1, 8); b[o + 2] = cl(w.side, 0, 2); }); return b; };
+/* FPSL: [0]=1 [1] size n (<= 24), then n*n cells: 0 floor, 1 wall, 2 enemy, 3 health, 4 ammo, 5 start, 6 exit */
+NR.fpsDesign = d => { const n = Math.max(8, Math.min(24, Math.max(d.map.length, ...d.map.map(r => r.length)))), b = new Uint8Array(8 + n * n); b[0] = 1; b[1] = n; const code = { '#': 1, '.': 0, E: 2, H: 3, A: 4, S: 5, X: 6 };
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) { const ch = (d.map[y] || '')[x]; b[8 + y * n + x] = ch === undefined ? 1 : (code[ch] === undefined ? 0 : code[ch]); } return b; };
 NR.breakoutDesign = d => { const g = d.grid.slice(0, 8), cols = Math.max(2, Math.min(16, Math.max(...g.map(r => r.length)))), b = new Uint8Array(4 + g.length * cols); b[0] = 1; b[1] = g.length; b[2] = cols; g.forEach((r, y) => { for (let x = 0; x < cols; x++) b[4 + y * cols + x] = Math.max(0, Math.min(4, (r[x] | 0))); }); return b; };
 NR.buildDSArcade = (P, scenes) => {
     const A = scenes ? { mode: scenes.first.mode, cfg: scenes.first.cfg } : P.arcade; if (!A) throw new Error('No arcade game set up yet');
@@ -450,6 +453,7 @@ NR.buildDSArcade = (P, scenes) => {
     const cfg = A.cfg || {}, b = mk(A.mode, cfg);
     const sections = [['ARCF', b]];
     if (!scenes && A.mode === 'shmup' && cfg.design && cfg.design.types && cfg.design.waves) sections.push(['SHMP', NR.shmupDesign(cfg.design)]);
+    if (!scenes && A.mode === 'fps' && cfg.design && Array.isArray(cfg.design.map) && cfg.design.map.length) sections.push(['FPSL', NR.fpsDesign(cfg.design)]);
     if (!scenes && A.mode === 'brawler' && cfg.design && cfg.design.types && cfg.design.waves) sections.push(['BRWL', NR.brawlerDesign(cfg.design)]);
     if (!scenes && A.mode === 'race' && cfg.design && Array.isArray(cfg.design.track) && cfg.design.track.length) sections.push(['RACE', NR.raceDesign(cfg.design)]);
     if (!scenes && A.mode === 'breakout' && cfg.design && Array.isArray(cfg.design.grid) && cfg.design.grid.length) sections.push(['BRKL', NR.breakoutDesign(cfg.design)]);

@@ -1,9 +1,23 @@
 /* Templates, Arcade games and "Make me a game" (v1.1). One starter for every game type; works offline, the AI is optional. */
 const TPL = { family: 'All', ai: { kind: 'none', url: '', model: '' }, log: [], busy: false };
 function tplBase() { return (P && P.sprites && P.tileset && P.songs && P.songs.length) ? P : EXAMPLE; }
+/* every new game starts with a Timeline plan: title -> the game's own sections -> credits. Each section is editable in the Timeline tab and the tab that owns it. */
+function tplTimeline(p, r) {
+    const T = NRTimeline, steps = [], ttl = (p.arcade && p.arcade.cfg && p.arcade.cfg.title) || p.title || p.name || 'My Game';
+    steps.push(T.step('title', { title: 'Title screen', text: ttl }));
+    if (r.engine === 'race' && p.console === 'ds' && p.arcade && p.arcade.mode) steps.push(T.step('arcade', { title: ttl, mode: p.arcade.mode, cfg: p.arcade.cfg || {} }));   // the DS runs racing as the arcade engine
+    else if (r.engine === 'side2d' || r.engine === 'race') (p.levels || []).forEach((L, i) => steps.push(T.step(r.engine === 'race' ? 'race' : 'level', { title: L.name || 'Level ' + (i + 1), level: i })));
+    else if (r.engine === 'world') steps.push(T.step('world', { title: (p.world && p.world.maps && p.world.maps[0] && p.world.maps[0].name) || 'World', map: p.world && p.world.maps && p.world.maps[0] ? p.world.maps[0].id : '' }));
+    else if (r.engine === 'fight') steps.push(T.step('fight', { title: 'Match' }));
+    else if (r.engine === 'puzzle') steps.push(T.step('puzzle', { title: 'Puzzle' }));
+    else if (p.arcade && p.arcade.mode) steps.push(T.step('arcade', { title: ttl, mode: p.arcade.mode, cfg: p.arcade.cfg || {} }));
+    steps.push(T.step('credits', { title: 'Credits' }));
+    return steps;
+}
 function applyResult(r) {
     P = r.project; curLevel = 0; imgCache.clear();
     if (r.engine === 'world') { syncWorldTilesets(); P.world = (r.kind === 'survival' ? NRWorld.berea : NRWorld.starterTown)(P, (P.style || 'classic') + '_town'); castStarter(); if (r.player) Object.assign(P.world.player, r.player); }
+    if (!Array.isArray(P.timeline) || !P.timeline.length) { try { P.timeline = tplTimeline(P, r); } catch (e) { console.warn('timeline plan', e); } }
     tab = r.tab; dirty = true; renderAll();
 }
 function useTemplate(id, o) {

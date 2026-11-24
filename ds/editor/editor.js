@@ -92,13 +92,16 @@ function navGroups() {
 }
 let navGrp = 'Game', navLock = false;
 function navTabs(tabs) { return tabs.filter(t => t !== 'touch' || !P || P.console === 'ds'); }   /* the bottom-screen editor only exists for Nintendo DS games */
+window.NR_TABS_OK = id => ['assets','level3d','level','chars','art','music','sigil','bracelet','godsim','berea','frontier','engines','sound','touch','world','gfx','fight','puzzle','arcade','templates','builder','fit','story','timeline','color','recipes','about','advanced','settings','tech','fix','lab'].indexOf(id) >= 0;
 function renderAll() {
     navGroups();
     $('#title').textContent = P ? P.meta.title : 'Notareal Game Studio';
     $$('.tabbtn').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
     const main = $('#main'); main.innerHTML = '';
     if (!P) { main.append(welcome()); return; }
-    ({ assets: assetsTab, level3d: level3dTab, level: levelTab, chars: charsTab, art: artTab, music: musicTab, sigil: sigilTab, bracelet: braceletTab, godsim: godsimTab, berea: bereaTab, frontier: frontierTab, engines: enginesTab, sound: soundTab, touch: touchTab, world: worldTab, gfx: gfxTab, fight: fightTab, puzzle: puzzleTab, arcade: arcadeTab, templates: templatesTab, builder: builderTab, fit: fitTab, story: storyTab, timeline: timelineTab, color: colorTab, recipes: recipesTab, about: aboutTab, advanced: advancedTab, settings: settingsTab, tech: techTab, fix: fixTab, lab: labTab }[tab])(main);
+    const TABS = { assets: assetsTab, level3d: level3dTab, level: levelTab, chars: charsTab, art: artTab, music: musicTab, sigil: sigilTab, bracelet: braceletTab, godsim: godsimTab, berea: bereaTab, frontier: frontierTab, engines: enginesTab, sound: soundTab, touch: touchTab, world: worldTab, gfx: gfxTab, fight: fightTab, puzzle: puzzleTab, arcade: arcadeTab, templates: templatesTab, builder: builderTab, fit: fitTab, story: storyTab, timeline: timelineTab, color: colorTab, recipes: recipesTab, about: aboutTab, advanced: advancedTab, settings: settingsTab, tech: techTab, fix: fixTab, lab: labTab };
+    if (typeof TABS[tab] !== 'function') tab = 'level3d';
+    TABS[tab](main);
 }
 function welcome() {
     return el('div', { class: 'welcome' },

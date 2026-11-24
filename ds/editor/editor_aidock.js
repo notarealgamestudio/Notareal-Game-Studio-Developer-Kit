@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------ The AI dock: one box at the bottom of EVERY screen. Tell the studio what you want; the built-in offline AI plans it and
    runs the studio's own tools one step at a time (the same tools the buttons use), checks each result and fixes mistakes. No AI installed = the keyword assistant answers instead. */
 const AID = { open: false, log: [], busy: false, st: '' };
-function aiCtx() { return { P: () => P, tesRef: () => (typeof bereaRef === 'function' ? bereaRef() : null), codedb: () => CODEDB.concat(labLoad()), measured: () => MEASURED, hooks: { markDirty: () => { dirty = true; }, useTemplate: (id, o) => useTemplate(id, o), exportRom: () => exportRom(), openTab: t => { tab = t; renderAll(); } } }; }
+function aiCtx() { return { P: () => P, tesRef: () => (typeof bereaRef === 'function' ? bereaRef() : null), codedb: () => CODEDB.concat(labLoad()), measured: () => MEASURED, hooks: { markDirty: () => { dirty = true; }, useTemplate: (id, o) => useTemplate(id, o), exportRom: () => exportRom(), openTab: t => { if (!window.NR_TABS_OK(t)) return false; tab = t; renderAll(); return true; } } }; }
 async function aiDockStatus() {
     const chip = document.getElementById('aidChip'); if (!chip) return;
     if (!DESK.ok) { chip.textContent = TPL.ai.kind === 'none' ? '⚠ keyword mode (the built-in AI is in the desktop program)' : '🧠 local AI'; chip.className = 'aidchip warn'; return; }

@@ -68,3 +68,10 @@ Known limits (also shown as warnings in the export box):
 * New tab "Story & Banner". Cutscenes: Intro (after the title screen), Before any level, Ending (after the last level). A / START / touch moves on.
   They play in the Nintendo DS platformer ROM (tested in DeSmuME). SNES, GB/NES/GBA and the PC page do not play cutscenes yet.
 * Banner designer: the icon (32x32, 15 colours) and up to 3 title lines the DS menu shows. Applied to every DS ROM you export. Please check it in DraStic.
+
+
+BUILT-IN OFFLINE AI (new)
+  The Make-me-a-game tab has a "Built-in offline AI" section. Press "Download the AI" once (about 4.7 GB: the Qwen 2.5 7B model plus the llama.cpp engine,
+  saved in the "ai" folder next to the program). After that it works with no internet. You can also copy llama-server(.exe) into ai\bin and a .gguf model into ai\models yourself.
+  The AI plans the game, then calls the studio's own tools one step at a time (change a setting, read or edit enemy types / waves / bricks / pieces / cards / track sections,
+  check the game, export), sees each result, fixes mistakes and finishes. A grammar forces it to answer only with real tool calls. With no model the keyword assistant still works.

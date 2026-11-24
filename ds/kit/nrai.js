@@ -46,7 +46,7 @@
         return async (prompt, o = {}) => {
             const msgs = [{ role: 'user', content: prompt }];
             if (cfg.kind === 'ollama') { const r = await f(url + '/api/chat', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ model: cfg.model || 'qwen2.5:7b', messages: msgs, stream: false, options: { temperature: .6, num_predict: o.maxTokens || 300 } }) }); const j = await r.json(); return j.message && j.message.content; }
-            const r = await f(url + '/v1/chat/completions', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ model: cfg.model || 'local', messages: msgs, temperature: .6, max_tokens: o.maxTokens || 300 }) }); const j = await r.json(); return j.choices && j.choices[0] && j.choices[0].message.content;
+            const r = await f(url + '/v1/chat/completions', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(Object.assign({ model: cfg.model || 'local', messages: msgs, temperature: .6, max_tokens: o.maxTokens || 300 }, o.grammar && cfg.kind !== 'ollama' ? { grammar: o.grammar } : {})) }); const j = await r.json(); return j.choices && j.choices[0] && j.choices[0].message.content;
         };
     };
     if (typeof module !== 'undefined') module.exports = AI; else root.NRAI = AI;

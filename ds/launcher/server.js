@@ -11,6 +11,8 @@ const DATA = process.env.NR_DATA || path.join(HOME, 'Notareal_Data'), LIB = path
 const ROM_EXT = new Set(['.nds', '.gba', '.gb', '.gbc', '.sfc', '.smc', '.z64', '.n64', '.v64', '.iso', '.bin', '.img', '.exe', '.xbe', '.xex', '.zip', '.xiso']);
 const PC_EXE = /\.(exe|xbe|xex)$/i;
 const log = m => { try { fs.mkdirSync(DATA, { recursive: true }); fs.appendFileSync(LOG, new Date().toISOString() + ' ' + m + '\n'); } catch (e) {} };
+const LOCALAI = require('./localai.js')(HOME, log);
+process.on('exit', () => { try { LOCALAI.stop(); } catch (e) {} });
 const UPD = path.join(DATA, 'update'), UPD_FILE = path.join(UPD, 'notareal_studio.html'), ENG = path.join(DATA, 'engines');
 const validEngineId = id => /^[a-z0-9_]{2,40}$/.test(String(id || ''));
 function updatedHtml() { try { const h = fs.readFileSync(UPD_FILE, 'utf8'); return h.includes('const ROMS=') && h.includes('NRKit') ? h : null; } catch (e) { return null; } }
@@ -76,6 +78,10 @@ function handler(PORT) {
             if (u.pathname === '/api/library' && req.method === 'POST') { const add = await body(req); const cur = loadLib(); for (const r of Array.isArray(add) ? add : []) { const i = cur.findIndex(c => c.id === r.id); if (i >= 0) cur[i] = r; else cur.push(r); } saveLib(cur); return send(res, 200, { ok: true, count: cur.length }); }
             if (u.pathname === '/api/library/remove' && req.method === 'POST') { const { id } = await body(req); saveLib(loadLib().filter(r => r.id !== id)); return send(res, 200, { ok: true }); }
             if (u.pathname === '/api/list' && req.method === 'POST') { const { dir } = await body(req); if (!dir || !fs.existsSync(dir)) return send(res, 400, { error: 'That folder does not exist on this computer.' }); const st = fs.statSync(dir); const files = st.isDirectory() ? listRoms(dir) : [{ path: dir, name: path.basename(dir), size: st.size }]; return send(res, 200, { files }); }
+            if (u.pathname === '/api/ai/status') return send(res, 200, await LOCALAI.status());
+            if (u.pathname === '/api/ai/start' && req.method === 'POST') { const { model } = await body(req); return send(res, 200, await LOCALAI.start(model)); }
+            if (u.pathname === '/api/ai/stop' && req.method === 'POST') return send(res, 200, LOCALAI.stop());
+            if (u.pathname === '/api/ai/download' && req.method === 'POST') return send(res, 200, await LOCALAI.download());
             if (u.pathname === '/api/ai' && req.method === 'POST') { /* relays one chat request to a model server running on THIS computer (llama.cpp / Ollama). Never leaves the machine. */
                 const { url, body: payload } = await body(req); let tu; try { tu = new URL(String(url)); } catch (e) { return send(res, 400, { error: 'bad address' }); }
                 if (!/^(127\.0\.0\.1|localhost|\[::1\])$/.test(tu.hostname) || !/^https?:$/.test(tu.protocol)) return send(res, 400, { error: 'The AI server must run on this computer (127.0.0.1).' });

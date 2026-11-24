@@ -71,3 +71,9 @@ Each lives in the "Level / content builder" tab when the game is that type, is s
 - Memory: paint 16x16 cards (15 colours + transparent), 2-16 pairs. PC engine draws the pictures; DS ROM reads a `MEMC` section. Verified: node tests, Playwright painting, DS emulator screenshot.
 - Falling blocks: draw up to 12 pieces on a 4x4 grid with colours, set speed-up per line and fastest speed (plus well size, start speed, lines to win). PC engine and DS ROM (`FALD`) read it. Verified: node tests, Playwright, DS emulator screenshot with a custom 2x3 piece.
 - Not verified: the installed Windows app; Timeline multi-scene DS ROMs still use built-in content.
+
+## Built-in offline AI (from the DeepSeek spec)
+- Real: `launcher/localai.js` starts llama-server (127.0.0.1:18080) from `ai/bin` + a `.gguf` in `ai/models`, with status / start / stop / one-time download endpoints; "Built-in AI" is the default in the desktop app; `NRTools.agent` is a planner -> one-tool-per-step loop (max 12) with results fed back, repair on failure, grammar-constrained output (`NRTools.grammar()`), console facts + kit guide in the prompt; new tools `get_design`, `set_design`, `add_design_item`, `remove_design_item`, `list_templates`, `timeline_show`.
+- Verified: node tests (`tests/test_aiagent.js`), a mock llama-server over HTTP through the editor in Playwright, and the launcher start/stop with a stand-in server process.
+- NOT verified: a real Qwen model (never downloaded or run here: disk and network), the download button, Windows `tar` unpacking, answer quality of a 7B model on these tools. No model or engine is bundled in the zip (4.7 GB).
+- Not built: the spec's telemetry/model-manager extras, AI texture/background generation tools, tools for the skate park / store layout / face tool.

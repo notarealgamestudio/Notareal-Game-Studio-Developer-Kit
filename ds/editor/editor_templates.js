@@ -1,5 +1,5 @@
 /* Templates, Arcade games and "Make me a game" (v1.1). One starter for every game type; works offline, the AI is optional. */
-const TPL = { family: 'All', ai: { kind: 'none', url: '', model: '' }, log: [], busy: false };
+const TPL = { family: 'All', ai: { kind: (typeof window !== 'undefined' && window.NR_DESKTOP) ? 'bundled' : 'none', url: '', model: '' }, log: [], busy: false };
 function tplBase() { return (P && P.sprites && P.tileset && P.songs && P.songs.length) ? P : EXAMPLE; }
 /* every new game starts with a Timeline plan: title -> the game's own sections -> credits. Each section is editable in the Timeline tab and the tab that owns it. */
 function tplTimeline(p, r) {
@@ -100,6 +100,8 @@ async function exportArcade() {
 /* ------------------------------------------------------------------ Make me a game */
 function aiClient() {
     const c = TPL.ai; if (c.kind === 'none') return null;
+    if (c.kind === 'bundled') { if (!DESK.ok) return null; const inner = NRAI.client({ kind: 'llama', url: 'http://127.0.0.1:18080' }, (u, o) => deskCall('/api/ai', { url: u, body: JSON.parse(o.body) }).then(j => ({ json: async () => j })));
+        return async (p, o) => { if (!TPL.aiReady) { const r = await deskCall('/api/ai/start', {}); if (!r.ok) throw new Error(r.msg); TPL.aiReady = 1; } return inner(p, o); }; }
     const via = DESK.ok ? ((u, o) => deskCall('/api/ai', { url: u, body: JSON.parse(o.body) }).then(j => ({ json: async () => j }))) : null;
     return NRAI.client({ kind: c.kind, url: c.url || undefined, model: c.model || undefined }, via || undefined);
 }
@@ -111,8 +113,16 @@ function builderTab(main) {
             if (TPL.busy || !ta.value.trim()) return; TPL.busy = true; TPL.log = []; const say = m => { TPL.log.push(m); log.textContent = TPL.log.join('\n'); };
             try { const r = await NRAI.make(ta.value, tplBase(), aiClient(), say); const apply = () => applyResult(r); if (P && dirty) { modal('Replace your game?', el('p', {}, 'Your game "' + r.project.meta.title + '" is ready. Starting it replaces the one you are working on.'), [['Cancel', () => true, 'alt'], ['Use it', () => { apply(); return true; }, 'go']]); } else apply(); }
             catch (e) { say('Problem: ' + e.message); } TPL.busy = false; } }, '✨ Build it')), log, st);
-    const ai = el('details', {}, el('summary', {}, '🧠 Local AI (optional)')), kindSel = el('select', { onchange: e => { TPL.ai.kind = e.target.value; TPL.ai.url = TPL.ai.model = ''; renderAll(); } }, ...[['none', 'No AI (keywords only)'], ['llama', 'llama.cpp server (127.0.0.1:8080)'], ['ollama', 'Ollama (127.0.0.1:11434)']].map(([k, n]) => el('option', Object.assign({ value: k }, TPL.ai.kind === k ? { selected: '' } : {}), n)));
-    ai.append(el('p', { class: 'hint' }, 'Run a small model on your own computer (for example Qwen 2.5 7B). Nothing is sent over the internet. The AI only chooses words and numbers; the kit builds and checks the game. See HOW_TO_USE for the one-time setup.'), el('div', { class: 'row wrap' }, kindSel,
+    const ai = el('details', DESK.ok ? { open: '' } : {}, el('summary', {}, '🧠 Built-in offline AI')), kindSel = el('select', { onchange: e => { TPL.ai.kind = e.target.value; TPL.ai.url = TPL.ai.model = ''; renderAll(); } }, ...[['none', 'No AI (keywords only)'], ...(DESK.ok ? [['bundled', 'Built-in AI (Qwen 2.5, runs inside this program)']] : []), ['llama', 'llama.cpp server (127.0.0.1:8080)'], ['ollama', 'Ollama (127.0.0.1:11434)']].map(([k, n]) => el('option', Object.assign({ value: k }, TPL.ai.kind === k ? { selected: '' } : {}), n)));
+    if (DESK.ok && TPL.ai.kind === 'bundled') {
+        const info = el('p', { class: 'hint' }, 'Checking...'), bar = (txt) => { info.textContent = txt; };
+        const poll = async () => { if (!info.isConnected) return; try { const s = await deskCall('/api/ai/status'); bar((s.ready ? '✅ AI is running. ' : s.hasServer && s.models.length ? 'Installed (' + s.models[0] + '). It starts the first time you use it. ' : '⬇ Not installed yet: ' + (s.hasServer ? '' : 'AI engine missing. ') + (s.models.length ? '' : 'Model missing (about ' + s.modelGB + ' GB). ')) + (s.phase === 'download' || s.phase === 'loading' || s.phase === 'error' ? s.msg + (s.pct ? ' ' + s.pct + '%' : '') : '') + ' Folder: ' + s.dir); } catch (e) { bar('Could not reach the program: ' + e.message); } setTimeout(poll, 2000); };
+        ai.append(el('p', { class: 'hint' }, 'The AI lives inside this program: it plans your game, calls the same tools as the buttons one step at a time, checks each result and fixes mistakes. It only runs on this computer. One-time download, then it works with no internet.'), info,
+            el('div', { class: 'row wrap' }, el('button', { class: 'go', onclick: async () => { const r = await deskCall('/api/ai/download', {}); bar(r.msg); } }, 'Download the AI (one time, about 4.7 GB)'), el('button', { class: 'alt', onclick: async () => { bar('Starting...'); const r = await deskCall('/api/ai/start', {}); if (r.ok) TPL.aiReady = 1; bar(r.msg); } }, 'Start'), el('button', { class: 'alt', onclick: async () => { await deskCall('/api/ai/stop', {}); TPL.aiReady = 0; bar('Stopped'); } }, 'Stop'),
+                el('button', { class: 'alt', onclick: async () => { try { const r = await aiClient()('Reply with {"ok":1}', { maxTokens: 20 }); st.textContent = 'AI answered: ' + String(r).slice(0, 60); } catch (e) { st.textContent = 'AI did not answer: ' + e.message; } } }, 'Test')));
+        setTimeout(poll, 50);
+    }
+    if (!(DESK.ok && TPL.ai.kind === 'bundled')) ai.append(el('p', { class: 'hint' }, 'Run a small model on your own computer (for example Qwen 2.5 7B). Nothing is sent over the internet. The AI only chooses words and numbers; the kit builds and checks the game. See HOW_TO_USE for the one-time setup.'), el('div', { class: 'row wrap' }, kindSel,
         TPL.ai.kind !== 'none' ? el('input', { placeholder: 'Model name (optional)', value: TPL.ai.model, style: 'width:180px', onchange: e => { TPL.ai.model = e.target.value; } }) : '',
         TPL.ai.kind !== 'none' ? el('button', { class: 'alt', onclick: async () => { try { const r = await aiClient()('Reply with {"ok":1}', { maxTokens: 20 }); st.textContent = 'AI answered: ' + String(r).slice(0, 60); } catch (e) { st.textContent = 'AI did not answer: ' + e.message; } } }, 'Test') : ''));
     box.append(ai); main.append(box);

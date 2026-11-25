@@ -89,13 +89,24 @@ static void camera(int mode)
 // WRCF: u8 count, u8 matchType (0-4, 5 = ask), u8 pad[2], then count records of 40 bytes: name[16], sex, skin, hair, hairc, eyes, beard, top, pants, boots, height(x100), build(x100), fin, heel, theme preset, key, tempo
 static const int SLOT[8] = { C_STEVE, C_AUSTIN, C_PYTHON, C_JOE, C_MICHELLE, C_DANNY, C_REBECCA, C_CLIFF };
 static int roster[8], nroster, fixed_type = 5;
+// FACE: u8 count, 3 pad, then count records: u8 roster slot, 3 pad, 64x64 RGB555 (8192 bytes) - the face wrap that replaces the generated face
+static u16 face_ov[8][64 * 64]; static int face_has[8];
+static void load_faces(void)
+{
+    const NrgHeader *H = (const NrgHeader *)nr_gamedata;
+    if (H->used) for (unsigned i = 0; i < H->count; i++) if (!memcmp(H->sec[i].id, "FACE", 4)) {
+        const unsigned char *p = nr_gamedata + H->sec[i].off; unsigned n = H->sec[i].size; int c = p[0];
+        for (int k = 0; k < c && 4 + (k + 1) * 8196 <= (int)n; k++) { const unsigned char *r = p + 4 + k * 8196; int s = r[0] & 7; memcpy(face_ov[s], r + 4, 8192); face_has[s] = 1; }
+    }
+}
 static void load_roster(void)
 {
+    load_faces();
     const NrgHeader *H = (const NrgHeader *)nr_gamedata;
     if (H->used) for (unsigned i = 0; i < H->count; i++) if (!memcmp(H->sec[i].id, "WRCF", 4)) {
         const unsigned char *p = nr_gamedata + H->sec[i].off; unsigned n = H->sec[i].size;
         int c = p[0]; if (c > 8) c = 8; fixed_type = p[1];
-        for (int k = 0; k < c && 4 + (k + 1) * 40 <= (int)n; k++) { cast_define(SLOT[k], p + 4 + k * 40); roster[nroster++] = SLOT[k]; }
+        for (int k = 0; k < c && 4 + (k + 1) * 40 <= (int)n; k++) { cast_define(SLOT[k], p + 4 + k * 40, face_has[k] ? face_ov[k] : 0); roster[nroster++] = SLOT[k]; }
     }
     if (nroster < 2) { nroster = 0; for (int k = 0; k < 8; k++) roster[nroster++] = SLOT[k]; }   // empty template: the stock cast
 }

@@ -139,6 +139,7 @@ extern Look caw_look;
 extern int caw_fin;
 extern char caw_name[20];
 void caw_init(void);
+extern const u16 *npc_face_override;
 void game_save(void);
 extern int story_prog[8], story_align[8];
 int pick_cast(u16 *sub, const char *title, const int *ids, int n, void (*top)(void));
@@ -170,7 +171,7 @@ int cast_heel(int id);
 extern const char *FIN_NAME[4];
 int load_face(const void *bin);
 void npc_look_p(Look *lk, int sex, int skin, int hair, int hairc, int eyes, int beard, int top, int pants, int boots, float height, float build, u16 *portrait);
-void cast_define(int id, const unsigned char *rec);
+void cast_define(int id, const unsigned char *rec, const u16 *face);
 const unsigned char *cast_moves(int id);   // which grapple each direction + B throws (index 0 none, 1 up, 2 down, 3 left, 4 right; values 0-4)
 const unsigned char *cast_stat(int id);   // power, toughness, speed, momentum gain (percent)
 void build_look2(Look *lk, int lodonly);

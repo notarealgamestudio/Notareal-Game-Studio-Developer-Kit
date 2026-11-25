@@ -204,12 +204,14 @@ static void apply(void)
 
 static void do_load(void);
 // Build a complete Look for an NPC from palette indices (used by the open world for fans and townsfolk).
+const u16 *npc_face_override;   /* 64x64 RGB555 face wrap from the dev kit (FACE section); used for the next npc_look_p only */
 void npc_look_p(Look *lk, int sex, int skin, int hair, int hairc, int eyes, int beard, int top, int pants, int boots,
               float height, float build, u16 *portrait)
 {
     int save[O_N]; memcpy(save, opt, sizeof opt);
     opt[O_SEX] = sex; opt[O_SKIN] = skin; opt[O_HAIR] = hair; opt[O_HAIRC] = hairc; opt[O_EYES] = eyes; opt[O_BEARD] = beard;
     paint_face();
+    if (npc_face_override) { memcpy(face_tex, npc_face_override, sizeof face_tex); npc_face_override = 0; }
     DC_FlushRange(face_tex, sizeof face_tex);
     if (portrait) face_to_portrait(face_tex, portrait);
     C3 sk = SKIN[skin], hr = HAIRC[hairc], tp = GEAR[top], pn = GEAR[pants], bt = GEAR[boots];

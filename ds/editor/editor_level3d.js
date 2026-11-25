@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------ shared 3D level builder (tab "3D level builder")
    Top-down editor for the 3D game types: place buildings (from the Asset library), props, ramps, stars / pickups / enemies and the spawn. P.level3d feeds NRWorld3D.build,
    so the DS, PlayStation and N64 3D world engines play your map instead of the built-in one. */
-const L3 = { tool: 'building', asset: null, w: 10, d: 10, h: 12, axis: 'z', sel: -1 };
+const L3 = { tool: 'select', undo: [], redo: [], asset: null, w: 10, d: 10, h: 12, axis: 'z', sel: -1 };
 function level3dInit() { P.level3d = P.level3d || { half: 40, spawn: { x: 0, z: -30 }, yaw: 180, objs: [] }; return P.level3d; }
 async function assetColor(ref, fallback) { try { const im = await imageData(ref); let r = 0, g = 0, b = 0, n = 0; for (let i = 0; i < im.data.length; i += 4) if (im.data[i + 3] > 128) { r += im.data[i]; g += im.data[i + 1]; b += im.data[i + 2]; n++; } return n ? [Math.round(r / n), Math.round(g / n), Math.round(b / n)] : fallback; } catch (e) { return fallback; } }
 async function level3dSample() {
@@ -27,6 +27,9 @@ async function level3dDraw(cv) {
     });
     g.fillStyle = '#fff'; g.strokeStyle = '#000'; g.beginPath(); g.arc(X(L.spawn.x), Y(L.spawn.z), 7, 0, 7); g.fill(); g.stroke(); g.fillStyle = '#000'; g.font = 'bold 9px sans-serif'; g.fillText('S', X(L.spawn.x) - 3, Y(L.spawn.z) + 3);
 }
+function l3snap() { const L = level3dInit(); L3.undo.push(JSON.stringify({ o: L.objs, s: L.spawn, h: L.half })); if (L3.undo.length > 60) L3.undo.shift(); L3.redo = []; }
+function l3restore(from, to) { const L = level3dInit(); if (!from.length) return false; to.push(JSON.stringify({ o: L.objs, s: L.spawn, h: L.half })); const d = JSON.parse(from.pop()); L.objs = d.o; L.spawn = d.s; L.half = d.h; L3.sel = -1; dirty = true; return true; }
+function l3pick(L, x, z) { let bi = -1, bd = 1e9; L.objs.forEach((o, i) => { const hw = (o.w || 0) / 2, hd = (o.d || 0) / 2, dx = Math.max(Math.abs(o.x - x) - hw, 0), dz = Math.max(Math.abs(o.z - z) - hd, 0), d = Math.hypot(dx, dz); if (d < bd) { bd = d; bi = i; } }); return bd < 3 ? bi : -1; }
 function level3dTab(main) {
     if (P.arcade && P.arcade.mode === 'skate') return skateparkTab(main);
     if (P.arcade && P.arcade.mode === 'store3d') return storeTab(main);
@@ -43,7 +46,7 @@ function level3dTab(main) {
     if (P.arcade && P.arcade.mode === 'baseball') return baseballDesignTab(main);
     const L = level3dInit(), box = el('div', { class: 'pane' }), cv = el('canvas', { width: 640, height: 640, style: 'width:100%;max-width:640px;border:1px solid #444;border-radius:6px;cursor:crosshair;image-rendering:pixelated' });
     box.append(el('h2', {}, '🏙 3D level builder'), el('p', { class: 'hint' }, 'Build the map for the 3D game types (open world, war, RPG world) on any console that has a 3D engine: DS, PlayStation, N64. Pick a tool, click the map. Buildings use your Asset library walls. Top-down view; export the ROM to walk it in 3D.'));
-    const tools = [['building', '🏢 Building'], ['prop', '🌳 Prop'], ['ramp', '⛰ Ramp'], ['star', '★ Star'], ['health', '+ Health'], ['ammo', 'Ammo'], ['enemy', 'Enemy'], ['npc', 'Person'], ['spawn', 'S Spawn'], ['erase', '🗑 Erase']];
+    const tools = [['select', '↖ Select / move'], ['building', '🏢 Building'], ['prop', '🌳 Prop'], ['ramp', '⛰ Ramp'], ['star', '★ Star'], ['health', '+ Health'], ['ammo', 'Ammo'], ['enemy', 'Enemy'], ['npc', 'Person'], ['spawn', 'S Spawn'], ['erase', '🗑 Erase']];
     const bAssets = assetList('building'), pAssets = assetList('prop').filter(a => a.id.replace('prop_', '') in { tree: 1, pine: 1, bush: 1, rock: 1, crate: 1, barrel: 1, bench: 1, lamp: 1, sign: 1, car: 1, fence: 1, cone: 1, hydrant: 1, trash_can: 1, rail: 1, chest: 1, torch: 1 });
     if (!L3.asset) L3.asset = bAssets[0] ? bAssets[0].id : null;
     const bar = el('div', { class: 'row wrap' }, ...tools.map(([k, n]) => el('button', { class: L3.tool === k ? 'go' : 'alt', onclick: () => { L3.tool = k; L3.asset = k === 'building' ? (bAssets[0] || {}).id : k === 'prop' ? (pAssets[0] || {}).id : L3.asset; renderAll(); } }, n)));
@@ -53,11 +56,21 @@ function level3dTab(main) {
     if (L3.tool === 'building') opts.append(opt(bAssets, L3.asset), sz('w', 'Width m', 2, 40), sz('d', 'Depth m', 2, 40), sz('h', 'Height m', 2, 60));
     if (L3.tool === 'prop') opts.append(opt(pAssets, L3.asset));
     if (L3.tool === 'ramp') opts.append(sz('w', 'Width m', 2, 30), sz('d', 'Length m', 2, 30), sz('h', 'Height m', 1, 12), el('label', {}, 'Rises along ', el('select', { onchange: e => { L3.axis = e.target.value; } }, ...['z', 'x'].map(a => { const o = el('option', { value: a }, a === 'z' ? 'north-south' : 'east-west'); if (L3.axis === a) o.selected = true; return o; }))));
-    box.append(bar, opts, cv, el('div', { class: 'row wrap' }, el('label', {}, 'Map half-size m ', el('input', { type: 'number', min: 20, max: 120, value: L.half, style: 'width:60px', onchange: e => { L.half = Math.max(20, Math.min(120, +e.target.value)); dirty = true; renderAll(); } })),
+    const selbox = el('div', { class: 'row wrap' });
+    const fillSel = () => { selbox.innerHTML = ''; const o = L.objs[L3.sel]; if (L3.tool !== 'select' || !o) { selbox.append(el('span', { class: 'hint' }, L3.tool === 'select' ? 'Click an object to select it, drag to move it. Arrow keys nudge. Delete removes it.' : '')); return; }
+        const f = (k, l, mn, mx, st) => el('label', {}, l + ' ', el('input', { type: 'number', min: mn, max: mx, step: st || 1, value: o[k], style: 'width:60px', onchange: e => { l3snap(); o[k] = Math.max(mn, Math.min(mx, +e.target.value)); dirty = true; level3dDraw(cv); } }));
+        selbox.append(el('b', {}, o.t + (o.id ? ' ' + o.id : '') + ' '), f('x', 'X', -120, 120), f('z', 'Z', -120, 120));
+        if (o.t === 'building' || o.t === 'ramp') selbox.append(f('w', 'Width', 2, 40), f('d', 'Depth', 2, 40), f('h', 'Height', 1, 60, 0.5));
+        selbox.append(el('button', { class: 'alt', onclick: () => { l3snap(); const c = JSON.parse(JSON.stringify(o)); c.x += 3; c.z += 3; L.objs.push(c); L3.sel = L.objs.length - 1; dirty = true; renderAll(); } }, 'Duplicate'), el('button', { class: 'alt', onclick: () => { l3snap(); L.objs.splice(L3.sel, 1); L3.sel = -1; dirty = true; renderAll(); } }, '🗑 Delete')); };
+    const undoBar = el('div', { class: 'row wrap' }, el('button', { class: 'alt', onclick: () => { if (l3restore(L3.undo, L3.redo)) renderAll(); } }, '↶ Undo'), el('button', { class: 'alt', onclick: () => { if (l3restore(L3.redo, L3.undo)) renderAll(); } }, '↷ Redo'));
+    fillSel();
+    box.append(bar, opts, undoBar, selbox, cv, el('div', { class: 'row wrap' }, el('label', {}, 'Map half-size m ', el('input', { type: 'number', min: 20, max: 120, value: L.half, style: 'width:60px', onchange: e => { L.half = Math.max(20, Math.min(120, +e.target.value)); dirty = true; renderAll(); } })),
         el('button', { class: 'alt', onclick: async () => { await level3dSample(); renderAll(); } }, 'Start from a sample town'), el('button', { class: 'alt', onclick: () => { L.objs = []; dirty = true; renderAll(); } }, 'Clear map'),
         el('span', { class: 'hint' }, L.objs.length + ' objects (the DS engine holds about 290 boxes and 60 pickups / people; extra ones are dropped on export with a warning).')));
     cv.onclick = async e => {
         const r = cv.getBoundingClientRect(), S = r.width / (L.half * 2), x = Math.round((e.clientX - r.left) / S - L.half), z = Math.round((e.clientY - r.top) / S - L.half);
+        if (L3.tool === 'select') return;
+        l3snap();
         if (L3.tool === 'spawn') L.spawn = { x, z };
         else if (L3.tool === 'erase') { let bi = -1, bd = 1e9; L.objs.forEach((o, i) => { const d = Math.hypot(o.x - x, o.z - z) - (o.w || 1) / 2; if (d < bd) { bd = d; bi = i; } }); if (bi >= 0 && bd < 4) L.objs.splice(bi, 1); }
         else if (L3.tool === 'building') { const a = bAssets.find(q => q.id === L3.asset); L.objs.push({ t: 'building', id: L3.asset, x, z, w: L3.w, d: L3.d, h: L3.h, col: a ? await assetColor(a.ref, [150, 120, 100]) : [150, 120, 100] }); }
@@ -66,5 +79,10 @@ function level3dTab(main) {
         else L.objs.push({ t: L3.tool, x, z });
         dirty = true; level3dDraw(cv); box.querySelector('.hint:last-child') && 0;
     };
+    let drag = null; const pos = e => { const r = cv.getBoundingClientRect(), S = r.width / (L.half * 2); return { x: (e.clientX - r.left) / S - L.half, z: (e.clientY - r.top) / S - L.half }; };
+    cv.onpointerdown = e => { if (L3.tool !== 'select') return; const p = pos(e), i = l3pick(L, p.x, p.z); L3.sel = i; fillSel(); level3dDraw(cv); if (i >= 0) { drag = { i, dx: L.objs[i].x - p.x, dz: L.objs[i].z - p.z, moved: false }; cv.setPointerCapture(e.pointerId); } };
+    cv.onpointermove = e => { if (!drag) return; const p = pos(e), o = L.objs[drag.i]; if (!drag.moved) { l3snap(); drag.moved = true; } o.x = Math.round(p.x + drag.dx); o.z = Math.round(p.z + drag.dz); dirty = true; level3dDraw(cv); };
+    cv.onpointerup = () => { if (drag && drag.moved) fillSel(); drag = null; };
+    cv.tabIndex = 0; cv.onkeydown = e => { const o = L.objs[L3.sel]; if (L3.tool !== 'select' || !o) return; const k = e.key; if (k === 'Delete' || k === 'Backspace') { l3snap(); L.objs.splice(L3.sel, 1); L3.sel = -1; dirty = true; renderAll(); e.preventDefault(); } else if (k.startsWith('Arrow')) { l3snap(); if (k === 'ArrowLeft') o.x--; if (k === 'ArrowRight') o.x++; if (k === 'ArrowUp') o.z--; if (k === 'ArrowDown') o.z++; dirty = true; fillSel(); level3dDraw(cv); e.preventDefault(); } };
     main.append(box); level3dDraw(cv);
 }

@@ -409,9 +409,13 @@ NR.buildDSWrestling = P => {
         [w.sex, w.skin, w.hair, w.hairc, w.eyes, w.beard, w.top, w.pants, w.boots].forEach((v, k) => { pl[o + 16 + k] = (+v || 0) & 255; });
         pl[o + 25] = Math.round((w.height || 1) * 100); pl[o + 26] = Math.round((w.build || 1) * 100); pl[o + 27] = (w.fin || 0) & 3; pl[o + 28] = w.heel ? 1 : 0; pl[o + 29] = (w.preset || 0) % 3; pl[o + 30] = (w.key || 0) % 12; pl[o + 31] = Math.max(60, Math.min(200, +w.tempo || 120)); [w.power, w.tough, w.speed, w.gain].forEach((v, k) => { pl[o + 32 + k] = Math.max(40, Math.min(200, Math.round(+v || 100))); });
         (w.moves || []).slice(0, 4).forEach((v, k) => { pl[o + 36 + k] = (Math.max(0, Math.min(4, v | 0)) + 1); }); });   // bytes 36-39: grapple used for UP / DOWN / LEFT / RIGHT + B (value + 1, 0 = engine default)
-    const hdr = 20 + 12, off = (hdr + 15) & ~15, blk = new Uint8Array((off + pl.length + 15) & ~15), v = new DataView(blk.buffer);
-    blk.set([...'NRGDATA1'].map(ch => ch.charCodeAt(0)), 0); v.setUint32(12, blk.length, true); v.setUint32(16, 1, true);
-    blk.set([...'WRCF'].map(ch => ch.charCodeAt(0)), 20); v.setUint32(24, off, true); v.setUint32(28, pl.length, true); blk.set(pl, off);
+    /* FACE section: the face wraps made in the Face wrap maker, one 64x64 RGB555 picture per wrestler that has one (c.faceWrap = { b64: base64 of 4096 little-endian u16 }); the engine paints it on the head instead of the generated face */
+    const faces = []; R.forEach((w, i) => { if (w.faceWrap && w.faceWrap.b64) { const raw = typeof Buffer !== 'undefined' ? Uint8Array.from(Buffer.from(w.faceWrap.b64, 'base64')) : Uint8Array.from(atob(w.faceWrap.b64), ch => ch.charCodeAt(0)); if (raw.length === 8192) faces.push([i, raw]); } });
+    const secs = [['WRCF', pl]]; if (faces.length) { const fb = new Uint8Array(4 + faces.length * 8196); fb[0] = faces.length; faces.forEach(([slot, raw], k) => { fb[4 + k * 8196] = slot; fb.set(raw, 4 + k * 8196 + 4); }); secs.push(['FACE', fb]); }
+    const hdr = 20 + 12 * secs.length; let off = (hdr + 15) & ~15; const offs = secs.map(([, d]) => { const o = off; off = (off + d.length + 15) & ~15; return o; });
+    const blk = new Uint8Array(off), v = new DataView(blk.buffer);
+    blk.set([...'NRGDATA1'].map(ch => ch.charCodeAt(0)), 0); v.setUint32(12, blk.length, true); v.setUint32(16, secs.length, true);
+    secs.forEach(([id, d], k) => { blk.set([...id].map(ch => ch.charCodeAt(0)), 20 + k * 12); v.setUint32(24 + k * 12, offs[k], true); v.setUint32(28 + k * 12, d.length, true); blk.set(d, offs[k]); });
     return { block: blk, warnings: [] };
 };
 NR.DS_ARCADE_MODES = () => Object.keys(NR.ARCADE_KEYS).filter(k => k !== 'combat');   /* combat has its own KCFG section: single-game ROM only, not in timeline routers */

@@ -196,7 +196,7 @@ function openingSection() {
 /* ------------------------------------------------------------------ face wrap maker */
 let faceCascadeReady = false;
 function ensureCascade() { if (!faceCascadeReady && typeof NR_FACEFINDER_B64 !== 'undefined') { NRFace.setCascade(Int8Array.from(atob(NR_FACEFINDER_B64), c => c.charCodeAt(0) << 24 >> 24)); faceCascadeReady = true; } }
-async function faceWrapMaker() {
+async function faceWrapMaker(castIdx) {
     const f = await pickFile('image/*'); if (!f) return;
     ensureCascade();
     const url = await fileToDataUrl(f), im = await new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = url; });
@@ -231,6 +231,8 @@ async function faceWrapMaker() {
             el('div', { class: 'row wrap' }, el('label', {}, 'Download for ', el('select', { onchange: e => target = e.target.value }, ...Object.entries(NRFace.TARGETS).map(([id, T]) => { const o = el('option', { value: id }, T.label); if (id === target) o.selected = true; return o; }))),
                 el('button', { onclick: () => download('face_wrap_' + target + '.png', bytesFromDataUrl(dataUrlFromRGBA(NRFace.forConsole(body._wrap, target, NRKit))), 'image/png') }, '⬇ PNG'),
                 el('button', { class: 'alt', onclick: () => download('face_wrap_full.png', bytesFromDataUrl(dataUrlFromRGBA(body._wrap)), 'image/png') }, '⬇ Full quality'))) ), outs);
+    const castList = (typeof castInit === 'function') ? castInit() : [], castSel = el('select', {}, ...castList.map((c, k) => { const o = el('option', { value: k }, c.name || ('Character ' + (k + 1))); if (k === (castIdx | 0)) o.selected = true; return o; })), castMsg = el('span', { class: 'hint' });
+    if (castList.length) body.append(el('div', { class: 'row wrap' }, el('label', {}, 'Put this face on cast character ', castSel), el('button', { onclick: () => { const c = castList[+castSel.value], r = NRKit.resize(body._wrap, 64, 64), u = new Uint8Array(8192); for (let q = 0; q < 4096; q++) { const R = r.data[q * 4], G = r.data[q * 4 + 1], B = r.data[q * 4 + 2], v = (R >> 3) | ((G >> 3) << 5) | ((B >> 3) << 10) | 0x8000; u[q * 2] = v & 255; u[q * 2 + 1] = v >> 8; } let bs = ''; for (let q = 0; q < u.length; q++) bs += String.fromCharCode(u[q]); c.faceWrap = { b64: btoa(bs), w: 64 }; dirty = true; castMsg.textContent = '✔ saved on ' + c.name + '. It is painted on the head in the 3D wrestling game (DS) when you export.'; } }, 'Put on character'), castMsg));
     redo();
     modal('📸 Face wrap maker', body, [['Close', () => true, 'alt'], ['Put this face on the character builder', () => { CB.face = dataUrlFromRGBA(body._wrap); CB.faceImg = body._wrap; CB.skin = '#' + det.skin.map(v => Math.round(v).toString(16).padStart(2, '0')).join(''); renderAll(); notify('The face is on the character builder (Characters tab). Press "Use as my hero" to put it in the game.'); }, 'go']]);
 }

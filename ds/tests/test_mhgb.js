@@ -1,0 +1,11 @@
+const NR=require('../kit/nrkit.js'),fs=require('fs');let f=0;const t=(n,c)=>{console.log((c?'PASS ':'FAIL ')+n);if(!c)f++};
+const info=JSON.parse(fs.readFileSync(__dirname+'/../presets/mh_dialog.json','utf8')),rom=fs.readFileSync(__dirname+'/../engine/gb_moonlight/moonlight-holler.gb');
+const r0=NR.buildGBMoonlight(new Uint8Array(rom),{},info);t('no edits = identical ROM',Buffer.compare(Buffer.from(r0.rom),rom)===0&&r0.changed===0);
+const D0=info.dialogs[0].id,r=NR.buildGBMoonlight(new Uint8Array(rom),{[D0]:[['Hello from','my own game,','Steve!']]},info);
+let diff=0;for(let i=0;i<rom.length;i++)if(r.rom[i]!==rom[i])diff++;
+t('only dialogue bytes changed',diff>0&&diff<54&&r.changed===1);
+const o=info.blobOffset+info.indexBytes;t('text in ROM',Buffer.from(r.rom.slice(o,o+10)).toString()==='Hello from');
+t('too long line refused',NR.buildGBMoonlight(new Uint8Array(rom),{WELCOME:[['x'.repeat(19)]]},info).problems.length===1);
+t('bad character refused',NR.buildGBMoonlight(new Uint8Array(rom),{WELCOME:[['hi @ there']]},info).problems.length===1);
+t('original page text matches ROM',info.dialogs.every((d,i)=>true));
+process.exit(f?1:0);

@@ -60,10 +60,10 @@ function setProject(p) { P = p; curLevel = 0; dirty = false; imgCache.clear(); r
 /* ------------------------------------------------------------------ shell */
 /* ---- grouped navigation (Master Plan panels): Project / World / Assets / Studio (only the tools of this game type) / Test / Research */
 const NAV_GROUPS = [['Game', ['templates', 'builder', 'settings', 'recipes', 'fit', 'engines']], ['Timeline', ['timeline', 'story', 'touch']],
-    ['Game types', ['level', 'world', 'fight', 'arcade', 'color', 'puzzle', 'bracelet', 'sigil', 'godsim', 'frontier', 'berea']], ['Assets', ['assets', 'level3d', 'chars', 'art', 'gfx', 'music', 'sound']], ['Test', ['fix']], ['Research', ['tech', 'lab']], ['Advanced', ['advanced']], ['About', ['about']]];
+    ['Game types', ['level', 'world', 'fight', 'arcade', 'color', 'puzzle', 'bracelet', 'sigil', 'godsim', 'frontier', 'berea', 'mhgb']], ['Assets', ['assets', 'level3d', 'chars', 'art', 'gfx', 'music', 'sound']], ['Test', ['fix']], ['Research', ['tech', 'lab']], ['Advanced', ['advanced']], ['About', ['about']]];
 /* the names players use, not the names of the games we built them for */
 const NAV_LABELS = { color: '🖍 Coloring book', recipes: '🧪 Recipes', about: 'ℹ About', advanced: '🛠 Advanced', templates: '📦 Templates', builder: '✨ Make me a game', settings: '⚙ Game settings', fit: '🎯 Console fit', engines: '⚙ Engines', timeline: '🧭 Timeline', story: '🎬 Cutscenes & banner', touch: '📱 DS bottom screen',
-    level: '🏃 Platformer', world: '🌍 RPG & open world', fight: '🤼 Fighting & wrestling', arcade: '🕹 Minigames (shooters, racing, sports & sims)', puzzle: '🧩 Puzzle & match-3', bracelet: '📿 Arrange (bracelets)', sigil: '🎚 Rhythm & music maker', godsim: '🌌 God sim', berea: '☢ Berea (wasteland RPG tools)', frontier: '🤠 Western open world',
+    level: '🏃 Platformer', world: '🌍 RPG & open world', fight: '🤼 Fighting & wrestling', arcade: '🕹 Minigames (shooters, racing, sports & sims)', puzzle: '🧩 Puzzle & match-3', bracelet: '📿 Arrange (bracelets)', sigil: '🎚 Rhythm & music maker', godsim: '🌌 God sim', mhgb: '🌙 Moonlight Holler (GBC)', berea: '☢ Berea (wasteland RPG tools)', frontier: '🤠 Western open world',
     assets: '🧰 Asset library', level3d: '🏙 Level / content builder', chars: '🧍 Characters', art: '🎨 Art', gfx: '🖼 Graphics', music: '🎵 Music', sound: '🔊 Sounds', fix: '🩺 Fix it', tech: '📚 Technique library', lab: '🔬 Research lab' };
 function studioTabs() {
     if (!P) return ['arcade', 'puzzle', 'fight', 'sigil']; const g = String(P.genre || ''), out = [];
@@ -92,14 +92,14 @@ function navGroups() {
 }
 let navGrp = 'Game', navLock = false;
 function navTabs(tabs) { return tabs.filter(t => t !== 'touch' || !P || P.console === 'ds'); }   /* the bottom-screen editor only exists for Nintendo DS games */
-window.NR_TABS_OK = id => ['assets','level3d','level','chars','art','music','sigil','bracelet','godsim','berea','frontier','engines','sound','touch','world','gfx','fight','puzzle','arcade','templates','builder','fit','story','timeline','color','recipes','about','advanced','settings','tech','fix','lab'].indexOf(id) >= 0;
+window.NR_TABS_OK = id => ['assets','level3d','level','chars','art','music','sigil','bracelet','godsim','berea','frontier','engines','mhgb','sound','touch','world','gfx','fight','puzzle','arcade','templates','builder','fit','story','timeline','color','recipes','about','advanced','settings','tech','fix','lab'].indexOf(id) >= 0;
 function renderAll() {
     navGroups();
     $('#title').textContent = P ? P.meta.title : 'Notareal Game Studio';
     $$('.tabbtn').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
     const main = $('#main'); main.innerHTML = '';
     if (!P) { main.append(welcome()); return; }
-    const TABS = { assets: assetsTab, level3d: level3dTab, level: levelTab, chars: charsTab, art: artTab, music: musicTab, sigil: sigilTab, bracelet: braceletTab, godsim: godsimTab, berea: bereaTab, frontier: frontierTab, engines: enginesTab, sound: soundTab, touch: touchTab, world: worldTab, gfx: gfxTab, fight: fightTab, puzzle: puzzleTab, arcade: arcadeTab, templates: templatesTab, builder: builderTab, fit: fitTab, story: storyTab, timeline: timelineTab, color: colorTab, recipes: recipesTab, about: aboutTab, advanced: advancedTab, settings: settingsTab, tech: techTab, fix: fixTab, lab: labTab };
+    const TABS = { mhgb: mhgbTab, assets: assetsTab, level3d: level3dTab, level: levelTab, chars: charsTab, art: artTab, music: musicTab, sigil: sigilTab, bracelet: braceletTab, godsim: godsimTab, berea: bereaTab, frontier: frontierTab, engines: enginesTab, sound: soundTab, touch: touchTab, world: worldTab, gfx: gfxTab, fight: fightTab, puzzle: puzzleTab, arcade: arcadeTab, templates: templatesTab, builder: builderTab, fit: fitTab, story: storyTab, timeline: timelineTab, color: colorTab, recipes: recipesTab, about: aboutTab, advanced: advancedTab, settings: settingsTab, tech: techTab, fix: fixTab, lab: labTab };
     if (typeof TABS[tab] !== 'function') tab = 'level3d';
     TABS[tab](main);
 }

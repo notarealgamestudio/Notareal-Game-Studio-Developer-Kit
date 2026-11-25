@@ -418,6 +418,23 @@ NR.buildDSWrestling = P => {
     secs.forEach(([id, d], k) => { blk.set([...id].map(ch => ch.charCodeAt(0)), 20 + k * 12); v.setUint32(24 + k * 12, offs[k], true); v.setUint32(28 + k * 12, d.length, true); blk.set(d, offs[k]); });
     return { block: blk, warnings: [] };
 };
+/* Moonlight Holler (Game Boy Color, the studio's first game): the finished ROM is the engine. Its dialogue is one blob of fixed 3 x 18 character pages (see presets/mh_dialog.json);
+   edits are written in place, so a line can be changed but a page can not be added. Returns { rom, changed, problems } */
+NR.buildGBMoonlight = (rom, edits, info) => {
+    const out = new Uint8Array(rom), chars = info.chars, L = info.lineLen, problems = []; let changed = 0, pageNo = 0;
+    for (const d of info.dialogs) {
+        const ed = edits && edits[d.id];
+        d.pages.forEach((pg, pi) => {
+            if (ed && ed[pi]) {
+                const lines = ed[pi].slice(0, 3); let ok = true;
+                lines.forEach((ln, i) => { if (String(ln).length > L) { problems.push(d.id + ' page ' + (pi + 1) + ' line ' + (i + 1) + ' is longer than ' + L + ' characters'); ok = false; } for (const ch of String(ln)) if (!chars.includes(ch)) { problems.push(d.id + ': the character ' + ch + ' is not in the game font'); ok = false; } });
+                if (ok) { const o = info.blobOffset + info.indexBytes + pageNo * 3 * L; for (let i = 0; i < 3; i++) { const t = String(lines[i] || '').padEnd(L, ' '); for (let k = 0; k < L; k++) out[o + i * L + k] = t.charCodeAt(k); } if (JSON.stringify(lines) !== JSON.stringify(pg)) changed++; }
+            }
+            pageNo++;
+        });
+    }
+    return { rom: out, changed, problems };
+};
 NR.DS_ARCADE_MODES = () => Object.keys(NR.ARCADE_KEYS).filter(k => k !== 'combat');   /* combat has its own KCFG section: single-game ROM only, not in timeline routers */
 /* Timeline -> DS router ROM: every game step must be one of the DS arcade engines; story steps become text cards; branches (win / lose / menus) are resolved to scene indexes */
 NR.buildDSScenes = P => {

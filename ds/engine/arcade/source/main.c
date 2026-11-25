@@ -66,13 +66,13 @@ static void video(void) {
 static int hexc(const char *h) { return 0; (void)h; }
 
 /* ---------------- config ---------------- */
-enum { M_SHMUP, M_BREAKOUT, M_RACE, M_FPS, M_BRAWLER, M_FALLING, M_MEMORY, M_SIM, M_PAINT, M_HOOPS, M_MUSIC, M_COLOR, M_CARD, M_COMBAT };
+enum { M_SHMUP, M_BREAKOUT, M_RACE, M_FPS, M_BRAWLER, M_FALLING, M_MEMORY, M_SIM, M_PAINT, M_HOOPS, M_MUSIC, M_COLOR, M_CARD, M_COMBAT, M_MAZE };
 static int mode, P[8]; static u16 c1 = RGB15(8, 24, 31) | BIT(15), c2 = RGB15(31, 10, 10) | BIT(15); static char title[33] = "ARCADE";
 static const char *HELP[] = { "D-pad move, A fire", "Left/Right paddle, A launch", "Up gas, Down brake, Left/Right steer", "Up/Down move, Left/Right turn, L/R strafe, A fire, B reload. Drag the bottom screen to look.", "D-pad walk, A punch, B kick", "Left/Right move, Up rotate, Down drop", "D-pad move, A flip (or tap)", "D-pad cursor, A build, B change (or tap)", "D-pad cursor, A paint, B next colour (or tap)", "A stops the meter, Left/Right aim", "Tap the grid to place notes. START plays and stops. L/R changes tempo.", "Tap a shape on the bottom screen to fill it. Pick colours below. L/R changes page.", "", "Up gas, Down brake, Left/Right steer. Hold B machine gun, A homing missile, X or Y drop a mine. Grab the crates." };
 /* a router ROM carries an SCNS section: a list of scenes (each = one arcade engine + its settings, or a text card) with win / lose links, played in order */
 static const u8 *SC; static int nscn, scn_i, scn_win, scn_lose, scn_card; static const char *card_text;
 static void apply_cfg(const u8 *p) {
-    mode = p[0]; if (mode > 11 && mode != M_COMBAT) mode = 0; cfg_song = p[1]; cfg_title = p[2]; for (int i = 0; i < 8; i++) P[i] = (s16)(p[4 + i * 2] | (p[5 + i * 2] << 8));
+    mode = p[0]; if (mode > 11 && mode != M_COMBAT && mode != M_MAZE) mode = 0; cfg_song = p[1]; cfg_title = p[2]; for (int i = 0; i < 8; i++) P[i] = (s16)(p[4 + i * 2] | (p[5 + i * 2] << 8));
     c1 = p[20] | (p[21] << 8) | BIT(15); c2 = p[22] | (p[23] << 8) | BIT(15); memcpy(title, p + 24, 32); title[32] = 0;
 }
 static void apply_scene(int i) {
@@ -480,9 +480,30 @@ static void combat_step(void) {
     kc_step(k); score = kc.score; if (kc.status) status = kc.status;
 }
 static void combat_draw(void) { cur = top; kc_draw(); }
-static void game_init(void) { status = 0; t = 0; paused = 0; hp = 0; switch (mode) { case M_SHMUP: shmup_init(); break; case M_BREAKOUT: bo_init(); break; case M_RACE: race_init(); break; case M_COMBAT: combat_init(); break; case M_FPS: fps_init(); break; case M_BRAWLER: br_init(); break; case M_FALLING: fall_init(); break; case M_MEMORY: mem_init(); break; case M_SIM: sim_init(); break; case M_PAINT: paint_init(); break; case M_MUSIC: music_init(); break; case M_COLOR: color_init(); break; case M_CARD: card_init(); break; default: hoops_init(); } }
-static void game_step(void) { switch (mode) { case M_SHMUP: shmup_step(); break; case M_BREAKOUT: bo_step(); break; case M_RACE: race_step(); break; case M_COMBAT: combat_step(); break; case M_FPS: fps_step(); break; case M_BRAWLER: br_step(); break; case M_FALLING: fall_step(); break; case M_MEMORY: mem_step(); break; case M_SIM: sim_step(); break; case M_PAINT: paint_step(); break; case M_MUSIC: music_step(); break; case M_COLOR: color_step(); break; case M_CARD: card_step(); break; default: hoops_step(); } }
-static void game_draw(void) { cur = top; switch (mode) { case M_SHMUP: shmup_draw(); break; case M_BREAKOUT: bo_draw(); break; case M_RACE: race_draw(); break; case M_COMBAT: combat_draw(); break; case M_FPS: fps_draw(); break; case M_BRAWLER: br_draw(); break; case M_FALLING: fall_draw(); break; case M_MEMORY: mem_draw(); break; case M_SIM: sim_draw(); break; case M_PAINT: paint_draw(); break; case M_MUSIC: music_draw(); break; case M_COLOR: color_draw(); break; case M_CARD: card_draw(); break; default: hoops_draw(); } }
+/* maze chase: eat every dot, avoid the ghosts; a big dot lets you chase them (kit A.maze mirrors this) */
+#define MZW 19
+#define MZH 13
+static const char *MZ[MZH] = { "###################", "#o.......#.......o#", "#.##.###.#.###.##.#", "#.................#", "#.##.#.#####.#.##.#", "#....#...#...#....#", "####.###.G.###.####", "#....#.......#....#", "#.##.#.#####.#.##.#", "#.................#", "#.##.###.#.###.##.#", "#o.......P.......o#", "###################" };
+static char mzg[MZH][MZW + 1]; static int mzpx, mzpy, mzdir, mzwant, mzfr, mzdots, mzn, mzsx, mzsy, mzgx, mzgy; static int mzgxs[3], mzgys[3], mzgd[3];
+static const int MDX[4] = { 1, 0, -1, 0 }, MDY[4] = { 0, 1, 0, -1 };
+static int mzfree(int x, int y) { return x >= 0 && x < MZW && y >= 0 && y < MZH && mzg[y][x] != '#'; }
+static void mz_reset(void) { mzpx = mzsx; mzpy = mzsy; mzdir = 0; mzwant = 0; for (int i = 0; i < mzn; i++) { mzgxs[i] = mzgx + i - 1; mzgys[i] = mzgy; mzgd[i] = 0; } }
+static void maze_init(void) { lives = P[0] < 1 ? 3 : P[0] > 9 ? 9 : P[0]; mzn = P[1] < 0 ? 3 : P[1] > 3 ? 3 : P[1]; mzdots = 0; score = 0; mzfr = 0; for (int y = 0; y < MZH; y++) for (int x = 0; x < MZW; x++) { char c = MZ[y][x]; if (c == 'P') { mzsx = x; mzsy = y; c = ' '; } if (c == 'G') { mzgx = x; mzgy = y; c = ' '; } mzg[y][x] = c; if (c == '.' || c == 'o') mzdots++; } mz_reset(); }
+static void mz_hit(void) { for (int i = 0; i < mzn; i++) if (mzgxs[i] == mzpx && mzgys[i] == mzpy) { if (mzfr > 0) { score += 200; mzgxs[i] = mzgx; mzgys[i] = mzgy; beep(900, 4); } else { lives--; thud(8); if (lives <= 0) status = 2; else { mz_reset(); mzfr = 0; } return; } } }
+static void maze_step(void) {
+    t++; int sf = P[2] < 2 ? 9 : P[2]; if (kh & KEY_RIGHT) mzwant = 0; else if (kh & KEY_DOWN) mzwant = 1; else if (kh & KEY_LEFT) mzwant = 2; else if (kh & KEY_UP) mzwant = 3; if (mzfr > 0) mzfr--;
+    if (t % sf == 0) { if (mzfree(mzpx + MDX[mzwant], mzpy + MDY[mzwant])) mzdir = mzwant; if (mzfree(mzpx + MDX[mzdir], mzpy + MDY[mzdir])) { mzpx += MDX[mzdir]; mzpy += MDY[mzdir]; } char c = mzg[mzpy][mzpx]; if (c == '.') { mzg[mzpy][mzpx] = ' '; mzdots--; score += 10; beep(700, 1); } else if (c == 'o') { mzg[mzpy][mzpx] = ' '; mzdots--; score += 50; mzfr = P[3] < 60 ? 360 : P[3]; beep(300, 6); } if (mzdots <= 0) { status = 1; return; } mz_hit(); if (status) return; }
+    if (t % (sf + (mzfr > 0 ? 4 : 2)) == 0) { for (int i = 0; i < mzn; i++) { int opts[4], no = 0, back = (mzgd[i] + 2) & 3; for (int d = 0; d < 4; d++) if (d != back && mzfree(mzgxs[i] + MDX[d], mzgys[i] + MDY[d])) opts[no++] = d; if (!no) opts[no++] = back; int d = opts[0]; if (mzfr > 0 || rnd(4) == 0) d = opts[rnd(no)]; else { int best = 999; for (int k = 0; k < no; k++) { int dd = abs(mzgxs[i] + MDX[opts[k]] - mzpx) + abs(mzgys[i] + MDY[opts[k]] - mzpy); if (dd < best) { best = dd; d = opts[k]; } } } mzgd[i] = d; mzgxs[i] += MDX[d]; mzgys[i] += MDY[d]; } mz_hit(); }
+}
+static void maze_draw(void) {
+    clear(RGB(5, 5, 15)); int cs = 12, ox = (256 - MZW * cs) / 2, oy = 18;
+    for (int y = 0; y < MZH; y++) for (int x = 0; x < MZW; x++) { char c = mzg[y][x]; if (c == '#') rect(ox + x * cs + 1, oy + y * cs + 1, cs - 2, cs - 2, RGB(42, 60, 200)); else if (c == '.') rect(ox + x * cs + 5, oy + y * cs + 5, 2, 2, RGB(245, 230, 176)); else if (c == 'o') disc(ox + x * cs + 6, oy + y * cs + 6, 3, RGB(255, 255, 255)); }
+    disc(ox + mzpx * cs + 6, oy + mzpy * cs + 6, 5, c1);
+    for (int i = 0; i < mzn; i++) { u16 gc = mzfr > 0 ? ((mzfr < 90 && (t / 5) % 2) ? RGB(255, 255, 255) : RGB(58, 106, 255)) : (i == 0 ? RGB(232, 74, 74) : i == 1 ? c2 : RGB(74, 232, 255)); rect(ox + mzgxs[i] * cs + 1, oy + mzgys[i] * cs + 1, 10, 10, gc); }
+}
+static void game_init(void) { status = 0; t = 0; paused = 0; hp = 0; switch (mode) { case M_SHMUP: shmup_init(); break; case M_BREAKOUT: bo_init(); break; case M_RACE: race_init(); break; case M_COMBAT: combat_init(); break; case M_FPS: fps_init(); break; case M_BRAWLER: br_init(); break; case M_FALLING: fall_init(); break; case M_MEMORY: mem_init(); break; case M_SIM: sim_init(); break; case M_PAINT: paint_init(); break; case M_MUSIC: music_init(); break; case M_COLOR: color_init(); break; case M_CARD: card_init(); break; case M_MAZE: maze_init(); break; default: hoops_init(); } }
+static void game_step(void) { switch (mode) { case M_SHMUP: shmup_step(); break; case M_BREAKOUT: bo_step(); break; case M_RACE: race_step(); break; case M_COMBAT: combat_step(); break; case M_FPS: fps_step(); break; case M_BRAWLER: br_step(); break; case M_FALLING: fall_step(); break; case M_MEMORY: mem_step(); break; case M_SIM: sim_step(); break; case M_PAINT: paint_step(); break; case M_MUSIC: music_step(); break; case M_COLOR: color_step(); break; case M_CARD: card_step(); break; case M_MAZE: maze_step(); break; default: hoops_step(); } }
+static void game_draw(void) { cur = top; switch (mode) { case M_SHMUP: shmup_draw(); break; case M_BREAKOUT: bo_draw(); break; case M_RACE: race_draw(); break; case M_COMBAT: combat_draw(); break; case M_FPS: fps_draw(); break; case M_BRAWLER: br_draw(); break; case M_FALLING: fall_draw(); break; case M_MEMORY: mem_draw(); break; case M_SIM: sim_draw(); break; case M_PAINT: paint_draw(); break; case M_MUSIC: music_draw(); break; case M_COLOR: color_draw(); break; case M_CARD: card_draw(); break; case M_MAZE: maze_draw(); break; default: hoops_draw(); } }
 static void bar(int x, int y, int w, int v, int mx, u16 c) { rect(x, y, w, 8, RGB(40, 40, 56)); rect(x, y, mx ? w * (v < 0 ? 0 : v > mx ? mx : v) / mx : 0, 8, c); frame_rect(x, y, w, 8, RGB(150, 150, 170)); }
 static void bottom_draw(void) {
     if (mode == M_COLOR) { color_bottom(); return; } if (mode == M_CARD) { card_bottom(); return; }
@@ -503,6 +524,7 @@ static void bottom_draw(void) {
     else if (mode == M_COMBAT) { sprintf(b, "POS %d / %d", kc.place, kcC.rivals + 1); text(8, 46, b, RGB(255, 255, 255)); sprintf(b, "LAP %d / %d", kc.lap > kcC.laps ? kcC.laps : kc.lap, kcC.laps); text(8, 60, b, RGB(255, 230, 120)); sprintf(b, "MISSILES %d  MINES %d", kc.missiles, kc.mines); text(8, 74, b, RGB(255, 255, 255)); text(8, 90, "HULL", RGB(200, 200, 220)); bar(48, 90, 100, kc.hp, kcC.hp, RGB(80, 220, 90)); text(8, 104, "HEAT", RGB(200, 200, 220)); bar(48, 104, 100, kc.heat, 100, kc.jam ? RGB(255, 80, 80) : RGB(255, 230, 80)); }
     else if (mode == M_BRAWLER) { sprintf(b, "LIVES %d  WAVE %d", lives, bwave); text(8, 46, b, RGB(255, 255, 255)); bar(8, 60, 100, bphp, 10, RGB(80, 220, 90)); }
     else if (mode == M_FALLING) { sprintf(b, "LINES %d / %d", flines, P[3] < 1 ? 20 : P[3]); text(8, 46, b, RGB(255, 255, 255)); }
+    else if (mode == M_MAZE) { sprintf(b, "LIVES %d  DOTS %d", lives, mzdots); text(8, 46, b, RGB(255, 255, 255)); }
     else if (mode == M_BREAKOUT) { sprintf(b, "LIVES %d  BRICKS %d", lives, bricks); text(8, 46, b, RGB(255, 255, 255)); }
     else if (mode == M_SHMUP) { sprintf(b, "LIVES %d  WAVE %d", lives, wave + 1); text(8, 46, b, RGB(255, 255, 255)); }
     if (mode == M_MUSIC) { clear(RGB(10, 14, 30)); for (int r = 0; r < 8; r++) for (int c = 0; c < 16; c++) { int on = mg[r][c], x = 8 + c * 15, y = 34 + r * 17; rect(x, y, 14, 16, on ? (r < 4 ? RGB(255, 200, 80) : RGB(120, 220, 255)) : ((c & 3) == 0 ? RGB(40, 46, 80) : RGB(28, 32, 58))); if (mplay && c == mstep) frame_rect(x - 1, y - 1, 16, 18, RGB(255, 255, 255)); if (c == mcx && r == mcy) frame_rect(x, y, 14, 16, RGB(255, 255, 80)); } text(8, 8, "TAP TO PLACE NOTES", RGB(170, 180, 210)); text(8, 176, "START = PLAY / STOP", RGB(130, 140, 170)); }

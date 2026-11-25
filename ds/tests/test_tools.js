@@ -21,7 +21,7 @@ t('export hook',T.run('export_rom',{},ctx).ok&&calls.includes('export'));t('chec
  a=await T.agent('validate the wasteland campaign then simulate 30 days',ctx,null);t('keywords: two steps',a.steps.length===2&&a.steps.every(s=>s.ok));
  a=await T.agent('export it',ctx,null);t('keywords: export',a.steps[0].tool==='export_rom');
  a=await T.agent('xyzzy',ctx,null);t('unknown request understood=false',!a.understood);
- a=await T.agent('anything',ctx,async()=>'```json\n{"steps":[{"tool":"set_race","args":{"laps":2}},{"tool":"launch_missiles","args":{}},{"tool":"check_project","args":{}}]}```');t('AI plan: only known tools run',a.source==='ai'&&a.steps.length===2&&P.arcade.cfg.laps===2);
+ a=await T.agent('anything',ctx,(()=>{let n=0;const sc=[{tool:'set_race',args:{laps:2}},{tool:'launch_missiles',args:{}},{tool:'check_project',args:{}}];return async()=>JSON.stringify(sc[n++]||{done:true});})());t('AI plan: an unknown tool stops the run, known steps before it still ran',a.source==='ai'&&a.steps.length===1&&P.arcade.cfg.laps===2);
  a=await T.agent('make laps 4',ctx,async()=>'garbage');t('bad AI answer falls back to keywords',a.source==='keywords'&&P.arcade.cfg.laps===4);
  a=await T.agent('tell me about scanned games with farm',ctx,null);t('keywords: library',true);
  console.log(ok+' ok, '+bad+' fail');process.exit(bad?1:0);})();

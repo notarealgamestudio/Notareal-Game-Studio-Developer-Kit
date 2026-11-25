@@ -9,8 +9,8 @@ const a=B.fromBase(base,{seed:5,levels:1}),b=B.fromBase(base,{seed:5,levels:1}),
 // music is changed from the source (not copied)
 const s=B.fromBase(base,{theme:'space',levels:1});ok(JSON.stringify(s.songs[0].ch)!==JSON.stringify(base.songs[0].ch)&&s.songs[0].ch.length===4,'songs transposed');
 ok(s.levels[0].objects.some(o=>o.type==='goal')&&s.levels[0].objects.some(o=>o.type==='start'),'goal+start');
-// all 42 templates give a project for their engine
-const all=T.all();ok(all.length===42,'42 templates');for(const t of all){const r=T.apply(t.id,base,{title:'X',theme:'ice',levels:1});ok(r.project&&(r.engine===t.engine||r.engine==='side2d'||r.engine==='fps3d')&&r.tab,'tpl '+t.id);if(t.engine==='arcade'||t.engine==='fps'||t.engine==='skate'){const g=A.create(r.project.arcade.mode,r.project.arcade.cfg,{seed:1});for(let i=0;i<120;i++)g.step({});ok(g.s.status,'arcade tpl runs '+t.id)}if(t.engine==='fight')ok(r.project.fight.fighters.length===2,'fight '+t.id);if(t.engine==='puzzle')ok(r.project.puzzle.mode===t.kind,'puzzle '+t.id)}
+// all 43 templates give a project for their engine
+const all=T.all();ok(all.length===43,'43 templates');for(const t of all){const r=T.apply(t.id,base,{title:'X',theme:'ice',levels:1});ok(r.project&&(r.engine===t.engine||r.engine==='side2d'||r.engine==='fps3d')&&r.tab,'tpl '+t.id);if(t.engine==='arcade'||t.engine==='fps'||t.engine==='skate'){const g=A.create(r.project.arcade.mode,r.project.arcade.cfg,{seed:1});for(let i=0;i<120;i++)g.step({});ok(g.s.status,'arcade tpl runs '+t.id)}if(t.engine==='fight')ok(r.project.fight.fighters.length===2,'fight '+t.id);if(t.engine==='puzzle')ok(r.project.puzzle.mode===t.kind,'puzzle '+t.id)}
 // ai: keywords, bad json, good json, unreachable
 ok(AI.heuristicPlan('spooky ghost castle platformer 5 levels').theme==='castle'&&AI.heuristicPlan('spooky ghost castle platformer 5 levels').levels===5,'keywords');
 let p=await AI.plan('a farm game',async()=>'not json');ok(p.genre==='farm_sim'&&p.source==='keywords','bad json falls back');

@@ -48,7 +48,7 @@ T.PALETTE = [
 T.palette = () => T.PALETTE.filter(p => p.type !== 'arcade' || (Arcade && Arcade.MODES && Arcade.MODES[p.mode]));
 T.fromPalette = id => { const p = T.PALETTE.find(x => x.id === id); if (!p) return null; const o = { title: p.label }; if (p.type === 'arcade') { o.mode = p.mode; o.cfg = JSON.parse(JSON.stringify((Arcade.DEFAULTS && Arcade.DEFAULTS[p.mode]) || {})); if (p.mode === 'room') o.cfg.machines = JSON.parse(JSON.stringify(Arcade.ROOM_MACHINES || o.cfg.machines || [])); o.title = p.label; } if (p.type === 'transition') o.mode = 'fade'; if (p.type === 'menu') o.choices = [{ text: 'Continue', next: 'next' }]; return T.step(p.type, o); };
 /* arcade engines the DS ROM scene router can chain (kept equal to NRKit.ARCADE_KEYS minus the old paint key; checked by tests) */
-T.DS_ARCADE = ['shmup', 'breakout', 'race', 'fps', 'brawler', 'falling', 'memory', 'sim', 'paint', 'hoops', 'music', 'coloring'];
+T.DS_ARCADE = ['shmup', 'breakout', 'race', 'fps', 'brawler', 'falling', 'memory', 'sim', 'paint', 'hoops', 'music', 'coloring', 'maze'];
 /* which step families a console can hold in ONE game: a small-console ROM is a single engine; DS holds one engine ROM; PC / Xbox mix everything */
 T.CAN = {
     pc: ['story', 'platformer', 'race', 'rpg', 'fps3d', 'arcade', 'world', 'puzzle', 'fight'], xbox: ['story', 'platformer', 'race', 'rpg', 'fps3d', 'arcade', 'world', 'puzzle', 'fight'],

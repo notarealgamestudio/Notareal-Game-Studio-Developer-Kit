@@ -491,6 +491,7 @@
     "SMACKDOWN 09",
     "SMACKDOWN 10",
     "TNAIMPACTCRL",
+    "TNA_Wrestling_Impact__-_Cross_the_Line__USA__1",
     "WCW - The Main Event USA Europe",
     "WCW Mayhem U C",
     "WCW Super Brawl Wrestling USA",
@@ -505,7 +506,8 @@
     "WWF Superstars 2 USA Europe",
     "WWF Superstars USA Europe",
     "WWF WrestleMania - The Arcade Game USA",
-    "WWF WrestleMania 2000 U C"
+    "WWF WrestleMania 2000 U C",
+    "WWF_WrestleMania_2000__USA_"
    ],
    "systems": [
     "Create-a-Superstar parts",
@@ -737,6 +739,8 @@
     "Tony Hawks Pro Skater 2 U C",
     "Tony Hawks Pro Skater 3 U C",
     "Tony Hawks Pro Skater U C",
+    "Tony_Hawk_s_American_Sk8land__USA_",
+    "Tony_Hawk_s_Proving_Ground__USA_",
     "Wipeout 64 (USA)",
     "thug2"
    ],
@@ -1210,6 +1214,29 @@
     "ds",
     "psx",
     "n64"
+   ]
+  },
+  {
+   "id": "maze_chase",
+   "name": "Maze chase",
+   "family": "Puzzle",
+   "about": "Eat every dot in the maze while ghosts chase you; big dots turn the tables. A Pac-Man style minigame that can also be a whole game.",
+   "learns_from": [
+    "Pac-Man 2 - The New Adventures",
+    "Pac-in-Time",
+    "Pac-Attack",
+    "Pac Man World 3 (E)(Independent)"
+   ],
+   "systems": [],
+   "engine": "arcade",
+   "status": "ready",
+   "touch_layout": "controller",
+   "music": "world_indonesia",
+   "art": "cute",
+   "controls": "D-pad moves",
+   "consoles": [
+    "ds",
+    "pc"
    ]
   }
  ],

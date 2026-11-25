@@ -356,7 +356,7 @@ NR.buildDSPuzzle = P => {
     return { block: blk, warnings: [] };
 };
 /* Arcade ROM: one ARCF section = mode, 8 settings (i16), two RGB15 colours, title. Engine: engine/arcade/source/main.c */
-NR.ARCADE_KEYS = { shmup: ['lives', 'speed', 'fireRate', 'waves', 'enemyHp', 'boss'], breakout: ['lives', 'rows', 'cols', 'ballSpeed', 'paddle'], race: ['laps', 'laneCars', 'maxSpeed', 'timeLimit', 'curves'], fps: ['size', 'enemies', 'health', 'ammo', 'damage'], brawler: ['lives', 'waves', 'enemyHp', 'boss'], falling: ['w', 'h', 'startSpeed', 'goalLines'], memory: ['pairs', 'cols', 'tries'], sim: ['w', 'h', 'cash', 'goalPop'], paint: ['picture'], hoops: ['seconds', 'goal', 'meterSpeed'], music: ['tempo'], coloring: ['page'], combat: [] };
+NR.ARCADE_KEYS = { shmup: ['lives', 'speed', 'fireRate', 'waves', 'enemyHp', 'boss'], breakout: ['lives', 'rows', 'cols', 'ballSpeed', 'paddle'], race: ['laps', 'laneCars', 'maxSpeed', 'timeLimit', 'curves'], fps: ['size', 'enemies', 'health', 'ammo', 'damage'], brawler: ['lives', 'waves', 'enemyHp', 'boss'], falling: ['w', 'h', 'startSpeed', 'goalLines'], memory: ['pairs', 'cols', 'tries'], sim: ['w', 'h', 'cash', 'goalPop'], paint: ['picture'], hoops: ['seconds', 'goal', 'meterSpeed'], music: ['tempo'], coloring: ['page'], combat: [], maze: ['lives', 'ghosts', 'stepFrames', 'powerFrames'] };
 /* Skate park data ('SKPK'): the shared level builder's skate park. Presets mirror the engine's three built-in parks. */
 NR.SKATE_PARKS = [
   { name: 'Plaza', qh: 2.2, c: { sky0: [150,196,240], sky1: [60,110,210], slab: [150,150,154], walls: [150,150,160], deck: [110,90,60] }, spawn: { x: 3.5, z: 3 }, yaw: 180,
@@ -454,7 +454,7 @@ NR.buildDSArcade = (P, scenes) => {
     const A = scenes ? { mode: scenes.first.mode, cfg: scenes.first.cfg } : P.arcade; if (!A) throw new Error('No arcade game set up yet');
     const modes = Object.keys(NR.ARCADE_KEYS), hex = h => [1, 3, 5].map(i => parseInt((h || '#000000').slice(i, i + 2), 16) || 0), rgb15 = c => (c[0] >> 3 | (c[1] >> 3) << 5 | (c[2] >> 3) << 10 | 0x8000), warn = [];
     const mk = (mode, cfg) => { const mi = modes.indexOf(mode); if (mi < 0) throw new Error('Unknown arcade game: ' + mode); cfg = cfg || {}; const b = new Uint8Array(56), dv = new DataView(b.buffer);
-        b[0] = mode === 'combat' ? 13 : mi; NR.ARCADE_KEYS[mode].forEach((k, i) => { let v = cfg[k]; if (k === 'picture') v = Math.max(0, ['house', 'cat', 'tree'].indexOf(v)); if (k === 'tempo') v = v || 120; if (k === 'meterSpeed') v = Math.round((v || 2.2) * 10); dv.setInt16(4 + i * 2, Math.max(-32768, Math.min(32767, Math.round(+v || 0))), true); });
+        b[0] = mode === 'combat' ? 13 : mode === 'maze' ? 14 : mi; NR.ARCADE_KEYS[mode].forEach((k, i) => { let v = cfg[k]; if (k === 'picture') v = Math.max(0, ['house', 'cat', 'tree'].indexOf(v)); if (k === 'tempo') v = v || 120; if (k === 'meterSpeed') v = Math.round((v || 2.2) * 10); dv.setInt16(4 + i * 2, Math.max(-32768, Math.min(32767, Math.round(+v || 0))), true); });
         dv.setUint16(20, rgb15(hex(cfg.color)), true); dv.setUint16(22, rgb15(hex(cfg.color2)), true); const t = String(cfg.title || 'Arcade').slice(0, 31); for (let i = 0; i < t.length; i++) b[24 + i] = t.charCodeAt(i) & 127; return b; };
     const cfg = A.cfg || {}, b = mk(A.mode, cfg);
     const sections = [['ARCF', b]];

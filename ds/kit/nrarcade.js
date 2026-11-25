@@ -16,6 +16,7 @@
         fps: { title: 'Corridor Ops', size: 16, enemies: 6, health: 100, ammo: 40, damage: 2, color: '#8b8bff', color2: '#ff5a5a' },
         brawler: { title: 'Street Brawl', lives: 3, waves: 4, enemyHp: 3, boss: 1, color: '#ffcf5a', color2: '#e84a4a' },
         falling: { title: 'Block Drop', w: 10, h: 18, startSpeed: 30, goalLines: 20, color: '#b04ae8', color2: '#4ae8ff' },
+        maze: { title: 'Dot Dash', lives: 3, ghosts: 3, stepFrames: 9, powerFrames: 360, color: '#f5c542', color2: '#e84a8a' },
         memory: { title: 'Pair Up', pairs: 8, cols: 4, tries: 20, color: '#4ae87a', color2: '#f58a42' },
         sim: { title: 'Little Town', w: 16, h: 12, cash: 600, goalPop: 120, color: '#4ae87a', color2: '#f5c542' },
         paint: { title: 'Color Me', picture: 'house', color: '#ff7aa8', color2: '#4ae8ff' },
@@ -34,6 +35,7 @@
         fps: { name: 'First-person shooter', controls: 'Up/Down move, Left/Right turn, A fire', genres: ['shooter_fps', 'shooter_tps', 'rpg_linear'] },
         brawler: { name: 'Beat-em-up', controls: 'D-pad walk, A punch, B kick', genres: ['beat_em_up'] },
         falling: { name: 'Falling blocks', controls: 'Left/Right move, Up rotate, Down drop', genres: ['puzzle_falling'] },
+        maze: { name: 'Maze chase', controls: 'D-pad move: eat every dot, avoid the ghosts, big dots let you chase them', genres: ['minigames', 'puzzle_falling'] },
         memory: { name: 'Memory pairs', controls: 'D-pad move, A flip', genres: ['memory_puzzle', 'minigames'] },
         sim: { name: 'Town / city builder', controls: 'D-pad cursor, A build, B change building', genres: ['city_builder', 'god_sim'] },
         paint: { name: 'Coloring book', controls: 'D-pad cursor, A paint, B next colour', genres: ['coloring_book'] },
@@ -205,6 +207,27 @@
         }, draw(g) {
             g.fillStyle = '#0b1220'; g.fillRect(0, 0, W, H); const cw = 54, ch = 50, ox = (W - C.cols * cw) / 2, oy = 30; for (let i = 0; i < n; i++) { const x = ox + (i % C.cols) * cw, y = oy + Math.floor(i / C.cols) * ch, face = s.found.has(i) || s.up.includes(i); g.fillStyle = face ? (MD ? '#f0f0e6' : `hsl(${deck[i] * 47},65%,55%)`) : C.color; g.globalAlpha = s.found.has(i) ? .35 : 1; g.fillRect(x + 2, y + 2, cw - 4, ch - 4); g.globalAlpha = 1; if (face && MD) { const px = MD.cards[deck[i]].px || '', q = Math.floor(Math.min(cw - 4, ch - 4) / 16), x0 = x + (cw - 16 * q) / 2, y0 = y + (ch - 16 * q) / 2; for (let k = 0; k < 256; k++) { const c = parseInt(px[k] || '0', 16) || 0; if (c) { g.fillStyle = MD.pal[c] || '#000'; g.fillRect(x0 + (k % 16) * q, y0 + Math.floor(k / 16) * q, q, q); } } } else if (face) fillText(g, String(deck[i] + 1), x + cw / 2, y + ch / 2 + 6, '#fff', 18, 'center'); if (i === s.cur) { g.strokeStyle = '#fff'; g.lineWidth = 2; g.strokeRect(x, y, cw, ch); } }
             fillText(g, 'TRIES LEFT ' + s.tries, 4, 14, '#fff', 9); fillText(g, 'SCORE ' + s.score, W - 4, 14, '#fff', 9, 'right'); end(g, s); } };
+    };
+
+    /* ---------------------------------------------------------------- maze chase (eat the dots, avoid the ghosts; original maze) */
+    A.MAZE = ['###################', '#o.......#.......o#', '#.##.###.#.###.##.#', '#.................#', '#.##.#.#####.#.##.#', '#....#...#...#....#', '####.###.G.###.####', '#....#.......#....#', '#.##.#.#####.#.##.#', '#.................#', '#.##.###.#.###.##.#', '#o.......P.......o#', '###################'];
+    A.maze = (cfg, o) => {
+        const C = Object.assign({}, A.DEFAULTS.maze, cfg), r = rng(o.seed || 1), g0 = A.MAZE.map(row => row.split('')), RW = g0.length, CW = g0[0].length, DX = [1, 0, -1, 0], DY = [0, 1, 0, -1], nG = Math.max(0, Math.min(3, C.ghosts | 0));
+        let start = [9, 11], gs = [9, 6]; g0.forEach((row, y) => row.forEach((c, x) => { if (c === 'P') { start = [x, y]; g0[y][x] = ' '; } if (c === 'G') { gs = [x, y]; g0[y][x] = ' '; } }));
+        const s = { status: 'play', score: 0, lives: C.lives, grid: g0, px: start[0], py: start[1], dir: 0, want: 0, fright: 0, t: 0, dots: 0, last: {}, ghosts: [] };
+        s.grid.forEach(row => row.forEach(c => { if (c === '.' || c === 'o') s.dots++; }));
+        const free = (x, y) => y >= 0 && y < RW && x >= 0 && x < CW && s.grid[y][x] !== '#', reset = () => { s.px = start[0]; s.py = start[1]; s.dir = 0; s.want = 0; s.ghosts = []; for (let i = 0; i < nG; i++) s.ghosts.push({ x: gs[0] + (i - 1), y: gs[1], dir: 0, dead: 0 }); }; reset();
+        const hit = () => { for (const gh of s.ghosts) if (gh.x === s.px && gh.y === s.py) { if (s.fright > 0) { s.score += 200; gh.x = gs[0]; gh.y = gs[1]; } else { s.lives--; if (s.lives <= 0) s.status = 'lose'; else { reset(); s.fright = 0; } return; } } };
+        return { s, C, step(k) {
+            if (s.status !== 'play') return; s.t++; if (k.ArrowRight) s.want = 0; else if (k.ArrowDown) s.want = 1; else if (k.ArrowLeft) s.want = 2; else if (k.ArrowUp) s.want = 3; if (s.fright > 0) s.fright--;
+            if (s.t % Math.max(2, C.stepFrames) === 0) { if (free(s.px + DX[s.want], s.py + DY[s.want])) s.dir = s.want; if (free(s.px + DX[s.dir], s.py + DY[s.dir])) { s.px += DX[s.dir]; s.py += DY[s.dir]; } const c = s.grid[s.py][s.px]; if (c === '.') { s.grid[s.py][s.px] = ' '; s.dots--; s.score += 10; } else if (c === 'o') { s.grid[s.py][s.px] = ' '; s.dots--; s.score += 50; s.fright = C.powerFrames; } if (s.dots <= 0) { s.status = 'win'; return; } hit(); if (s.status !== 'play') return; }
+            if (s.t % (Math.max(2, C.stepFrames) + (s.fright > 0 ? 4 : 2)) === 0) { for (const gh of s.ghosts) { let opts = [0, 1, 2, 3].filter(d => free(gh.x + DX[d], gh.y + DY[d]) && d !== (gh.dir + 2) % 4); if (!opts.length) opts = [(gh.dir + 2) % 4]; let d; if (s.fright > 0 || r() < .25) d = opts[Math.floor(r() * opts.length)]; else { d = opts.reduce((b, c) => (Math.abs(gh.x + DX[c] - s.px) + Math.abs(gh.y + DY[c] - s.py) < Math.abs(gh.x + DX[b] - s.px) + Math.abs(gh.y + DY[b] - s.py) ? c : b), opts[0]); } gh.dir = d; gh.x += DX[d]; gh.y += DY[d]; } hit(); }
+        }, draw(g) {
+            g.fillStyle = '#05050f'; g.fillRect(0, 0, W, H); const cs = 16, ox = (W - CW * cs) / 2, oy = 22;
+            for (let y = 0; y < RW; y++) for (let x = 0; x < CW; x++) { const c = s.grid[y][x]; if (c === '#') { g.fillStyle = '#2a3cc8'; g.fillRect(ox + x * cs + 1, oy + y * cs + 1, cs - 2, cs - 2); } else if (c === '.') { g.fillStyle = '#f5e6b0'; g.fillRect(ox + x * cs + 7, oy + y * cs + 7, 3, 3); } else if (c === 'o') { g.fillStyle = '#fff'; g.beginPath(); g.arc(ox + x * cs + 8, oy + y * cs + 8, 5, 0, 7); g.fill(); } }
+            g.fillStyle = C.color; g.beginPath(); g.arc(ox + s.px * cs + 8, oy + s.py * cs + 8, 7, 0, 7); g.fill();
+            s.ghosts.forEach((gh, i) => { g.fillStyle = s.fright > 0 ? (s.fright < 90 && s.t % 10 < 5 ? '#fff' : '#3a6aff') : ['#e84a4a', C.color2, '#4ae8ff'][i % 3]; g.fillRect(ox + gh.x * cs + 2, oy + gh.y * cs + 2, 12, 12); });
+            fillText(g, 'SCORE ' + s.score, 6, 14, '#fff', 9); fillText(g, 'LIVES ' + s.lives, W - 6, 14, '#fff', 9, 'right'); end(g, s); } };
     };
 
     /* ---------------------------------------------------------------- town / city builder */

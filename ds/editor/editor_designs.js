@@ -138,6 +138,24 @@ function memoryDesignTab(main) {
     main.append(box);
 }
 
+
+/* Maze chase: paint the maze (19 x 13). Walls, dots, big dots, the player start and the ghost start. */
+const MZD = { tool: '#' };
+function mazeDesignTab(main) {
+    const A = P.arcade; A.cfg = A.cfg || {}; if (!A.cfg.design) A.cfg.design = NRArcade.MAZE_DESIGN(); const D = A.cfg.design, box = el('div', { class: 'pane' });
+    const TOOLS = [['#', 'Wall', '#2a3cc8'], ['.', 'Dot', '#f5e6b0'], ['o', 'Big dot', '#ffffff'], [' ', 'Empty', '#111'], ['P', 'Player start', '#f5c542'], ['G', 'Ghost start', '#e84a4a']];
+    const rows = D.rows.map(r => r.split('')), save = () => { D.rows = rows.map(r => r.join('')); dirty = true; };
+    box.append(el('h2', {}, '🟡 Maze designer'), el('p', { class: 'hint' }, 'Pick a tool, then click or drag on the maze. You need exactly one player start and one ghost start, and every dot must be reachable. If the maze has a problem the game uses the built-in maze instead and the Export button explains why.'),
+        el('div', { class: 'row wrap' }, el('button', { class: 'alt', onclick: () => { A.cfg.design = NRArcade.MAZE_DESIGN(); dirty = true; renderAll(); } }, 'Reset to the starter maze'), el('label', {}, 'Lives ', dsgNum(A.cfg.lives == null ? 3 : A.cfg.lives, 1, 9, 1, v => A.cfg.lives = v)), el('label', {}, 'Ghosts ', dsgNum(A.cfg.ghosts == null ? 3 : A.cfg.ghosts, 0, 3, 1, v => A.cfg.ghosts = v)), el('label', {}, 'Speed (frames per step, lower = faster) ', dsgNum(A.cfg.stepFrames || 9, 2, 20, 1, v => A.cfg.stepFrames = v)), el('label', {}, 'Big dot power (frames) ', dsgNum(A.cfg.powerFrames || 360, 60, 900, 30, v => A.cfg.powerFrames = v))));
+    const tl = el('div', { class: 'row wrap' }); TOOLS.forEach(([ch, nm, col]) => tl.append(el('span', { style: 'display:inline-block;padding:4px 8px;margin:2px;cursor:pointer;border:2px solid ' + (MZD.tool === ch ? '#fff' : '#444') + ';background:' + col + ';color:' + (ch === '#' || ch === 'G' ? '#fff' : '#000'), onclick: () => { MZD.tool = ch; renderAll(); } }, nm)));
+    const cv = el('canvas', { width: 19 * 24, height: 13 * 24, style: 'border:1px solid #444;touch-action:none;cursor:crosshair;margin-top:8px' }), g = cv.getContext('2d');
+    const draw = () => { g.fillStyle = '#05050f'; g.fillRect(0, 0, cv.width, cv.height); for (let y = 0; y < 13; y++) for (let x = 0; x < 19; x++) { const c = rows[y][x], X = x * 24, Y = y * 24; if (c === '#') { g.fillStyle = '#2a3cc8'; g.fillRect(X + 1, Y + 1, 22, 22); } else if (c === '.') { g.fillStyle = '#f5e6b0'; g.fillRect(X + 10, Y + 10, 4, 4); } else if (c === 'o') { g.fillStyle = '#fff'; g.beginPath(); g.arc(X + 12, Y + 12, 7, 0, 7); g.fill(); } else if (c === 'P') { g.fillStyle = '#f5c542'; g.beginPath(); g.arc(X + 12, Y + 12, 10, 0, 7); g.fill(); } else if (c === 'G') { g.fillStyle = '#e84a4a'; g.fillRect(X + 3, Y + 3, 18, 18); } } };
+    const status = el('p', {}), check = () => { const bad = NRArcade.mazeCheck(rows.map(r => r.join(''))); status.textContent = bad.length ? '⚠ ' + bad.join(' ') : '✔ Maze is playable: ' + rows.join('').split('').filter(c => c === '.' || c === 'o').length + ' dots.'; status.style.color = bad.length ? '#fc6' : '#7e7'; };
+    let down = 0; const put = e => { const r = cv.getBoundingClientRect(), x = Math.floor((e.clientX - r.left) / r.width * 19), y = Math.floor((e.clientY - r.top) / r.height * 13); if (x < 0 || y < 0 || x > 18 || y > 12 || rows[y][x] === MZD.tool) return; if (MZD.tool === 'P' || MZD.tool === 'G') rows.forEach(rr => rr.forEach((c, i) => { if (c === MZD.tool) rr[i] = ' '; })); rows[y][x] = MZD.tool; save(); draw(); check(); };
+    cv.onpointerdown = e => { down = 1; put(e); }; cv.onpointermove = e => { if (down) put(e); }; cv.onpointerup = cv.onpointerleave = () => { down = 0; }; draw(); check();
+    box.append(tl, cv, status); main.append(box);
+}
+
 /* Falling blocks: draw the pieces (4x4 grid each, up to 12), pick colours, set how fast it speeds up. */
 const FBD = { sel: 0 };
 function fallingDesignTab(main) {

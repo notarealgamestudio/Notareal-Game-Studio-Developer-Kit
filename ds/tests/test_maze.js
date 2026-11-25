@@ -15,4 +15,13 @@ t('eating a frightened ghost scores and sends it home',m3.s.score>=sc+200&&m3.s.
 // DS ROM data: mode byte and four settings
 const b=NR.buildDSArcade?null:null;
 t('maze has settings keys for the DS cfg',NR.ARCADE_KEYS.maze.length===4);
+// a custom maze plays, bad mazes are refused, the DS ROM block carries it, and the AI tools can edit it
+const T=require('../kit/nrtools.js');const rows=A.MAZE.slice();rows[3]='#.....#.....#.....#'.replace(/#/g,'.').replace(/^\./,'#').replace(/\.$/,'#');
+t('starter maze passes the check',A.mazeCheck(A.MAZE).length===0);
+t('maze without a ghost start is refused',A.mazeCheck(A.MAZE.map(r=>r.replace('G','.'))).length>0);
+t('unreachable dot is refused',A.mazeCheck(['###################','#P...#.....G.....o#'].concat(Array(11).fill('###################'))).length>0);
+const cm=A.create('maze',{design:{rows:A.MAZE.map(r=>r.replace(/o/g,'.'))},ghosts:0,stepFrames:2},{seed:1});t('custom maze is used by the engine',!cm.s.grid.flat().includes('o'));
+const blk=NR.buildDSArcade({arcade:{mode:'maze',cfg:Object.assign({},A.DEFAULTS.maze,{design:A.MAZE_DESIGN()})}}).block;t('DS ROM data block carries the maze',blk&&blk.length>300);
+let threw=false;try{NR.buildDSArcade({arcade:{mode:'maze',cfg:{design:{rows:['bad']}}}})}catch(e){threw=/maze design/.test(e.message)}t('export explains a broken maze',threw);
+const P={meta:{title:'x'},console:'ds',arcade:{mode:'maze',cfg:{}}};const r1=T.run('get_design',{path:'design.rows.0'},{P:()=>P,hooks:{markDirty(){}}});t('AI can read the maze design',/#####/.test(JSON.stringify(r1)));
 console.log(ok+' passed, '+bad+' failed');process.exit(bad?1:0);

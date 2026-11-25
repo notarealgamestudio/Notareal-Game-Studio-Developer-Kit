@@ -38,6 +38,7 @@ function level3dTab(main) {
     if (P.arcade && P.arcade.mode === 'rail') return railDesignTab(main);
     if (P.arcade && P.arcade.mode === 'memory') return memoryDesignTab(main);
     if (P.arcade && P.arcade.mode === 'falling') return fallingDesignTab(main);
+    if (P.arcade && P.arcade.mode === 'maze') return mazeDesignTab(main);
     if (P.arcade && P.arcade.mode === 'basketball') return basketballDesignTab(main);
     if (P.arcade && P.arcade.mode === 'baseball') return baseballDesignTab(main);
     const L = level3dInit(), box = el('div', { class: 'pane' }), cv = el('canvas', { width: 640, height: 640, style: 'width:100%;max-width:640px;border:1px solid #444;border-radius:6px;cursor:crosshair;image-rendering:pixelated' });

@@ -1,5 +1,5 @@
 name: Build the Windows program with the AI inside
-# (run 6: maze chase engine) Run it from the Actions tab (Run workflow) or push a tag like ai-1. It joins the app zip in downloads/, adds the llama.cpp engine and a Qwen model,
+# (run 7: maze designer) Run it from the Actions tab (Run workflow) or push a tag like ai-1. It joins the app zip in downloads/, adds the llama.cpp engine and a Qwen model,
 # and publishes ONE zip (or a few parts if it is over 2 GB) on the Releases page. Nothing to install afterwards: unzip, run NotarealStudio.exe.
 on:
   workflow_dispatch:

@@ -6,7 +6,7 @@ Evidence = what I read in the code and ran today. "Real" means run or clicked th
 |---|---|---|
 | Organise by game type (taxonomy sidebar) | Partly | Timeline palette groups (Screens & story, Open world, Action, Platformer, Racing, Fighting, Minigames...) and template families exist. The main menu has not been reorganised by the agreed taxonomy. |
 | Game = timeline of scenes | Partly | Timeline editor, validator and PC runner exist (`nrtimeline.js`, `editor_timeline.js`; branching on win/lose/menu/flags/score/time). The DS ROM scene router (SCNS) runs only arcade engines and text cards, using their built-in content, not your designs. Other DS engines (RPG, fight, platformer) cannot be chained in one DS ROM. |
-| Minigames as a reusable block library | Partly | 18 arcade engines and an arcade room with air hockey and claw machine (PC). Maze chase added (DS + PC). No QTE, trivia; air hockey / claw / room are PC only. |
+| Minigames as a reusable block library | Partly | 18 arcade engines and an arcade room with air hockey and claw machine (PC). Maze chase added (DS + PC, with a maze designer tab). No QTE, trivia; air hockey / claw / room are PC only. |
 | DS-only bottom-screen editor (buttons to scenes/events/popups) | Partly | Editor lane, validation and PC play exist. The DS ROM does not read the buttons. |
 | Experiment area: custom 3D characters with presets | Not built | Only the 2D character builder and the cast/face tools exist. |
 | Research lab -> recipe -> preset -> scene ("Frankenstein protocol") | Partly | Recipes tab applies measured/scanned numbers with undo (`nrrecipes.js`, `test_recipes.js`). It is not driven by every ROM scan automatically, and recipes cannot be dropped in as a timeline scene. |
